@@ -1,0 +1,16 @@
+.vscode/
+__pycache__/
+data/
+.venv/
+*.csv
+*.zip
+*.txt
+*.lprof
+*.so
+*.c
+*.o
+
+frozen_data/
+input_files/
+trie.conf
+
