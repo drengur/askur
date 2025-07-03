@@ -297,6 +297,22 @@ class Mapping:
         Returns 2 if is end of word reversed
         Returns 3 if is both end of word and word reversed
         """
+        
+        start_byte = index // 8
+        extra_bits = (index % 8)
+
+        regular_bins = bin(
+            int.from_bytes(
+                self._eow_bits[start_byte : start_byte + 1],
+                byteorder="big",
+                signed=False,
+            )
+        )[2:].rjust(8, "0")
+        # print(f"Regular bins: {regular_bins}, Extra bits: {extra_bits}, Index: {index}")
+        # print(f"is end of word: {int(regular_bins[extra_bits : extra_bits + 1], 2)}")
+        return int(regular_bins[extra_bits : extra_bits + 1], 2)
+        # print("IS END OF WORD:",int(regular_bins[extra_bits : extra_bits + 1], 2))
+        
         start_byte = index // 4
         extra_bits = (index % 4) * 2
 
@@ -308,6 +324,8 @@ class Mapping:
             )
         )[2:].rjust(8, "0")
         return int(fat_bins[extra_bits : extra_bits + 2], 2)
+    
+
 
     def get_value_bits_sum(self, index) -> int:
         """
