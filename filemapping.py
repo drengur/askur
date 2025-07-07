@@ -20,7 +20,7 @@ class Mapping:
         self.bits_in_superblock: int | None = None  # nr of bits in a superblock (8,16,24,32,..)
         self.collection: str = collection
         self._eow_sb: mmap.mmap | None = None  # uppsafnaður fjöldi af "1" bitum í hverju byte (32 bits in byte)
-        self._value_bits_fat: mmap.mmap | None = None
+        # self._value_bits_fat: mmap.mmap | None = None
         # self.bytes_in_index_block: int | None = None
         self.nr_bytes_in_index_block: int = 0
         self.nr_bytes_in_value_block: int = 0
@@ -72,7 +72,7 @@ class Mapping:
         # end of word bits summary file (super block file)
         EOW_BITS_SUMMARY_FILE = os.path.join(frozen_folder, "eow_sb.bin")
 
-        VALUE_BITS_FAT_FILE = os.path.join(frozen_folder, "eow_bits.bin" + ".fat")
+        # VALUE_BITS_FAT_FILE = os.path.join(frozen_folder, "eow_bits.bin" + ".fat")
 
         INDEX_BITS_FILE = os.path.join(frozen_folder, "index_bits.bin")
 
@@ -108,10 +108,10 @@ class Mapping:
                 f_value_bits.fileno(), 0, access=mmap.ACCESS_READ
             )
 
-        with io.open(VALUE_BITS_FAT_FILE, "rb") as f_value_bits_fat:
-            self._value_bits_fat = mmap.mmap(
-                f_value_bits_fat.fileno(), 0, access=mmap.ACCESS_READ
-            )
+        # with io.open(VALUE_BITS_FAT_FILE, "rb") as f_value_bits_fat:
+        #     self._value_bits_fat = mmap.mmap(
+        #         f_value_bits_fat.fileno(), 0, access=mmap.ACCESS_READ
+        #     )
 
         with io.open(
             EOW_BITS_SUMMARY_FILE, "r", encoding="utf-8"

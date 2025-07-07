@@ -6,12 +6,16 @@ listi yfir orð id og ekkert annað.
 """
 
 import io
-# import sys
+import sys
 
 # import sys
 import os
 import argparse
 import math as m
+# import tracemalloc
+# import gc
+# from memory_profiler import profile, memory_usage
+from pympler import asizeof
 
 # import threading
 # from multiprocessing import Process
@@ -47,7 +51,6 @@ class Node:
         self.has_children = False
         self.fw = 0
         self.bw = 0
-        self.letters = [None] * len(self.alphabet)
 
 
 class Trie:
@@ -69,7 +72,7 @@ class Trie:
         self._index = []  # the counter array (the number of words that have been added to the trie)
         self._short_text = []  # the short text array (the words in the trie)
         self._data_values = {}
-        self._fat_value = []
+        # self._fat_value = []
         self.collection_name = collection_name
         self.alphabet = Node().alphabet  # the alphabet used in the trie
 
@@ -125,6 +128,7 @@ class Trie:
 
         self.root = Node()  # the root node of the trie
 
+    # @profile
     def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
@@ -180,14 +184,13 @@ class Trie:
 
         print("\n ")
         print("writing do disk...")
-
         print("2 - Making binary tree (trie)")
         self.make_tree()
         self.write_tree_to_file(self.trie_file, "wb")
         del self._trie
 
         print("2a - Processing eow values")
-        self.write_eow_values_to_file(self.value_bits_filename, "wb")
+        self.write_eow_values_to_file(self.value_bits_filename)
 
         # print("2b -make value_bits_sum_file")
         self.write_eow_sums_to_file(self.eow_sb)
@@ -271,67 +274,146 @@ class Trie:
                 self._hc.append(1 if letter.has_children else 0)
                 if letter.end:
                     self._is_eow.append(1)
-                    self._fat_value.append(bin(letter.fw + letter.bw)[2:].rjust(2, "0"))
+                    # self._fat_value.append(bin(letter.fw + letter.bw)[2:].rjust(2, "0"))
                     self._index.append(letter.index)
                 else:
                     self._is_eow.append(0)
-                    self._fat_value.append("00")
+                    # self._fat_value.append("00")
                 child_nodes.append(letter)
         self._to_tree(child_nodes)
+
+    def generate_data(self, big_string):
+        """Generate data from a big string."""
+        # This function is a placeholder for generating data.
+        i = 0
+        chunk_size = 1024
+        while i < len(big_string):
+            yield big_string[i : i + chunk_size]
+            i += chunk_size
 
     def write_tree_to_file(self, filename, write_method="wb"):
         """Write the LOUDS representation of the trie to a file."""
         with io.open(filename, write_method) as f:
-            f.write(self._trie)
+            for chunk in self.generate_data(self._trie):
+                f.write(chunk)
             f.close()
+        # with io.open(filename, write_method) as f:
+        #     f.write(self._trie)
+        #     f.close()
 
-    def get_hc(self):
-        """Return the head child array."""
-        return "".join(str(hc) for hc in self._hc) + "0" * (8 - len(self._hc) % 8)
+    # def get_hc(self):
+    #     """Return the head child array."""
+    #     return "".join(str(hc) for hc in self._hc) + "0" * (8 - len(self._hc) % 8)
 
     def write_hc_to_file(self, filename):
         """Write the head child array to a file."""
-        with io.open(filename, "bw") as f:
-            f.write(self.bit_bytes_to_bits(self.get_hc()))
+        with io.open(filename, "w") as f:
+            f.write("")
             f.close()
 
-    def get_select(self) -> str:
-        """Return the select array."""
-        return "".join(str(s) for s in self._select) + "1" * (8 - len(self._select) % 8)
+        buffer = bytearray()  # Buffer to hold bytes before writing to file
+        i = 0
+        extra_bits = len(self._hc) % 8
+        if extra_bits > 0:
+            for _ in range(8 - extra_bits):
+                self._hc.append(0)  # Pad with zeros to make it a multiple of 8 bits
+        while i < len(self._hc):
+            buffer.append(int("".join([str(c) for c in self._hc[i : i + 8]]), 2))
+            i += 8
+            if len(buffer) >= 10240:
+                with io.open(filename, "ab") as f:
+                    f.write(buffer)
+                buffer.clear()  # Clear the buffer to free memory
+        if len(buffer) > 0:
+            with io.open(filename, "ab") as f:
+                f.write(buffer)
+                f.close()
+
+        # with io.open(filename, "bw") as f:
+        #     f.write(self.bit_bytes_to_bits(self.get_hc()))
+        #     f.close()
+
+    # def get_select(self) -> str:
+    #     """Return the select array."""
+    #     return "".join(str(s) for s in self._select) + "1" * (8 - len(self._select) % 8)
 
     def write_select_to_file(self, filename):
         """Write the select array to a file."""
-        with io.open(filename, "bw") as f:
-            f.write(self.bit_bytes_to_bits(self.get_select()))
+        with io.open(filename, "w") as f:
+            f.write("")
             f.close()
+        buffer = bytearray()  # Buffer to hold bytes before writing to file
+        i = 0
+        extra_bits = len(self._select) % 8
+        if extra_bits > 0:
+            for _ in range(8 - extra_bits):
+                self._select.append(0)  # Pad with zeros to make it a multiple of 8 bits
+        while i < len(self._select):
+            buffer.append(int("".join([str(c) for c in self._select[i : i + 8]]), 2))
+            i += 8
+            if len(buffer) >= 10240:
+                with io.open(filename, "ab") as f:
+                    f.write(buffer)
+                buffer.clear()
+        if len(buffer) > 0:
+            with io.open(filename, "ab") as f:
+                f.write(buffer)
+                f.close()
 
-    def write_eow_values_to_file(self, filename, write_method="wb"):
+        # with io.open(filename, "bw") as f:
+        #     f.write(self.bit_bytes_to_bits(self.get_select()))
+        #     f.close()
+
+    def write_eow_values_to_file(self, filename):
         """Write the value array to a file."""
-        with io.open(filename, write_method) as f:
-            f.write(self.bit_bytes_to_bits(self.get_eow_values()))
+        with io.open(filename, "w") as f:
+            f.write("")
             f.close()
 
-        with io.open(self.value_bits_filename + ".fat", "wb") as f:
-            f.write(self.bit_bytes_to_bits(self.get_fat_values()))
-            f.close()
+        buffer = bytearray()  # Buffer to hold bytes before writing to file
+        i = 0
+        extra_bits = len(self._is_eow) % 8
+        if extra_bits > 0:
+            for _ in range(8 - extra_bits):
+                self._is_eow.append(0)  # Pad with zeros to make it a multiple of 8 bits
+        while i < len(self._is_eow):
+            buffer.append(int("".join([str(c) for c in self._is_eow[i : i + 8]]), 2))
+            i += 8
+            if len(buffer) >= 10240:
+                with io.open(filename, "ab") as f:
+                    f.write(buffer)
+                buffer.clear()  # Clear the buffer to free memory
+        if len(buffer) > 0:
+            with io.open(filename, "ab") as f:
+                f.write(buffer)
+                f.close()
 
-    def get_eow_values(self):
-        """Return the value array (is_end_of_word)."""
-        if not self._is_eow:
-            return ""
-        return "".join(
-            [
-                "1" if (c == Node.BOTH_WAY or c == Node.FORWARD_WORD) else "0"
-                for c in self._is_eow
-            ]
-        )
+        # return
+
+        # with io.open(filename, write_method) as f:
+        #     f.write(self.bit_bytes_to_bits(self.get_eow_values()))
+        #     f.close()
+
+        # with io.open(self.value_bits_filename + ".fat", "wb") as f:
+        #     f.write(self.bit_bytes_to_bits(self.get_fat_values()))
+        #     f.close()
+
+    # def get_eow_values(self):
+    #     """Return the value array (is_end_of_word)."""
+    #     if not self._is_eow:
+    #         return ""
+    #     return "".join(
+    #         [
+    #             "1" if (c == Node.BOTH_WAY or c == Node.FORWARD_WORD) else "0"
+    #             for c in self._is_eow
+    #         ]
+    #     )
 
     def write_eow_sums_to_file(self, filename):
         # bits in block = 32
         # sum of "1"-bits in a block of 32 bits
         with io.open(filename, "w") as f:
             f.write("")
-
 
         sum = 0
         i = 0
@@ -344,18 +426,30 @@ class Trie:
             if i == bits_in_block:
                 i = 0
                 buffer.append(sum)
+                if len(buffer) >= 1024:
+                    with io.open(filename, "ab") as f:
+                        f.write(
+                            self.bit_bytes_to_bits(
+                                "".join(
+                                    [
+                                        bin(item)[2:].rjust(bits_in_block, "0")
+                                        for item in buffer
+                                    ]
+                                )
+                            )
+                        )
+                    buffer.clear()
         if sum:
             buffer.append(sum)
-        with io.open(filename, "ab") as f:
-            f.write(
-                self.bit_bytes_to_bits(
-                    "".join(
-                        [bin(item)[2:].rjust(bits_in_block, "0") for item in buffer]
+            with io.open(filename, "ab") as f:
+                f.write(
+                    self.bit_bytes_to_bits(
+                        "".join(
+                            [bin(item)[2:].rjust(bits_in_block, "0") for item in buffer]
+                        )
                     )
                 )
-            )
-            f.close()
-
+                f.close()
 
     def write_short_text_to_file(self, filename, write_method="ab"):
         """Write the short text array to a file."""
@@ -456,8 +550,8 @@ class Trie:
                 f.write(item)
             f.close()
 
-    def get_fat_values(self):
-        return "".join([val for val in self._fat_value])
+    # def get_fat_values(self):
+    #     return "".join([val for val in self._fat_value])
 
     def to_bytearray(self, s_bytes):
         """Convert chr to ord(chr)."""
@@ -485,13 +579,17 @@ class Trie:
         # Writing to hc-superblock
         bib = 8
         block_size = (round(m.ceil(m.log2(len(self._hc)) / 2) + 5, -1) // bib) * bib
+
         # bit lengd getur verið (len(bin(self._hc)) // 8 + 1 (byte)) * 8  í stað föstu tölunnar 32
         # það ætti að spara í það minnsta 1 byte fyrir hvert 32 bita block
         # sama er hægt að gera fyrir select_lookup
+        with io.open(self.hc_sb_file, "w") as f:
+            f.write("")
+            f.close()
+
         res = bytearray()
         bitsum = 0
         index = 0
-        max_value = 0
         for i, val in enumerate(self._hc):
             bitsum += val
             index += 1
@@ -500,37 +598,49 @@ class Trie:
                 for j in range(0, len(bits), 8):
                     res.append(int(bits[j : j + 8], 2))
                 index = 0
-        if bitsum > 0:
-            max_value = max(max_value, bitsum)
+                if len(res) >= 10240:
+                    with io.open(self.hc_sb_file, "ab") as f:
+                        f.write(res)
+                        f.close()
+                    res.clear()
+        if index > 0:
             bits = bin(bitsum)[2:].rjust(32, "0")
             for j in range(0, len(bits), 8):
                 res.append(int(bits[j : j + 8], 2))
-        with io.open(self.hc_sb_file, "wb") as f:
+
+        with io.open(self.hc_sb_file, "ab") as f:
             f.write(res)
             f.close()
 
     def select_to_lookup(self):
+        with io.open(self.s_sb_file, "w") as f:
+            f.write("")
+            f.close()
+
         bib = 8
         block_size = (round(m.ceil(m.log2(len(self._select)) / 2) + 5, -1) // bib) * bib
         bitsum = 0
         res = bytearray()
         res.append(block_size)
-        max_val = 0
         for i, val in enumerate(self._select):
             bitsum += val
             if bitsum == block_size:
                 bits = bin(i)[2:].rjust(32, "0")
-                max_val = max(max_val, i)
                 for j in range(0, len(bits), 8):
                     res.append(int(bits[j : j + 8], 2))
+                    if len(res) >= 10240:
+                        with io.open(self.s_sb_file, "ab") as f:
+                            f.write(res)
+                            f.close()
+                        res.clear()
                 bitsum = 0
         if bitsum > 0:
             bits = bin(i)[2:].rjust(32, "0")
             for j in range(0, len(bits), 8):
                 res.append(int(bits[j : j + 8], 2))
-        with io.open(self.s_sb_file, "wb") as f:
-            f.write(res)
-            f.close()
+            with io.open(self.s_sb_file, "ab") as f:
+                f.write(res)
+                f.close()
 
     def __str__(self):
         return str(self.root)
@@ -548,7 +658,14 @@ def make_trie(filename, collection):
 if __name__ == "__main__":
     args = ARG_PARSER.parse_args()
     if args.filename is not None and args.collection is not None:
+        # tracemalloc.start()
+        # import gc
+
         make_trie(filename=args.filename, collection=args.collection)
-        make_trie(filename=args.filename, collection="__" + args.collection)
+        # make_trie(filename=args.filename, collection="__" + args.collection)
+
+        # top_stats = snapshot.statistics("lineno")
+        # for stat in top_stats[:10]:
+        # print(stat)
     else:
         ARG_PARSER.print_help()

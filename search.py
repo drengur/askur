@@ -38,12 +38,19 @@ class Search:
 
     def add_result(self, result):
         """Add a result to the search results."""
+
         if self.limit > 0 and len(self._results) >= self.limit:
             return
-        for item in result:
-            if item in self._results:
-                continue
-            self._results.append(item)
+        if result not in self._results:
+            self._results.append(result)
+        # return
+        # print(f"Adding result: {result}, {type(result)}")
+
+        # for item in result:
+        #     print(f"Adding item: {item}, {type(item)}")
+        #     if item in self._results:
+        #         continue
+        #     self._results.append(item)
 
     def results(self):
         """Return the results of the search."""
@@ -58,6 +65,11 @@ class Search:
             elif isinstance(items, list):
                 for item in items:
                     res.append(item)
+            elif isinstance(items, dict):
+                for key, value in items.items():
+                    res.append(f"{key}: {value}")
+            else:
+                res.append(str(items))
         res.sort() if res else []
         return res
 
@@ -100,11 +112,20 @@ class Search:
         """Search for a word in the trie with wildcards (*)."""
         if self.search_completed():
             return
+        # print(f"Wildcard search: {start_part}, {word_parts}, {end_part}")
+        if not word_parts and not end_part and start_part[-1] == 42:
+            self._search([start_part[:-1],None,None], 1)
+
 
         s_start, s_end = self.mmap.calculate_select(s_index)
 
         for idx, letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
-            next_start_part = start_part.copy() + [letter]
+            # next_start_part = start_part[:-1].copy() + [letter]
+            next_start_part = (
+                start_part[:-1].copy() if start_part[-1] == 42 else start_part.copy()
+            )
+            next_start_part.append(letter)
+
             next_end_part = None if not end_part else next_start_part[-len(end_part) :]
             end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
 
