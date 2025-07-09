@@ -12,6 +12,7 @@ import sys
 import os
 import argparse
 import math as m
+
 # import tracemalloc
 # import gc
 # from memory_profiler import profile, memory_usage
@@ -32,13 +33,13 @@ ARG_PARSER.add_argument(
 class Node:
     """A node in a tree."""
 
-    FORWARD_WORD = 1
-    REVERSE_WORD = 2
-    BOTH_WAY = 3
+    # FORWARD_WORD = 1
+    # REVERSE_WORD = 2
+    # BOTH_WAY = 3
 
     def __init__(self, alphabet=None):
         self.end = False
-        self.value_ids = []
+        # self.value_ids = []
         self.index = []
         self.alphabet = bytearray()
         if alphabet is None:
@@ -62,8 +63,6 @@ class Trie:
             trie = Trie()
             trie.make_frozen_data()
         """
-        # p = configparser.ConfigParser()
-        # p.read("config.ini")
 
         self._trie = bytearray()  # the LOUDS representation of the trie
         self._hc = []  # the head child array (1 if the node has a child, 0 otherwise)
@@ -71,8 +70,6 @@ class Trie:
         self._is_eow = []  # the value array (is the end of the word)
         self._index = []  # the counter array (the number of words that have been added to the trie)
         self._short_text = []  # the short text array (the words in the trie)
-        self._data_values = {}
-        # self._fat_value = []
         self.collection_name = collection_name
         self.alphabet = Node().alphabet  # the alphabet used in the trie
 
@@ -138,7 +135,8 @@ class Trie:
         nr_lines_in_file = sum(1 for line in open(filename))
         print(f"Number of lines in file: {nr_lines_in_file}")
 
-        self._data_values = {}
+        # self._data_values = {}
+        data_values = {}
         index = 0
         line_nr = 0
         fw = 1  # forward direction
@@ -168,12 +166,12 @@ class Trie:
                 key = self.modify_word(word_key[::-1])
             else:
                 key = self.modify_word(word_key)
-            if word_value not in self._data_values:
-                index = len(self._data_values)
+            if word_value not in data_values:
+                index = len(data_values)
                 # Use setdefault to avoid storing duplicate values and save memory
-                self._data_values.setdefault(word_value, index)
+                data_values.setdefault(word_value, index)
             else:
-                index = self._data_values[word_value]
+                index = data_values[word_value]
             self._add(key, index, fw)
 
             for c in key:
@@ -184,10 +182,11 @@ class Trie:
 
         print("\n ")
         print("writing do disk...")
-        print("2 - Making binary tree (trie)")
+        print("2 - Writing trie to file")
         self.make_tree()
         self.write_tree_to_file(self.trie_file, "wb")
         del self._trie
+        
 
         print("2a - Processing eow values")
         self.write_eow_values_to_file(self.value_bits_filename)
@@ -202,10 +201,21 @@ class Trie:
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_lookup()
 
+        # reverse data_values
+        # self._data_values = data_values
+        # inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
+        # i = 0
+        # for k, v in inv_data_values.items():
+        #     print(f"{k} : {v}")
+        #     i += 1
+        #     if i > 5:
+        #         break
+
         print("5 - Process SHORT_TEXT")
-        with io.open(self.short_text_bits_filename, "w", encoding="utf-8") as f:
-            f.write("")
-        self.write_short_text_to_file(self.short_text_bits_filename, "wb")
+        # inverting data_values so that the key is the value and the value is the key
+        self.write_short_text_to_file(
+            {v: self.modify_word(k) for k, v in data_values.items()},
+        )
 
         print("6 - write alphabet to file")
         with io.open(self.trie_file + ".alphabet", "wb") as f:
@@ -329,9 +339,8 @@ class Trie:
                 f.write(buffer)
                 f.close()
 
-        # with io.open(filename, "bw") as f:
-        #     f.write(self.bit_bytes_to_bits(self.get_hc()))
-        #     f.close()
+        
+        # print("".join(str(c) for c in self._hc))
 
     # def get_select(self) -> str:
     #     """Return the select array."""
@@ -342,6 +351,9 @@ class Trie:
         with io.open(filename, "w") as f:
             f.write("")
             f.close()
+        # Það þarf að bæta við 1 í enda á select fylkinu til að geta staðsett síðasta bókstafinn í trie-skránni
+        # Að öðrum kosti finnst ekki verður select útreikningurinn óendanlegur
+        self._select.append(1)  # Pad with 1 to make it a multiple
         buffer = bytearray()  # Buffer to hold bytes before writing to file
         i = 0
         extra_bits = len(self._select) % 8
@@ -359,9 +371,11 @@ class Trie:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
                 f.close()
-
-        # with io.open(filename, "bw") as f:
-        #     f.write(self.bit_bytes_to_bits(self.get_select()))
+            
+        
+        
+        # with io.open("select.txt", "w") as f:
+        #     f.write("".join(str(c) for c in self._select))
         #     f.close()
 
     def write_eow_values_to_file(self, filename):
@@ -451,43 +465,53 @@ class Trie:
                 )
                 f.close()
 
-    def write_short_text_to_file(self, filename, write_method="ab"):
+    def write_short_text_to_file(self, inv_data_values):
         """Write the short text array to a file."""
+        with io.open(self.short_text_bits_filename, "w", encoding="utf-8") as f:
+            f.write("")
+            f.close()
 
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
-        tmp_short_text = {}
+        # inv_data_values = {}
         total_sum = 0
         max_tmp_short_text = 0
-        for n, item in enumerate(self._data_values):
-            modified_item = self.modify_word(item)
-            tmp_short_text[n] = modified_item
 
-            total_sum += len(modified_item)
-            if len(modified_item) > max_tmp_short_text:
-                max_tmp_short_text = len(modified_item)
+        for _, value in inv_data_values.items():
+            total_sum += len(value)
+            max_tmp_short_text = max(max_tmp_short_text, len(value))
+
+        # for n, item in enumerate(self._data_values):
+        #     modified_item = self.modify_word(item)
+        #     tmp_short_text[n] = modified_item
+
+        #     total_sum += len(modified_item)
+        #     if len(modified_item) > max_tmp_short_text:
+        #         max_tmp_short_text = len(modified_item)
 
         # byte_length er hægt að nota til að skipta út fyrir 32-bita lengdina
         nr_bytes_in_index_block = (
             len(bin(total_sum)[2:]) // 8 + (1 if len(bin(total_sum)[2:]) % 8 else 0) + 1
         )
-        # nr_bytes_in_value_block er hægt að nota til að skipta út fyrir 16 bita lengdina
-        nr_bytes_in_value_block = len(bin(max_tmp_short_text)[2:]) // 8 + (
-            1 if len(bin(max_tmp_short_text)[2:]) % 8 else 0
-        )
-
         nr_bits_in_index_block = nr_bytes_in_index_block * 8  # 32
+
+        # nr_bytes_in_value_block er hægt að nota til að skipta út fyrir 16 bita lengdina
+        # nr_bytes_in_value_block = len(bin(max_tmp_short_text)[2:]) // 8 + (
+        #     1 if len(bin(max_tmp_short_text)[2:]) % 8 else 0
+        # )
         # nr_bits_in_value_block = nr_bytes_in_value_block * 8  # 16
 
         # athuga lengd á tmp_short_text, s.s. spurning hvort að það séu mörg gildi fyrir sama key-index
         max_text_len = 0
         for idxs in self._index:
-            if len(idxs) > 1:
-                text_len = 0
-                for idx in idxs:
-                    text_len += len(tmp_short_text[idx]) + 1
-                if text_len > max_text_len:
-                    max_text_len = text_len
+            # if len(idxs) > 1:
+            text_len = 0
+            for idx in idxs:
+                text_len += len(inv_data_values[idx]) + 1
+            max_text_len = max(max_text_len, text_len)
+                # if text_len > max_text_len:
+                #     max_text_len = text_len
+        # print(inv_data_values,max_text_len)
         if max_text_len > 0:
             nr_bytes_in_value_block = len(bin(max_text_len)[2:]) // 8 + (
                 1 if len(bin(max_text_len)[2:]) % 8 else 0
@@ -504,29 +528,29 @@ class Trie:
             for idx in idxs:
                 if len(idxs) == 1:
                     if idx not in indices:
-                        short_texts.append(tmp_short_text[idx])
+                        short_texts.append(inv_data_values[idx])
                         value = bin(sum_index)[2:].rjust(
                             nr_bits_in_index_block, "0"
-                        ) + bin(len(tmp_short_text[idx]))[2:].rjust(
+                        ) + bin(len(inv_data_values[idx]))[2:].rjust(
                             nr_bits_in_value_block, "0"
                         )
                         indices[idx] = value
                         tmp_indices.append(value)
-                        sum_index += len(tmp_short_text[idx])
+                        sum_index += len(inv_data_values[idx])
 
                     else:
                         tmp_indices.append(indices[idx])
                 else:
-                    multi_text.append(tmp_short_text[idx])
+                    multi_text.append(inv_data_values[idx])
             if len(multi_text) > 1:
                 tmp_txt = []
                 for mtx in multi_text:
                     if len(tmp_txt) == 0:
                         tmp_txt = mtx.copy()
                     else:
-                        tmp_txt.append(141)
+                        tmp_txt.append(141) # separator between words/sentences
                         tmp_txt += mtx.copy()
-                idx_n = len(tmp_short_text)
+                idx_n = len(inv_data_values)
                 short_texts.append(tmp_txt)
                 value = bin(sum_index)[2:].rjust(nr_bits_in_index_block, "0") + bin(
                     len(tmp_txt)
@@ -535,20 +559,41 @@ class Trie:
                 tmp_indices.append(value)
                 sum_index += len(tmp_txt)
 
-        with io.open(self.index_bits_filename, "wb") as f:
-            f.write(
-                self.bit_bytes_to_bits(
-                    bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
-                    + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
-                    + "".join([txt for txt in tmp_indices])
-                )
-            )
-            f.close()
+            if len(short_texts) >= 1024:
+                with io.open(self.short_text_bits_filename, "ab") as f:
+                    for item in short_texts:
+                        f.write(item)
+                    f.close()
+                short_texts.clear()
 
-        with io.open(filename, "wb") as f:
-            for item in short_texts:
-                f.write(item)
-            f.close()
+            if len(tmp_indices) >= 1024:
+                with io.open(self.index_bits_filename, "ab") as f:
+                    f.write(
+                        self.bit_bytes_to_bits(
+                            bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
+                            + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
+                            + "".join([txt for txt in tmp_indices])
+                        )
+                    )
+                    f.close()
+                tmp_indices.clear()
+
+        if len(tmp_indices) > 0:
+            with io.open(self.index_bits_filename, "ab") as f:
+                f.write(
+                    self.bit_bytes_to_bits(
+                        bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
+                        + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
+                        + "".join([txt for txt in tmp_indices])
+                    )
+                )
+                f.close()
+
+        if len(short_texts) > 0:
+            with io.open(self.short_text_bits_filename, "ab") as f:
+                for item in short_texts:
+                    f.write(item)
+                f.close()
 
     # def get_fat_values(self):
     #     return "".join([val for val in self._fat_value])
@@ -607,10 +652,10 @@ class Trie:
             bits = bin(bitsum)[2:].rjust(32, "0")
             for j in range(0, len(bits), 8):
                 res.append(int(bits[j : j + 8], 2))
-
-        with io.open(self.hc_sb_file, "ab") as f:
-            f.write(res)
-            f.close()
+        if len(res) > 0:
+            with io.open(self.hc_sb_file, "ab") as f:
+                f.write(res)
+                f.close()
 
     def select_to_lookup(self):
         with io.open(self.s_sb_file, "w") as f:
@@ -618,6 +663,7 @@ class Trie:
             f.close()
 
         bib = 8
+        bits = ""
         block_size = (round(m.ceil(m.log2(len(self._select)) / 2) + 5, -1) // bib) * bib
         bitsum = 0
         res = bytearray()
@@ -628,19 +674,23 @@ class Trie:
                 bits = bin(i)[2:].rjust(32, "0")
                 for j in range(0, len(bits), 8):
                     res.append(int(bits[j : j + 8], 2))
-                    if len(res) >= 10240:
+                bitsum = 0
+                if len(res) >= 10240:
                         with io.open(self.s_sb_file, "ab") as f:
                             f.write(res)
                             f.close()
                         res.clear()
-                bitsum = 0
+                        bits = ""
+
         if bitsum > 0:
             bits = bin(i)[2:].rjust(32, "0")
             for j in range(0, len(bits), 8):
                 res.append(int(bits[j : j + 8], 2))
+        if len(res) > 0:
             with io.open(self.s_sb_file, "ab") as f:
                 f.write(res)
                 f.close()
+
 
     def __str__(self):
         return str(self.root)

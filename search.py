@@ -43,14 +43,6 @@ class Search:
             return
         if result not in self._results:
             self._results.append(result)
-        # return
-        # print(f"Adding result: {result}, {type(result)}")
-
-        # for item in result:
-        #     print(f"Adding item: {item}, {type(item)}")
-        #     if item in self._results:
-        #         continue
-        #     self._results.append(item)
 
     def results(self):
         """Return the results of the search."""
@@ -112,31 +104,36 @@ class Search:
         """Search for a word in the trie with wildcards (*)."""
         if self.search_completed():
             return
-        # print(f"Wildcard search: {start_part}, {word_parts}, {end_part}")
-        if not word_parts and not end_part and start_part[-1] == 42:
-            self._search([start_part[:-1],None,None], 1)
 
+        # Hér er verið að athuga hvort að bókstarnir sem koma á undan stjörnunni (*)
+        # séu sjálfstætt orð (is_eow)
+        if start_part and start_part[-1] == 42 and not word_parts and not end_part:
+            self._search([start_part[:-1], None, None], s_index)
 
         s_start, s_end = self.mmap.calculate_select(s_index)
 
         for idx, letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
-            # next_start_part = start_part[:-1].copy() + [letter]
             next_start_part = (
-                start_part[:-1].copy() if start_part[-1] == 42 else start_part.copy()
+                start_part[:-1].copy()
+                if start_part and start_part[-1] == 42
+                else start_part.copy()
             )
-            next_start_part.append(letter)
+            next_start_part.append(int(letter))
 
             next_end_part = None if not end_part else next_start_part[-len(end_part) :]
             end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
-
-            # Check if we can match any of the patterns in word_parts sequentially
-            if end_part_match and self._matches_pattern_sequence(
+            word_parts_match = self._matches_pattern_sequence(
                 next_start_part, word_parts
+            )
+            # Check if we can match any of the patterns in word_parts sequentially
+            if (
+                end_part_match
+                and word_parts_match
+                and self.mmap.is_end_of_word(s_start + idx)
             ):
-                if self.mmap.is_end_of_word(s_start + idx):
-                    result = self.mmap.get_result(s_start + idx)
-                    self.add_result(result)
-
+                result = self.mmap.get_result(s_start + idx)
+                self.add_result(result)
+            # If we have a match, continue searching
             if self.mmap.has_child(s_start + idx):
                 nr_hc = self.mmap.calculate_hc(s_start + idx)
                 self._wildcard_search(nr_hc + 1, next_start_part, word_parts, end_part)
@@ -204,6 +201,7 @@ class Search:
             self._search(next_query, s_index)
 
     def _search(self, query, s_index) -> None:
+        # print(f"Searching for: {query}, s_index: {s_index}")
         chr_index = -1
         if self.search_completed():
             return
@@ -224,6 +222,10 @@ class Search:
                 nr_hc = self.mmap.calculate_hc(s_start + chr_index)
                 # No child, so we can return and get the results
                 if nr_hc is None:
+                    # if we are at the end of the query and the last letter is a wildcard
+                    # and we have perhaps a complete word at this point
+                    if n == len(query[0]) - 2 and query[0][-1] == 42:
+                        self._wildcard_search(s_index, query[0], query[1], query[2])
                     return
                 s_index = nr_hc + 1
 
@@ -234,6 +236,7 @@ class Search:
             self.add_result({word: result})
 
     def search(self, query) -> str:
+        # print("Searching for:", query)
         if self.use_levenstein:
             """Using Levenshtein distance to find similar words."""
             if query is None or query[0] is None:

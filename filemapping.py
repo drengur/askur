@@ -8,20 +8,18 @@ import cython
 
 class Mapping:
     def __init__(self, collection: str) -> None:
-        self._trie: mmap.mmap | None = None
-        self._hc_bitarray: mmap.mmap | None = None
-        self._s_bits: mmap.mmap | None = None
-        self._eow_bits: mmap.mmap | None = None
+        self._trie: mmap.mmap
+        self._hc_bitarray: mmap.mmap
+        self._s_bits: mmap.mmap
+        self._eow_bits: mmap.mmap
         self.short_text_len: int = 0
-        self._s_lookup_blocks: None = None  # Type unknown, set to None
-        self._s_superblocks: mmap.mmap | None = None
-        self._hc_super_blocks: mmap.mmap | None = None
-        self._hc_lookup_blocks: None = None  # Type unknown, set to None
-        self.bits_in_superblock: int | None = None  # nr of bits in a superblock (8,16,24,32,..)
+        self._s_lookup_blocks: mmap.mmap  # Type unknown, set to None
+        self._s_superblocks: mmap.mmap
+        self._hc_super_blocks: mmap.mmap 
+        self._hc_lookup_blocks: mmap.mmap  # Type unknown, set to None
+        self.bits_in_superblock: int = 0
         self.collection: str = collection
-        self._eow_sb: mmap.mmap | None = None  # uppsafnaður fjöldi af "1" bitum í hverju byte (32 bits in byte)
-        # self._value_bits_fat: mmap.mmap | None = None
-        # self.bytes_in_index_block: int | None = None
+        self._eow_sb: mmap.mmap
         self.nr_bytes_in_index_block: int = 0
         self.nr_bytes_in_value_block: int = 0
         self.alphabet: mmap.mmap | bytearray = bytearray()
@@ -49,7 +47,7 @@ class Mapping:
 
         frozen_folder = os.path.join(DATA_FOLDER, self.collection)
         if not os.path.exists(frozen_folder):
-            existing_collections = os.listdir(os.path.join( DATA_FOLDER))
+            existing_collections = os.listdir(os.path.join(DATA_FOLDER))
             raise FileNotFoundError(
                 f"{self.collection} collection does not exist!\n Existing collections are: {existing_collections}"
             )
@@ -139,12 +137,10 @@ class Mapping:
         with io.open(ALPHABET_FILE, "rb") as f_alphabet:
             self.alphabet = mmap.mmap(f_alphabet.fileno(), 0, access=mmap.ACCESS_READ)
 
-
-
-    @cython.cfunc 
+    @cython.cfunc
     def calculate_select(self, sum_ones_wanted: cython.int) -> list[int, int]:
         # Það eru 32 bitar í hverri superblock sem skiptist í 4 bæt (4*8 = 32)
-        
+
         res_end_index: cython.int = None
         res_start_index = cython.int = None
         r_start = cython.int = 7
@@ -176,6 +172,7 @@ class Mapping:
 
         byte: cython.int = 0
         i: cython.int = 0
+
         while total_sum < sum_ones_wanted + 1:
             for byte in self._s_bits[start_byte : start_byte + 1]:
                 if byte == 0:
@@ -203,7 +200,7 @@ class Mapping:
         """Hver er heildar summan við end_request_index"""
         bits_in_byte = 8
         superblock_start = end_request_index // self.bits_in_superblock
-
+        
         if superblock_start == 0:
             index = 0
             bitsum = 0
@@ -230,7 +227,7 @@ class Mapping:
                 ),
                 2,
             )
-
+        
         # það er búið að reikna summu frá 0 til start_block -1
         # þá vantar summuna frá start_block til end_request_index
         start_block = superblock_start * self.bits_in_superblock // bits_in_byte
@@ -276,7 +273,7 @@ class Mapping:
 
         start_len = end_idx
         end_len = start_len + self.nr_bytes_in_value_block
-
+        
         index_val = int.from_bytes(
             self._index_bits[start_idx:end_idx],
             byteorder="big",
@@ -287,45 +284,25 @@ class Mapping:
             byteorder="big",
             signed=False,
         )
-
         return [index_val, len_value]
 
     def is_end_of_word(self, index) -> int:
         """
         Returns 0 if is not end of word
         Returns 1 if is end of word
-        Returns 2 if is end of word reversed
-        Returns 3 if is both end of word and word reversed
         """
-        
-        start_byte = index // 8
-        extra_bits = (index % 8)
 
-        regular_bins = bin(
+        start_byte = index // 8
+        extra_bits = index % 8
+
+        bits = bin(
             int.from_bytes(
                 self._eow_bits[start_byte : start_byte + 1],
                 byteorder="big",
                 signed=False,
             )
         )[2:].rjust(8, "0")
-        # print(f"Regular bins: {regular_bins}, Extra bits: {extra_bits}, Index: {index}")
-        # print(f"is end of word: {int(regular_bins[extra_bits : extra_bits + 1], 2)}")
-        return int(regular_bins[extra_bits : extra_bits + 1], 2)
-        # print("IS END OF WORD:",int(regular_bins[extra_bits : extra_bits + 1], 2))
-        
-        start_byte = index // 4
-        extra_bits = (index % 4) * 2
-
-        fat_bins = bin(
-            int.from_bytes(
-                self._value_bits_fat[start_byte : start_byte + 1],
-                byteorder="big",
-                signed=False,
-            )
-        )[2:].rjust(8, "0")
-        return int(fat_bins[extra_bits : extra_bits + 2], 2)
-    
-
+        return int(bits[extra_bits : extra_bits + 1])
 
     def get_value_bits_sum(self, index) -> int:
         """
@@ -365,7 +342,6 @@ class Mapping:
     def get_result(self, value_index, reversed=False) -> list[str]:
         """Returns result of the query"""
         value_sum = self.get_value_bits_sum(value_index)
-        # print(f"Value index: {value_index}")
         index_value, text_len = self.get_index(value_sum)
         return self.get_short_text(index_value, text_len)
 
