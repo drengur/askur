@@ -6,21 +6,9 @@ listi yfir orð id og ekkert annað.
 """
 
 import io
-import sys
-
-# import sys
 import os
 import argparse
 import math as m
-
-# import tracemalloc
-# import gc
-# from memory_profiler import profile, memory_usage
-from pympler import asizeof
-
-# import threading
-# from multiprocessing import Process
-# import configparser
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
@@ -32,26 +20,11 @@ ARG_PARSER.add_argument(
 
 class Node:
     """A node in a tree."""
-
-    # FORWARD_WORD = 1
-    # REVERSE_WORD = 2
-    # BOTH_WAY = 3
-
-    def __init__(self, alphabet=None):
+    def __init__(self):
         self.end = False
-        # self.value_ids = []
         self.index = []
-        self.alphabet = bytearray()
-        if alphabet is None:
-            alphabet = "123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
-        for item in alphabet:
-            self.alphabet.append(ord(item))
-        self.alphabet.append(129)
-
-        self.letters = [None] * len(self.alphabet)
+        self.letters = {}
         self.has_children = False
-        self.fw = 0
-        self.bw = 0
 
 
 class Trie:
@@ -71,7 +44,14 @@ class Trie:
         self._index = []  # the counter array (the number of words that have been added to the trie)
         self._short_text = []  # the short text array (the words in the trie)
         self.collection_name = collection_name
-        self.alphabet = Node().alphabet  # the alphabet used in the trie
+
+        # self.alphabet = Node().alphabet  # the alphabet used in the trie
+        alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
+        self.alphabet = {ord(item): n for n, item in enumerate(alphabet)}
+        # Add a multibyte start character to the end of the self.alphabet dict:
+        multibyte_char = 129
+        if multibyte_char not in self.alphabet:
+            self.alphabet[multibyte_char] = len(self.alphabet)
 
         confs = {}
         with open("trie.conf", "r") as f:
@@ -129,18 +109,13 @@ class Trie:
     def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
-        # if filename is None:
-        #     filename = self.trie_data_file
         print(f"1 - Reading from file {filename}, \n making trie...")
         nr_lines_in_file = sum(1 for line in open(filename))
         print(f"Number of lines in file: {nr_lines_in_file}")
 
-        # self._data_values = {}
         data_values = {}
         index = 0
         line_nr = 0
-        fw = 1  # forward direction
-        # bw = 2  # backward direction
         is_reverse = self.collection_name.startswith("__")
 
         print(f"Is reverse: {is_reverse}")
@@ -154,7 +129,6 @@ class Trie:
             if word_key.startswith("#") or word_key.startswith("\n"):
                 continue
             if not word_key:
-                print(f" No key found in line {line_nr}.\n Skipping line.")
                 continue
             word_value = None if len(line_split) == 1 else line_split[1].strip()
             if word_value is None:
@@ -172,26 +146,19 @@ class Trie:
                 data_values.setdefault(word_value, index)
             else:
                 index = data_values[word_value]
-            self._add(key, index, fw)
+            self._add(key, index)
 
-            for c in key:
-                if c > 255:
-                    continue
-                if c not in self.alphabet:
-                    self.alphabet.append(c)
+        self.inv_alphabet = {v: k for k, v in self.alphabet.items()}
 
         print("\n ")
         print("writing do disk...")
         print("2 - Writing trie to file")
         self.make_tree()
-        self.write_tree_to_file(self.trie_file, "wb")
+        self.write_tree_to_file()
         del self._trie
-        
 
         print("2a - Processing eow values")
         self.write_eow_values_to_file(self.value_bits_filename)
-
-        # print("2b -make value_bits_sum_file")
         self.write_eow_sums_to_file(self.eow_sb)
 
         print("3 - Process HC")
@@ -201,25 +168,18 @@ class Trie:
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_lookup()
 
-        # reverse data_values
-        # self._data_values = data_values
-        # inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
-        # i = 0
-        # for k, v in inv_data_values.items():
-        #     print(f"{k} : {v}")
-        #     i += 1
-        #     if i > 5:
-        #         break
 
         print("5 - Process SHORT_TEXT")
         # inverting data_values so that the key is the value and the value is the key
-        self.write_short_text_to_file(
-            {v: self.modify_word(k) for k, v in data_values.items()},
-        )
+        inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
+        self.write_short_text_to_file(inv_data_values)
 
         print("6 - write alphabet to file")
+        alphabet_bytes = bytearray()
+        for _, v in self.alphabet.items():
+            alphabet_bytes.append(v)
         with io.open(self.trie_file + ".alphabet", "wb") as f:
-            f.write(self.alphabet)
+            f.write(alphabet_bytes)
 
     def read_from_file(self, filename):
         """Read a file line by line."""
@@ -231,39 +191,39 @@ class Trie:
     def modify_word(self, word):
         res = bytearray()
         for c in word:
+            if ord(c) not in self.alphabet.keys():
+                # update the alphabet with the new character
+                idx = len(self.alphabet)
+                self.alphabet.setdefault(ord(c), idx)
+                
             if ord(c) > 255:
                 bits = bin(ord(c))[2:].rjust(32, "0")
                 res.append(129)
                 for i in range(0, 32, 8):
-                    res.append(int(bits[i : i + 8], 2))
+                    num = int(bits[i : i + 8], 2)
+                    res.append(num)
+                    if num not in self.alphabet.keys():
+                        idx = len(self.alphabet)
+                        self.alphabet.setdefault(num, idx)
             else:
                 res.append(ord(c))
         return res
 
-    def _add(self, word, index_id, direction=1):
+    def _add(self, word, index_id):
         """Add a word to the trie."""
         node = self.root
         for i, ch in enumerate(word):
-            node.has_children = True
-            if ch not in node.alphabet:
-                node.alphabet.append(ch)
-            idx = node.alphabet.index(ch)
-            while len(node.letters) <= idx:
-                node.letters.append(None)
-            if node.letters[idx] is None:
+            idx = self.alphabet.get(ch)
+            if node.letters.get(idx):
+                node = node.letters[idx]
+            else:
                 node.letters[idx] = Node()
-                if i < len(word) - 1:
-                    node.letters[idx].has_children = True
-                node.letters[idx].ord = ch
-            node = node.letters[idx]
-
-        node.end = True
-        if direction == 1:
-            node.fw = 1
-        else:
-            node.bw = 2
+                node = node.letters[idx]
+            if i < len(word) -1:
+                node.has_children = True
         if index_id not in node.index:
             node.index.append(index_id)
+        node.end = True
 
     def make_tree(self, node=None):
         """the level out trie."""
@@ -275,25 +235,21 @@ class Trie:
         child_nodes = []
         for node in nodes:
             first = 1
-            for letter in node.letters:
-                if letter is None:
-                    continue
-                self._trie.append(letter.ord)
+            for letter_key in sorted(node.letters.keys()):
+                self._trie.append(self.inv_alphabet.get(letter_key))
                 self._select.append(first)
                 first = 0
-                self._hc.append(1 if letter.has_children else 0)
-                if letter.end:
+                self._hc.append(1 if node.letters[letter_key].has_children else 0)
+                if node.letters[letter_key].end:
                     self._is_eow.append(1)
-                    # self._fat_value.append(bin(letter.fw + letter.bw)[2:].rjust(2, "0"))
-                    self._index.append(letter.index)
+                    self._index.append(node.letters[letter_key].index)
                 else:
                     self._is_eow.append(0)
-                    # self._fat_value.append("00")
-                child_nodes.append(letter)
+                child_nodes.append(node.letters[letter_key])
         self._to_tree(child_nodes)
 
     def generate_data(self, big_string):
-        """Generate data from a big string."""
+        """Generate data from a big string in chunks to mimize memory usage."""
         # This function is a placeholder for generating data.
         i = 0
         chunk_size = 1024
@@ -301,19 +257,16 @@ class Trie:
             yield big_string[i : i + chunk_size]
             i += chunk_size
 
-    def write_tree_to_file(self, filename, write_method="wb"):
-        """Write the LOUDS representation of the trie to a file."""
-        with io.open(filename, write_method) as f:
+    def write_tree_to_file(self):
+        """Write level ordered trie to a file."""
+        with io.open(self.trie_file, "w") as f:
+            f.write("")
+            f.close()
+        with io.open(self.trie_file, "ab") as f:
             for chunk in self.generate_data(self._trie):
                 f.write(chunk)
             f.close()
-        # with io.open(filename, write_method) as f:
-        #     f.write(self._trie)
-        #     f.close()
 
-    # def get_hc(self):
-    #     """Return the head child array."""
-    #     return "".join(str(hc) for hc in self._hc) + "0" * (8 - len(self._hc) % 8)
 
     def write_hc_to_file(self, filename):
         """Write the head child array to a file."""
@@ -338,13 +291,6 @@ class Trie:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
                 f.close()
-
-        
-        # print("".join(str(c) for c in self._hc))
-
-    # def get_select(self) -> str:
-    #     """Return the select array."""
-    #     return "".join(str(s) for s in self._select) + "1" * (8 - len(self._select) % 8)
 
     def write_select_to_file(self, filename):
         """Write the select array to a file."""
@@ -371,12 +317,6 @@ class Trie:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
                 f.close()
-            
-        
-        
-        # with io.open("select.txt", "w") as f:
-        #     f.write("".join(str(c) for c in self._select))
-        #     f.close()
 
     def write_eow_values_to_file(self, filename):
         """Write the value array to a file."""
@@ -401,28 +341,7 @@ class Trie:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
                 f.close()
-
-        # return
-
-        # with io.open(filename, write_method) as f:
-        #     f.write(self.bit_bytes_to_bits(self.get_eow_values()))
-        #     f.close()
-
-        # with io.open(self.value_bits_filename + ".fat", "wb") as f:
-        #     f.write(self.bit_bytes_to_bits(self.get_fat_values()))
-        #     f.close()
-
-    # def get_eow_values(self):
-    #     """Return the value array (is_end_of_word)."""
-    #     if not self._is_eow:
-    #         return ""
-    #     return "".join(
-    #         [
-    #             "1" if (c == Node.BOTH_WAY or c == Node.FORWARD_WORD) else "0"
-    #             for c in self._is_eow
-    #         ]
-    #     )
-
+        
     def write_eow_sums_to_file(self, filename):
         # bits in block = 32
         # sum of "1"-bits in a block of 32 bits
@@ -440,7 +359,7 @@ class Trie:
             if i == bits_in_block:
                 i = 0
                 buffer.append(sum)
-                if len(buffer) >= 1024:
+                if len(buffer) >= 10240:
                     with io.open(filename, "ab") as f:
                         f.write(
                             self.bit_bytes_to_bits(
@@ -470,6 +389,11 @@ class Trie:
         with io.open(self.short_text_bits_filename, "w", encoding="utf-8") as f:
             f.write("")
             f.close()
+            
+        with io.open(self.index_bits_filename, "w") as f:
+            f.write("")
+            f.close()
+            
 
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
@@ -481,44 +405,33 @@ class Trie:
             total_sum += len(value)
             max_tmp_short_text = max(max_tmp_short_text, len(value))
 
-        # for n, item in enumerate(self._data_values):
-        #     modified_item = self.modify_word(item)
-        #     tmp_short_text[n] = modified_item
-
-        #     total_sum += len(modified_item)
-        #     if len(modified_item) > max_tmp_short_text:
-        #         max_tmp_short_text = len(modified_item)
-
         # byte_length er hægt að nota til að skipta út fyrir 32-bita lengdina
         nr_bytes_in_index_block = (
             len(bin(total_sum)[2:]) // 8 + (1 if len(bin(total_sum)[2:]) % 8 else 0) + 1
         )
         nr_bits_in_index_block = nr_bytes_in_index_block * 8  # 32
 
-        # nr_bytes_in_value_block er hægt að nota til að skipta út fyrir 16 bita lengdina
-        # nr_bytes_in_value_block = len(bin(max_tmp_short_text)[2:]) // 8 + (
-        #     1 if len(bin(max_tmp_short_text)[2:]) % 8 else 0
-        # )
-        # nr_bits_in_value_block = nr_bytes_in_value_block * 8  # 16
-
         # athuga lengd á tmp_short_text, s.s. spurning hvort að það séu mörg gildi fyrir sama key-index
         max_text_len = 0
         for idxs in self._index:
-            # if len(idxs) > 1:
             text_len = 0
             for idx in idxs:
                 text_len += len(inv_data_values[idx]) + 1
             max_text_len = max(max_text_len, text_len)
-                # if text_len > max_text_len:
-                #     max_text_len = text_len
-        # print(inv_data_values,max_text_len)
         if max_text_len > 0:
             nr_bytes_in_value_block = len(bin(max_text_len)[2:]) // 8 + (
                 1 if len(bin(max_text_len)[2:]) % 8 else 0
             )
             nr_bits_in_value_block = nr_bytes_in_value_block * 8
-
-        n = 0
+            
+        with io.open(self.index_bits_filename, "ab") as f:
+                f.write(
+                    self.bit_bytes_to_bits(
+                        bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
+                        + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
+                        )
+                    )
+                f.close()
         short_texts = []
         sum_index = 0
         tmp_indices = []
@@ -548,7 +461,7 @@ class Trie:
                     if len(tmp_txt) == 0:
                         tmp_txt = mtx.copy()
                     else:
-                        tmp_txt.append(141) # separator between words/sentences
+                        tmp_txt.append(141)  # separator between words/sentences
                         tmp_txt += mtx.copy()
                 idx_n = len(inv_data_values)
                 short_texts.append(tmp_txt)
@@ -559,20 +472,18 @@ class Trie:
                 tmp_indices.append(value)
                 sum_index += len(tmp_txt)
 
-            if len(short_texts) >= 1024:
+            if len(short_texts) >= 10240:
                 with io.open(self.short_text_bits_filename, "ab") as f:
                     for item in short_texts:
                         f.write(item)
                     f.close()
                 short_texts.clear()
 
-            if len(tmp_indices) >= 1024:
+            if len(tmp_indices) >= 10240:
                 with io.open(self.index_bits_filename, "ab") as f:
                     f.write(
                         self.bit_bytes_to_bits(
-                            bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
-                            + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
-                            + "".join([txt for txt in tmp_indices])
+                            "".join([txt for txt in tmp_indices])
                         )
                     )
                     f.close()
@@ -582,9 +493,7 @@ class Trie:
             with io.open(self.index_bits_filename, "ab") as f:
                 f.write(
                     self.bit_bytes_to_bits(
-                        bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
-                        + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
-                        + "".join([txt for txt in tmp_indices])
+                        "".join([txt for txt in tmp_indices])
                     )
                 )
                 f.close()
@@ -613,7 +522,6 @@ class Trie:
         buffer = bytearray()
         i = 0
         if len(s_bytes) % 8 != 0:
-            # s_bytes = s_bytes.ljust(len(s_bytes) + (8 - len(s_bytes) % 8), "0")
             s_bytes = s_bytes + "0" * (8 - len(s_bytes) % 8)
         while i < len(s_bytes):
             buffer.append(int(s_bytes[i : i + 8].ljust(8, "0"), 2))
@@ -643,7 +551,7 @@ class Trie:
                 for j in range(0, len(bits), 8):
                     res.append(int(bits[j : j + 8], 2))
                 index = 0
-                if len(res) >= 10240:
+                if len(res) >= 1024:
                     with io.open(self.hc_sb_file, "ab") as f:
                         f.write(res)
                         f.close()
@@ -675,12 +583,12 @@ class Trie:
                 for j in range(0, len(bits), 8):
                     res.append(int(bits[j : j + 8], 2))
                 bitsum = 0
-                if len(res) >= 10240:
-                        with io.open(self.s_sb_file, "ab") as f:
-                            f.write(res)
-                            f.close()
-                        res.clear()
-                        bits = ""
+                if len(res) >= 1024:
+                    with io.open(self.s_sb_file, "ab") as f:
+                        f.write(res)
+                        f.close()
+                    res.clear()
+                    bits = ""
 
         if bitsum > 0:
             bits = bin(i)[2:].rjust(32, "0")
@@ -690,7 +598,6 @@ class Trie:
             with io.open(self.s_sb_file, "ab") as f:
                 f.write(res)
                 f.close()
-
 
     def __str__(self):
         return str(self.root)
@@ -708,14 +615,8 @@ def make_trie(filename, collection):
 if __name__ == "__main__":
     args = ARG_PARSER.parse_args()
     if args.filename is not None and args.collection is not None:
-        # tracemalloc.start()
-        # import gc
 
         make_trie(filename=args.filename, collection=args.collection)
         # make_trie(filename=args.filename, collection="__" + args.collection)
-
-        # top_stats = snapshot.statistics("lineno")
-        # for stat in top_stats[:10]:
-        # print(stat)
     else:
         ARG_PARSER.print_help()
