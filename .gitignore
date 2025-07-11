@@ -12,5 +12,7 @@ data/
 
 frozen_data/
 input_files/
+fil-result/
+
 trie.conf
 
