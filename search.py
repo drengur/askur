@@ -105,11 +105,6 @@ class Search:
         if self.search_completed():
             return
 
-        # Hér er verið að athuga hvort að bókstarnir sem koma á undan stjörnunni (*)
-        # séu sjálfstætt orð (is_eow)
-        if start_part and start_part[-1] == 42 and not word_parts and not end_part:
-            self._search([start_part[:-1], None, None], s_index)
-
         s_start, s_end = self.mmap.calculate_select(s_index)
 
         for idx, letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
@@ -132,7 +127,8 @@ class Search:
                 and self.mmap.is_end_of_word(s_start + idx)
             ):
                 result = self.mmap.get_result(s_start + idx)
-                self.add_result(result)
+                word = "".join([chr(c) for c in next_start_part])
+                self.add_result({word: result})
             # If we have a match, continue searching
             if self.mmap.has_child(s_start + idx):
                 nr_hc = self.mmap.calculate_hc(s_start + idx)
@@ -188,10 +184,14 @@ class Search:
         return True
 
     def _underscore_search(self, s_index, query, start) -> None:
-        """Search for a word in the trie from a given index."""
+        """
+        Search for a word in the trie from a given index.
+        This method handles the underscore wildcard "_" which matches any single character.
+        """
         s_start, s_end = self.mmap.calculate_select(s_index)
         chr_range = self.mmap.get_trie_range(s_start, s_end)
         next_query = [[], query[1], query[2]]
+
         for i_letter in chr_range:
             if i_letter == 95 or i_letter == 42:  # "_" or "*"
                 continue
@@ -201,11 +201,12 @@ class Search:
             self._search(next_query, s_index)
 
     def _search(self, query, s_index) -> None:
-        # print(f"Searching for: {query}, s_index: {s_index}")
         chr_index = -1
         if self.search_completed():
             return
+
         for n, i_letter in enumerate(query[0]):
+            # print(f"Searching for letter: {i_letter} at index {n} with s_index {s_index}")
             if i_letter == 42:  # "*"
                 self._wildcard_search(s_index, query[0], query[1], query[2])
                 return
@@ -220,35 +221,57 @@ class Search:
 
             if n < len(query[0]) - 1:
                 nr_hc = self.mmap.calculate_hc(s_start + chr_index)
-                # No child, so we can return and get the results
+                # No child (nr_ch is None), so we can return or get the results, if any, if a wildcard is at the end
                 if nr_hc is None:
-                    # if we are at the end of the query and the last letter is a wildcard
+                    # if we are (almost) at the end of the query and the last letter is a wildcard
                     # and we have perhaps a complete word at this point
                     if n == len(query[0]) - 2 and query[0][-1] == 42:
-                        self._wildcard_search(s_index, query[0], query[1], query[2])
+                        if query[1] is None and query[2] is None:
+                            break
+                    # We can return here without result, because we have nothing more to search for
                     return
-                s_index = nr_hc + 1
+                # if we are at the end of the query and the last letter is a wildcard
+                # and we have perhaps a complete word at this point, even if there are no more letters
+                # in the query, we can still get the result
+                if n == len(query[0]) - 2 and query[0][-1] == 42:
+                    end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
+                    if end_of_word == 1:
+                        result = self.mmap.get_result(s_start + chr_index)
+                        word = "".join([chr(c) for c in query[0]])
+                        self.add_result({word: result})
 
+                s_index = nr_hc + 1
         end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
+
         if end_of_word == 1:
             result = self.mmap.get_result(s_start + chr_index)
             word = "".join([chr(c) for c in query[0]])
+
             self.add_result({word: result})
 
-    def search(self, query) -> str:
+    def search(self, query_in) -> str:
         # print("Searching for:", query)
+        modified_query = self.prepare_query(query_in)
+        # print(f"Modified query: {modified_query}")
+        if modified_query is None:
+            print("Query is empty or invalid.")
+            sys.exit(1)
+        # if LEVENSHTEIN_QUERY:
+        #     S.use_levenstein = True
+        # else:
+        #     S.use_levenstein = False
         if self.use_levenstein:
             """Using Levenshtein distance to find similar words."""
-            if query is None or query[0] is None:
+            if modified_query is None or modified_query[0] is None:
                 print("Invalid query for Levenshtein search.")
                 return []
-            self.levhenshtein_find(query)
-        elif query[0] is None:
+            self.levhenshtein_find(modified_query)
+        elif modified_query[0] is None:
             """Using wildcards in start of query:"""
-            self._wildcard_search(1, [], query[1], query[2])  # "*"
+            self._wildcard_search(1, [], modified_query[1], modified_query[2])  # "*"
         else:
             """Using no wildcards in start of query:"""
-            self._search(query, 1)
+            self._search(modified_query, 1)
         return self.result_as_list()
 
     def prepare_query(self, query):
@@ -318,20 +341,11 @@ if __name__ == "__main__":
 
     SEARCH_RESULTS = []
     S = Search(COLLECTION, LIMIT)
-    # S.reversed_query = False
     START_TIME = time.time()
     queries = QUERY.split(" ")
 
     for QUERY in queries:
-        modified_query = S.prepare_query(QUERY)
-        if modified_query is None:
-            print("Query is empty or invalid.")
-            sys.exit(1)
-        if LEVENSHTEIN_QUERY:
-            S.use_levenstein = True
-        else:
-            S.use_levenstein = False
-        SEARCH_RESULTS.append(S.search(modified_query))
+        SEARCH_RESULTS.append(S.search(QUERY))
 
     END_TIME = time.time()
     print("\n".join("\n".join(res) for res in SEARCH_RESULTS))
