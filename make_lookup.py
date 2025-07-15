@@ -16,10 +16,14 @@ ARG_PARSER.add_argument("--filename", "-f", type=str, help="The filename to read
 ARG_PARSER.add_argument(
     "--collection", "-c", type=str, help="The name of the collection to create."
 )
+ARG_PARSER.add_argument("--reversed", "-r",nargs='?', const=True, type=str, help="Reversed index")
+ARG_PARSER.add_argument("-F",type=str,help="Column seperator")
+ARG_PARSER.add_argument("-i",type=str,help="Case insensitive")
 
 
 class Node:
     """A node in a tree."""
+
     def __init__(self):
         self.end = False
         self.index = []
@@ -30,7 +34,7 @@ class Node:
 class Trie:
     """A trie."""
 
-    def __init__(self, collection_name=None):
+    def __init__(self, collection_name=None, reversed=False):
         """Create a new trie and associated files.
         usage:
             trie = Trie()
@@ -44,6 +48,7 @@ class Trie:
         self._index = []  # the counter array (the number of words that have been added to the trie)
         self._short_text = []  # the short text array (the words in the trie)
         self.collection_name = collection_name
+        self.reverse = reversed
 
         # self.alphabet = Node().alphabet  # the alphabet used in the trie
         alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
@@ -78,6 +83,15 @@ class Trie:
             return
 
         this_folder = os.path.dirname(os.path.abspath(__file__))
+
+        if reversed:
+            reversed_folder = os.path.join(
+                this_folder, DATA_FOLDER,  collection_name, "__"+collection_name
+            )
+        else:
+            reversed_folder = ""
+        print(f"Reversed folder: {reversed_folder}")
+
         FROZEN_FOLDER = os.path.join(this_folder, DATA_FOLDER, collection_name)
 
         os.makedirs(FROZEN_FOLDER, exist_ok=True)
@@ -106,7 +120,7 @@ class Trie:
         self.root = Node()  # the root node of the trie
 
     # @profile
-    def make_frozen_data(self, filename=None):
+    def make_frozen_data(self, filename=None, reversed=False):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
         print(f"1 - Reading from file {filename}, \n making trie...")
@@ -116,9 +130,8 @@ class Trie:
         data_values = {}
         index = 0
         line_nr = 0
-        is_reverse = self.collection_name.startswith("__")
 
-        print(f"Is reverse: {is_reverse}")
+        print(f"Is reverse: {reversed}")
 
         for line in self.read_from_file(filename):
             line_nr += 1
@@ -136,7 +149,7 @@ class Trie:
                     f"Error: in line {line_nr}, key:'{word_key}'.\n  No value.\n  Please add missing values and try again. \n Exiting."
                 )
                 return
-            if is_reverse:
+            if reversed:
                 key = self.modify_word(word_key[::-1])
             else:
                 key = self.modify_word(word_key)
@@ -168,7 +181,6 @@ class Trie:
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_lookup()
 
-
         print("5 - Process SHORT_TEXT")
         # inverting data_values so that the key is the value and the value is the key
         inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
@@ -195,7 +207,7 @@ class Trie:
                 # update the alphabet with the new character
                 idx = len(self.alphabet)
                 self.alphabet.setdefault(ord(c), idx)
-                
+
             if ord(c) > 255:
                 bits = bin(ord(c))[2:].rjust(32, "0")
                 res.append(129)
@@ -219,7 +231,7 @@ class Trie:
             else:
                 node.letters[idx] = Node()
                 node = node.letters[idx]
-            if i < len(word) -1:
+            if i < len(word) - 1:
                 node.has_children = True
         if index_id not in node.index:
             node.index.append(index_id)
@@ -266,7 +278,6 @@ class Trie:
             for chunk in self.generate_data(self._trie):
                 f.write(chunk)
             f.close()
-
 
     def write_hc_to_file(self, filename):
         """Write the head child array to a file."""
@@ -341,7 +352,7 @@ class Trie:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
                 f.close()
-        
+
     def write_eow_sums_to_file(self, filename):
         # bits in block = 32
         # sum of "1"-bits in a block of 32 bits
@@ -389,11 +400,10 @@ class Trie:
         with io.open(self.short_text_bits_filename, "w", encoding="utf-8") as f:
             f.write("")
             f.close()
-            
+
         with io.open(self.index_bits_filename, "w") as f:
             f.write("")
             f.close()
-            
 
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
@@ -423,15 +433,15 @@ class Trie:
                 1 if len(bin(max_text_len)[2:]) % 8 else 0
             )
             nr_bits_in_value_block = nr_bytes_in_value_block * 8
-            
+
         with io.open(self.index_bits_filename, "ab") as f:
-                f.write(
-                    self.bit_bytes_to_bits(
-                        bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
-                        + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
-                        )
-                    )
-                f.close()
+            f.write(
+                self.bit_bytes_to_bits(
+                    bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
+                    + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
+                )
+            )
+            f.close()
         short_texts = []
         sum_index = 0
         tmp_indices = []
@@ -482,20 +492,14 @@ class Trie:
             if len(tmp_indices) >= 10240:
                 with io.open(self.index_bits_filename, "ab") as f:
                     f.write(
-                        self.bit_bytes_to_bits(
-                            "".join([txt for txt in tmp_indices])
-                        )
+                        self.bit_bytes_to_bits("".join([txt for txt in tmp_indices]))
                     )
                     f.close()
                 tmp_indices.clear()
 
         if len(tmp_indices) > 0:
             with io.open(self.index_bits_filename, "ab") as f:
-                f.write(
-                    self.bit_bytes_to_bits(
-                        "".join([txt for txt in tmp_indices])
-                    )
-                )
+                f.write(self.bit_bytes_to_bits("".join([txt for txt in tmp_indices])))
                 f.close()
 
         if len(short_texts) > 0:
@@ -603,20 +607,21 @@ class Trie:
         return str(self.root)
 
 
-def make_trie(filename, collection):
+def make_trie(filename, collection, reversed=False):
     """Load a tree from a file.
     The file should contain one word per line along with the word id.
     Saving the trie and associated data to files in frozen folder.
     """
-    trie = Trie(collection)
+    trie = Trie(collection, reversed=reversed)
     trie.make_frozen_data(filename)
 
 
 if __name__ == "__main__":
     args = ARG_PARSER.parse_args()
     if args.filename is not None and args.collection is not None:
-
         make_trie(filename=args.filename, collection=args.collection)
-        # make_trie(filename=args.filename, collection="__" + args.collection)
+        if args.reversed:
+            make_trie(filename=args.filename, collection=args.collection, reversed=True)
+
     else:
         ARG_PARSER.print_help()
