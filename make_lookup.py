@@ -57,6 +57,7 @@ class Trie:
         multibyte_char = 129
         if multibyte_char not in self.alphabet:
             self.alphabet[multibyte_char] = len(self.alphabet)
+        self.used_alphabet = []  # used alphabet
 
         confs = {}
         with open("trie.conf", "r") as f:
@@ -186,10 +187,12 @@ class Trie:
         inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
         self.write_short_text_to_file(inv_data_values)
 
+
         print("6 - write alphabet to file")
         alphabet_bytes = bytearray()
-        for _, v in self.alphabet.items():
-            alphabet_bytes.append(v)
+        for k in self.alphabet.keys():
+            if k in self.used_alphabet:
+                alphabet_bytes.append(k)
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(alphabet_bytes)
 
@@ -203,6 +206,9 @@ class Trie:
     def modify_word(self, word):
         res = bytearray()
         for c in word:
+            if ord(c) not in self.used_alphabet:
+                self.used_alphabet.append(ord(c))
+                
             if ord(c) not in self.alphabet.keys():
                 # update the alphabet with the new character
                 idx = len(self.alphabet)
