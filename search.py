@@ -76,7 +76,7 @@ class Search:
         return False
 
     def levhenshtein_find(self, query):
-        """Method to find similar words to the query
+        """Method to find similar words
         Levenshtein distance of 1 is used to find similar words
         """
         if (
@@ -86,22 +86,29 @@ class Search:
         ):
             # If there are wildcards in the query, we cannot use Levenshtein distance
             return
-        s_index = 1  # Start from the root of the trie
-        i_word = query[0].copy()
-        base_len = len(i_word)
-        for n in range(base_len):
-            for i_letter in [
-                ord(c) for c in self.mmap.alphabet if ord(c) not in (42, 95)
-            ]:
-                if self.search_completed():
-                    return
-                new_word = i_word.copy()
+
+        alphabet = [ord(c) for c in self.mmap.alphabet if ord(c) not in (42, 95)]
+        base_word = query[0].copy()
+
+        new_query = [None, None, None]
+        for i_letter in alphabet:
+            # add the letter at the start of the word
+            new_query[0] = [i_letter] + base_word.copy()
+            self._search(new_query, s_index=1)
+
+            # add the letter at the end of the word
+            new_query[0] = base_word.copy() + [i_letter]
+            self._search(new_query, s_index=1)
+
+        for n in range(len(base_word)):
+            for i_letter in alphabet:
+                # replace the letter at position n with i_letter
+                new_word = base_word.copy()
                 new_word[n] = i_letter
-                query[0] = new_word
-                self._search(query, s_index)
+                self._search([new_word, None, None], s_index=1)
 
     def _wildcard_search(self, s_index, start_part, word_parts, end_part) -> None:
-        """Search for a word in the trie with wildcards (*)."""
+        """Search for a word in the trie with wildcards (*) in the query."""
         if self.search_completed():
             return
 
@@ -117,15 +124,11 @@ class Search:
 
             next_end_part = None if not end_part else next_start_part[-len(end_part) :]
             end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
-            word_parts_match = self._matches_pattern_sequence(
+            word_parts_match = end_part_match and self._matches_pattern_sequence(
                 next_start_part, word_parts
             )
             # Check if we can match any of the patterns in word_parts sequentially
-            if (
-                end_part_match
-                and word_parts_match
-                and self.mmap.is_end_of_word(s_start + idx)
-            ):
+            if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
                 word = "".join([chr(c) for c in next_start_part])
                 self.add_result({word: result})
@@ -191,6 +194,11 @@ class Search:
         s_start, s_end = self.mmap.calculate_select(s_index)
         chr_range = self.mmap.get_trie_range(s_start, s_end)
         next_query = [[], query[1], query[2]]
+        if len(query) > 3:
+            # print(f"next query 3 start={start}", query[3] + query[0][0:start])
+            next_query.append(query[3] + query[0][0:start])
+        else:
+            next_query.append(query[0][0:start])
 
         for i_letter in chr_range:
             if i_letter == 95 or i_letter == 42:  # "_" or "*"
@@ -232,7 +240,7 @@ class Search:
                     return
                 # if we are at the end of the query and the last letter is a wildcard
                 # and we have perhaps a complete word at this point, even if there are no more letters
-                # in the query, we can still get the result
+                # in the query, we can still get a possible result
                 if n == len(query[0]) - 2 and query[0][-1] == 42:
                     end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
                     if end_of_word == 1:
@@ -246,7 +254,10 @@ class Search:
         if end_of_word == 1:
             result = self.mmap.get_result(s_start + chr_index)
             word = "".join([chr(c) for c in query[0]])
-
+            if (
+                len(query) > 3
+            ):  # If there is a prefix in the query from underscore search
+                word = "".join([chr(c) for c in query[3]]) + word
             self.add_result({word: result})
 
     def search(self, query_in) -> str:
@@ -256,10 +267,7 @@ class Search:
         if modified_query is None:
             print("Query is empty or invalid.")
             sys.exit(1)
-        # if LEVENSHTEIN_QUERY:
-        #     S.use_levenstein = True
-        # else:
-        #     S.use_levenstein = False
+
         if self.use_levenstein:
             """Using Levenshtein distance to find similar words."""
             if modified_query is None or modified_query[0] is None:
@@ -290,10 +298,9 @@ class Search:
                 res.append(ord(c))
 
         if 42 in res:  # 42 is the ASCII code for '*'
-            sublist = []
-            starts_with = None
-            middle_part = []
-            ends_with = None
+            starts_with = None  # Every character before the first 42
+            middle_part = []  # Every character between the first and last 42
+            ends_with = None  # Every character after the last 42
             # split at first 42
             index = res.index(42)
             if index > 0:
@@ -306,7 +313,8 @@ class Search:
 
             parts = res[index + 1 : last_index]
             res = res[index + 1 :]
-            for i, item in enumerate(parts):
+            sublist = []
+            for _, item in enumerate(parts):
                 if item == 42:
                     middle_part.append(sublist)
                     sublist = []
@@ -341,11 +349,13 @@ if __name__ == "__main__":
 
     SEARCH_RESULTS = []
     S = Search(COLLECTION, LIMIT)
-    START_TIME = time.time()
-    queries = QUERY.split(" ")
 
-    for QUERY in queries:
-        SEARCH_RESULTS.append(S.search(QUERY))
+    S.use_levenstein = True if LEVENSHTEIN_QUERY else False
+
+    START_TIME = time.time()
+
+    for query in QUERY.split(" "):
+        SEARCH_RESULTS.append(S.search(query))
 
     END_TIME = time.time()
     print("\n".join("\n".join(res) for res in SEARCH_RESULTS))
