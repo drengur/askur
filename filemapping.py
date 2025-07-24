@@ -15,7 +15,7 @@ class Mapping:
         self.short_text_len: int = 0
         self._s_lookup_blocks: mmap.mmap  # Type unknown, set to None
         self._s_superblocks: mmap.mmap
-        self._hc_super_blocks: mmap.mmap 
+        self._hc_super_blocks: mmap.mmap
         self._hc_lookup_blocks: mmap.mmap  # Type unknown, set to None
         self.bits_in_superblock: int = 0
         self.collection: str = collection
@@ -106,11 +106,6 @@ class Mapping:
                 f_value_bits.fileno(), 0, access=mmap.ACCESS_READ
             )
 
-        # with io.open(VALUE_BITS_FAT_FILE, "rb") as f_value_bits_fat:
-        #     self._value_bits_fat = mmap.mmap(
-        #         f_value_bits_fat.fileno(), 0, access=mmap.ACCESS_READ
-        #     )
-
         with io.open(
             EOW_BITS_SUMMARY_FILE, "r", encoding="utf-8"
         ) as f_eow_bits_summary:
@@ -175,7 +170,7 @@ class Mapping:
 
         while total_sum < sum_ones_wanted + 1:
             for byte in self._s_bits[start_byte : start_byte + 1]:
-                if byte == 0:
+                if not byte:
                     start_byte += 1
                     loop_index += 8
                     continue
@@ -200,13 +195,13 @@ class Mapping:
         """Hver er heildar summan við end_request_index"""
         bits_in_byte = 8
         superblock_start = end_request_index // self.bits_in_superblock
-        
+
         if superblock_start == 0:
             index = 0
             bitsum = 0
             end_block = self.bits_in_superblock // bits_in_byte + 1
             for byte in self._hc_bitarray[0:end_block]:
-                if byte == 0:
+                if not byte:
                     index += 8
                     continue
                 for i in range(7, -1, -1):
@@ -227,7 +222,7 @@ class Mapping:
                 ),
                 2,
             )
-        
+
         # það er búið að reikna summu frá 0 til start_block -1
         # þá vantar summuna frá start_block til end_request_index
         start_block = superblock_start * self.bits_in_superblock // bits_in_byte
@@ -235,7 +230,7 @@ class Mapping:
 
         index = superblock_start * self.bits_in_superblock
         for byte in self._hc_bitarray[start_block:end_block]:  # bytes:
-            if byte == 0:
+            if not byte:
                 index += 8
                 continue
             for i in range(7, -1, -1):
@@ -250,7 +245,7 @@ class Mapping:
         byte = self._hc_bitarray[0] if index < 9 else self._hc_bitarray[index // 8]
         return byte & (1 << (7 - index % 8)) > 0
 
-    def get_trie_range(self, start, end, letter=None) -> list[int]:
+    def get_trie_range(self, start, end) -> list[int]:
         """Returns the letter (int of letter) in the given range or the range itself"""
         return self._trie[start:end]
 
@@ -273,7 +268,7 @@ class Mapping:
 
         start_len = end_idx
         end_len = start_len + self.nr_bytes_in_value_block
-        
+
         index_val = int.from_bytes(
             self._index_bits[start_idx:end_idx],
             byteorder="big",
@@ -288,8 +283,7 @@ class Mapping:
 
     def is_end_of_word(self, index) -> int:
         """
-        Returns 0 if is not end of word
-        Returns 1 if is end of word
+        Returns 1 if is end of word, else 0
         """
 
         start_byte = index // 8
@@ -326,10 +320,9 @@ class Mapping:
         extra_bits = index - s_end * 8 + 1
         value_bits = self._eow_bits[s_end : s_end + 4]
         for byte in value_bits:
-            if not byte:
-                if extra_bits > 8:
-                    extra_bits -= 8
-                    continue
+            if not byte and extra_bits > 8:
+                extra_bits -= 8
+                continue
             for i in range(7, -1, -1):
                 if extra_bits > 0:
                     extra_bits -= 1
