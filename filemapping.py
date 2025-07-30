@@ -23,6 +23,7 @@ class Mapping:
         self.nr_bytes_in_index_block: int = 0
         self.nr_bytes_in_value_block: int = 0
         self.alphabet: mmap.mmap | bytearray = bytearray()
+        self.reversed: bool = False
 
         self._load_files()
 
@@ -131,6 +132,14 @@ class Mapping:
             )
         with io.open(ALPHABET_FILE, "rb") as f_alphabet:
             self.alphabet = mmap.mmap(f_alphabet.fileno(), 0, access=mmap.ACCESS_READ)
+
+        # Check if value 143 exists in self.alphabet (is it reversed?)
+        if b"\x8f" == self.alphabet[0:1]:
+            self.reversed = True
+
+    def is_reversed(self) -> bool:
+        """Returns True if the index is reversed"""
+        return self.reversed
 
     @cython.cfunc
     def calculate_select(self, sum_ones_wanted: cython.int) -> list[int, int]:
