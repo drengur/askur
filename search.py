@@ -30,9 +30,9 @@ arg_parser.add_argument(
 class Search:
     """Search for words in the LOUDS trie."""
 
-    def __init__(self, collection, limit=0) -> None:
+    def __init__(self, collection, limit=0, use_levenshtein=False) -> None:
         self.mmap = Mapping(collection)
-        self.use_levenstein = False
+        self.use_levenstein = use_levenshtein
         self.limit = limit  # 0 means no limit
         self._results = []
 
@@ -42,6 +42,9 @@ class Search:
         if self.limit > 0 and len(self._results) >= self.limit:
             return
         if result not in self._results:
+            if self.reversed:
+                # If the search is reversed, we need to reverse the result
+                result = {k[::-1]: v for k, v in result.items()}
             self._results.append(result)
 
     def results(self):
@@ -62,7 +65,7 @@ class Search:
                     res.append(f"{key}: {value}")
             else:
                 res.append(str(items))
-        res.sort() if res else []
+        # res.sort() if res else []
         return res
 
     def clear_results(self):
@@ -74,6 +77,14 @@ class Search:
         if self.limit > 0 and len(self._results) >= self.limit:
             return True
         return False
+
+    def set_levenshtein(self, use_levenshtein: bool):
+        """Set whether to use Levenshtein distance for the search."""
+        self.use_levenstein = use_levenshtein
+
+    def set_reversed(self, reversed: bool):
+        """Set whether to search in reversed order."""
+        self.reversed = reversed and self.mmap.is_reversed()
 
     def levhenshtein_find(self, query):
         """Method to find similar words
@@ -87,7 +98,9 @@ class Search:
             # If there are wildcards in the query, we cannot use Levenshtein distance
             return
 
-        alphabet = [ord(c) for c in self.mmap.alphabet if ord(c) not in (42, 95)]
+        alphabet = [
+            ord(c) for c in self.mmap.alphabet if ord(c) not in (42, 95, 143) # 143 is reversed start
+        ]
         base_word = query[0].copy()
 
         new_query = [None, None, None]
@@ -119,6 +132,8 @@ class Search:
                 start_part[:-1].copy()
                 if start_part and start_part[-1] == 42
                 else start_part.copy()
+                if start_part
+                else []
             )
             next_start_part.append(int(letter))
 
@@ -195,7 +210,6 @@ class Search:
         chr_range = self.mmap.get_trie_range(s_start, s_end)
         next_query = [[], query[1], query[2]]
         if len(query) > 3:
-            # print(f"next query 3 start={start}", query[3] + query[0][0:start])
             next_query.append(query[3] + query[0][0:start])
         else:
             next_query.append(query[0][0:start])
@@ -245,7 +259,11 @@ class Search:
                     end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
                     if end_of_word == 1:
                         result = self.mmap.get_result(s_start + chr_index)
-                        word = "".join([chr(c) for c in query[0]])
+                        word = "".join([chr(c) for c in query[0][:-1]])
+                        if (
+                            len(query) > 3
+                        ):  # If there is a prefix in the query from underscore search
+                            word = "".join([chr(c) for c in query[3]]) + word
                         self.add_result({word: result})
 
                 s_index = nr_hc + 1
@@ -260,13 +278,17 @@ class Search:
                 word = "".join([chr(c) for c in query[3]]) + word
             self.add_result({word: result})
 
-    def search(self, query_in) -> str:
-        # print("Searching for:", query)
-        modified_query = self.prepare_query(query_in)
-        # print(f"Modified query: {modified_query}")
+    def exists(self, query):
+        pass
+
+    def search(self, query) -> str:
+        modified_query = self.prepare_query(query)
+
         if modified_query is None:
             print("Query is empty or invalid.")
             sys.exit(1)
+        self.clear_results()
+        self.reversed = modified_query[0] is not None and modified_query[0][0] == 143
 
         if self.use_levenstein:
             """Using Levenshtein distance to find similar words."""
@@ -276,21 +298,42 @@ class Search:
             self.levhenshtein_find(modified_query)
         elif modified_query[0] is None:
             """Using wildcards in start of query:"""
-            self._wildcard_search(1, [], modified_query[1], modified_query[2])  # "*"
+            self._wildcard_search(1, [], modified_query[1], modified_query[2])
         else:
             """Using no wildcards in start of query:"""
             self._search(modified_query, 1)
         return self.result_as_list()
 
     def prepare_query(self, query):
-        """Modify the query to be used in the search."""
+        """Modify the query to be used in the search.
+        This method handles wildcards, underscores, and character encoding.
+        It returns a list with three parts and converts characters to their ASCII values:
+        - starts_with: characters before the first wildcard (*)
+        - middle_part: characters between the first and last wildcard (*)
+        - ends_with: characters after the last wildcard (*)
+        If there are no wildcards, it returns a list with the query as the first element and None for the other two.
+        """
+        res = []
         if query.count("*") > 1:
             query = re.sub(r"\*+", "*", query)
 
-        res = []
+        reversed_query = (
+            self.mmap.is_reversed()
+            and query.startswith("*")
+            and not query.endswith("*")
+            and len(query) > 1
+        )
+        if reversed_query:
+            query = query[::-1]
+            res.append(
+                143
+            )  # 143 is unused ASCII code, used to indicate start of reversed query
+
         for c in query:
             if ord(c) > 255:
-                res.append(129)  # start of 4(5) byte char
+                res.append(
+                    129
+                )  # 129 is unused ASCII code, used to indicate start of 4(5) byte char
                 bits = bin(ord(c))[2:].rjust(32, "0")
                 for i in range(0, 32, 8):
                     res.append(int(bits[i : i + 8], 2))
@@ -298,9 +341,11 @@ class Search:
                 res.append(ord(c))
 
         if 42 in res:  # 42 is the ASCII code for '*'
-            starts_with = None  # Every character before the first 42
-            middle_part = []  # Every character between the first and last 42
-            ends_with = None  # Every character after the last 42
+            starts_with = (
+                None  # Every character before the first 42 belong to the start
+            )
+            middle_part = []  # Every character between the first and last 42 belongs to the middle
+            ends_with = None  # Every character after the last 42 belongs to the end
             # split at first 42
             index = res.index(42)
             if index > 0:
@@ -341,16 +386,14 @@ if __name__ == "__main__":
     if COLLECTION is None or QUERY is None:
         print("Usage: python3 search.py -c <collection> -w <word1,word2,word3>")
         sys.exit(1)
-    if QUERY.startswith("*") and not QUERY.endswith("*"):
-        QUERY = QUERY[::-1]  # remove leading * if present
-        COLLECTION = (
-            "__" + COLLECTION
-        )  # prepend __ to collection name for reversed search
+    # if QUERY.startswith("*") and not QUERY.endswith("*"):
+    #     QUERY = QUERY[::-1]  # remove leading * if present
+    #     COLLECTION = (
+    #         "__" + COLLECTION
+    #     )  # prepend __ to collection name for reversed search
 
     SEARCH_RESULTS = []
-    S = Search(COLLECTION, LIMIT)
-
-    S.use_levenstein = True if LEVENSHTEIN_QUERY else False
+    S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
 
     START_TIME = time.time()
 
