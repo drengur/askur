@@ -122,7 +122,6 @@ class Trie:
 
         self.root = Node()  # the root node of the trie
 
-    # @profile
     def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
@@ -168,7 +167,7 @@ class Trie:
         self.inv_alphabet = {v: k for k, v in self.alphabet.items()}
 
         print(" 1/7 - Writing to file...", end="\r")
-        self.make_tree()
+        self.level_order_tree([self.root])
         print(" 2/7 - Writing to file...", end="\r")
         self.write_tree_to_file()
         del self._trie
@@ -245,11 +244,11 @@ class Trie:
             node.index.append(index_id)
         node.end = True
 
-    def make_tree(self, node=None):
-        """the level out trie."""
-        self._to_tree([self.root])
-
-    def _to_tree(self, nodes):
+    def level_order_tree(self, nodes):
+        """Level out trie.
+        Traverse the trie in level order and write to the _trie, _hc,
+        _select, _is_eow and _index arrays.
+        """
         if len(nodes) == 0:
             return
         child_nodes = []
@@ -266,7 +265,7 @@ class Trie:
                 else:
                     self._is_eow.append(0)
                 child_nodes.append(node.letters[letter_key])
-        self._to_tree(child_nodes)
+        self.level_order_tree(child_nodes)
 
     def generate_data(self, big_string):
         """Generate data from a big string in chunks to mimize memory usage."""
@@ -515,9 +514,6 @@ class Trie:
                 for item in short_texts:
                     f.write(item)
                 f.close()
-
-    # def get_fat_values(self):
-    #     return "".join([val for val in self._fat_value])
 
     def to_bytearray(self, s_bytes):
         """Convert chr to ord(chr)."""
