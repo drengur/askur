@@ -126,9 +126,9 @@ class Trie:
     def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
-        print(f"1 - Reading from file {filename}, \n making trie...")
+        print(f" Reading from file {filename}")
         nr_lines_in_file = sum(1 for line in open(filename))
-        print(f"Number of lines in file: {nr_lines_in_file}")
+        print(f" Number of lines in file: {nr_lines_in_file}")
 
         data_values = {}
         index = 0
@@ -161,42 +161,36 @@ class Trie:
             self._add(key, index)
             if self.reversed:
                 # If reversed, we add the word in reverse order
-                # print(f"Addin key: {[int(c) for c in key]}")
                 key.reverse()
                 key.insert(0, 143)
-                # print('working with key:', key)
-                # print(f"Adding reversed key: {[int(c) for c in key]}")
-                # import sys
-
-                # sys.exit()
                 self._add(key, index)
 
         self.inv_alphabet = {v: k for k, v in self.alphabet.items()}
 
-        print("1/7 - Writing to file...")
+        print(" 1/7 - Writing to file...", end="\r")
         self.make_tree()
-        print("2/7 - Writing to file...")
+        print(" 2/7 - Writing to file...", end="\r")
         self.write_tree_to_file()
         del self._trie
 
-        print("3/7 - Writing to file...")
+        print(" 3/7 - Writing to file...", end="\r")
         self.write_eow_values_to_file(self.value_bits_filename)
         self.write_eow_sums_to_file(self.eow_sb)
 
-        print("4/7 - Writing to file...")
+        print(" 4/7 - Writing to file...", end="\r")
         self.write_hc_to_file(self.hc_bits_filename)
         self.hc_to_lookup()
 
-        print("5/7 - Writing to file...")
+        print(" 5/7 - Writing to file...", end="\r")
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_lookup()
 
-        print("6/7 - Writing to file...")
+        print(" 6/7 - Writing to file...", end="\r")
         # inverting data_values so that the key is the value and the value is the key
         inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
         self.write_short_text_to_file(inv_data_values)
 
-        print("7/7 - Writing to file...")
+        print(" 7/7 - Writing to file...", end="\r")
         alphabet_bytes = bytearray()
         for k in self.used_alphabet:
             # if k in self.used_alphabet:
