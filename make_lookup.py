@@ -12,13 +12,18 @@ import math as m
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
-ARG_PARSER.add_argument("--filename", "-f", type=str, help="The filename to read from.")
+# ARG_PARSER.add_argument("--filename", "-f", type=str, help="The filename to read from.")
 ARG_PARSER.add_argument(
-    "--collection", "-c", type=str, help="The name of the collection to create."
+    "--collection", "-C", type=str, help="The name of the collection to create."
 )
-ARG_PARSER.add_argument("--reversed", "-r",nargs='?', const=True, type=str, help="Reversed index")
-ARG_PARSER.add_argument("-F",type=str,help="Column seperator")
-ARG_PARSER.add_argument("-i",type=str,help="Case insensitive")
+ARG_PARSER.add_argument("--file", "-f", type=str, help="File to read from.")
+ARG_PARSER.add_argument("-i", type=str, help="Case insensitive")
+ARG_PARSER.add_argument(
+    "--reversed", "-R", action="store_true", help="Make reversed index"
+)
+ARG_PARSER.add_argument(
+    "-F", type=str, default=";", help="Field separator (default: ';')"
+)
 
 
 class Node:
@@ -48,16 +53,21 @@ class Trie:
         self._index = []  # the counter array (the number of words that have been added to the trie)
         self._short_text = []  # the short text array (the words in the trie)
         self.collection_name = collection_name
-        self.reverse = reversed
+        self.reversed = reversed
 
         # self.alphabet = Node().alphabet  # the alphabet used in the trie
         alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
         self.alphabet = {ord(item): n for n, item in enumerate(alphabet)}
+        self.used_alphabet = []  # used alphabet
         # Add a multibyte start character to the end of the self.alphabet dict:
         multibyte_char = 129
-        if multibyte_char not in self.alphabet:
-            self.alphabet[multibyte_char] = len(self.alphabet)
-        self.used_alphabet = []  # used alphabet
+        reversed_char = 143  # This is a character that is not in the alphabet
+        self.alphabet.setdefault(multibyte_char, len(self.alphabet))
+        if self.reversed:
+            # If reversed, we add a reversed character to the alphabet
+            # This is used to mark the start of the reversed index
+            self.alphabet.setdefault(reversed_char, len(self.alphabet))
+            self.used_alphabet.append(reversed_char)
 
         confs = {}
         with open("trie.conf", "r") as f:
@@ -84,14 +94,6 @@ class Trie:
             return
 
         this_folder = os.path.dirname(os.path.abspath(__file__))
-
-        if reversed:
-            reversed_folder = os.path.join(
-                this_folder, DATA_FOLDER,  collection_name, "__"+collection_name
-            )
-        else:
-            reversed_folder = ""
-        print(f"Reversed folder: {reversed_folder}")
 
         FROZEN_FOLDER = os.path.join(this_folder, DATA_FOLDER, collection_name)
 
@@ -121,7 +123,7 @@ class Trie:
         self.root = Node()  # the root node of the trie
 
     # @profile
-    def make_frozen_data(self, filename=None, reversed=False):
+    def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
         print(f"1 - Reading from file {filename}, \n making trie...")
@@ -131,8 +133,6 @@ class Trie:
         data_values = {}
         index = 0
         line_nr = 0
-
-        print(f"Is reverse: {reversed}")
 
         for line in self.read_from_file(filename):
             line_nr += 1
@@ -150,10 +150,8 @@ class Trie:
                     f"Error: in line {line_nr}, key:'{word_key}'.\n  No value.\n  Please add missing values and try again. \n Exiting."
                 )
                 return
-            if reversed:
-                key = self.modify_word(word_key[::-1])
-            else:
-                key = self.modify_word(word_key)
+            key = self.modify_word(word_key)
+
             if word_value not in data_values:
                 index = len(data_values)
                 # Use setdefault to avoid storing duplicate values and save memory
@@ -161,38 +159,48 @@ class Trie:
             else:
                 index = data_values[word_value]
             self._add(key, index)
+            if self.reversed:
+                # If reversed, we add the word in reverse order
+                # print(f"Addin key: {[int(c) for c in key]}")
+                key.reverse()
+                key.insert(0, 143)
+                # print('working with key:', key)
+                # print(f"Adding reversed key: {[int(c) for c in key]}")
+                # import sys
+
+                # sys.exit()
+                self._add(key, index)
 
         self.inv_alphabet = {v: k for k, v in self.alphabet.items()}
 
-        print("\n ")
-        print("writing do disk...")
-        print("2 - Writing trie to file")
+        print("1/7 - Writing to file...")
         self.make_tree()
+        print("2/7 - Writing to file...")
         self.write_tree_to_file()
         del self._trie
 
-        print("2a - Processing eow values")
+        print("3/7 - Writing to file...")
         self.write_eow_values_to_file(self.value_bits_filename)
         self.write_eow_sums_to_file(self.eow_sb)
 
-        print("3 - Process HC")
+        print("4/7 - Writing to file...")
         self.write_hc_to_file(self.hc_bits_filename)
         self.hc_to_lookup()
 
+        print("5/7 - Writing to file...")
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_lookup()
 
-        print("5 - Process SHORT_TEXT")
+        print("6/7 - Writing to file...")
         # inverting data_values so that the key is the value and the value is the key
         inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
         self.write_short_text_to_file(inv_data_values)
 
-
-        print("6 - write alphabet to file")
+        print("7/7 - Writing to file...")
         alphabet_bytes = bytearray()
-        for k in self.alphabet.keys():
-            if k in self.used_alphabet:
-                alphabet_bytes.append(k)
+        for k in self.used_alphabet:
+            # if k in self.used_alphabet:
+            alphabet_bytes.append(k)
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(alphabet_bytes)
 
@@ -208,7 +216,7 @@ class Trie:
         for c in word:
             if ord(c) not in self.used_alphabet:
                 self.used_alphabet.append(ord(c))
-                
+
             if ord(c) not in self.alphabet.keys():
                 # update the alphabet with the new character
                 idx = len(self.alphabet)
@@ -619,15 +627,15 @@ def make_trie(filename, collection, reversed=False):
     Saving the trie and associated data to files in frozen folder.
     """
     trie = Trie(collection, reversed=reversed)
-    trie.make_frozen_data(filename)
+    trie.make_frozen_data(filename=filename)
 
 
 if __name__ == "__main__":
     args = ARG_PARSER.parse_args()
-    if args.filename is not None and args.collection is not None:
-        make_trie(filename=args.filename, collection=args.collection)
-        if args.reversed:
-            make_trie(filename=args.filename, collection=args.collection, reversed=True)
 
+    if args.file is not None and args.collection is not None:
+        make_trie(
+            filename=args.file, collection=args.collection, reversed=args.reversed
+        )
     else:
         ARG_PARSER.print_help()
