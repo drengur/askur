@@ -99,7 +99,9 @@ class Search:
             return
 
         alphabet = [
-            ord(c) for c in self.mmap.alphabet if ord(c) not in (42, 95, 143) # 143 is reversed start
+            ord(c)
+            for c in self.mmap.alphabet
+            if ord(c) not in (42, 95, 143)  # 143 is reversed start
         ]
         base_word = query[0].copy()
 
@@ -128,6 +130,8 @@ class Search:
         s_start, s_end = self.mmap.calculate_select(s_index)
 
         for idx, letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
+            if letter in (42, 95, 143):
+                continue
             next_start_part = (
                 start_part[:-1].copy()
                 if start_part and start_part[-1] == 42
@@ -279,7 +283,15 @@ class Search:
             self.add_result({word: result})
 
     def exists(self, query):
-        pass
+        """Check if a word exists in the collection.
+        this method does not return the value associated with the word,
+        it only checks if the word exists.
+        For faster search results.
+        """
+        self.mmap.set_check_key_exists(True)
+        self.search(query)
+        self.mmap.set_check_key_exists(False)
+        return self.result_as_list() if self.results() else ["0"]
 
     def search(self, query) -> str:
         modified_query = self.prepare_query(query)
@@ -399,6 +411,7 @@ if __name__ == "__main__":
 
     for query in QUERY.split(" "):
         SEARCH_RESULTS.append(S.search(query))
+        # SEARCH_RESULTS.append(S.exists(query))
 
     END_TIME = time.time()
     print("\n".join("\n".join(res) for res in SEARCH_RESULTS))
