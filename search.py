@@ -103,22 +103,22 @@ class Search:
             for c in self.mmap.alphabet
             if ord(c) not in (42, 95, 143)  # 143 is reversed start
         ]
-        base_word = query[0].copy()
+        base_word = query[0][:]  # copy list to avoid modifying the original query
 
         new_query = [None, None, None]
         for i_letter in alphabet:
             # add the letter at the start of the word
-            new_query[0] = [i_letter] + base_word.copy()
+            new_query[0] = [i_letter] + base_word[:]
             self._search(new_query, s_index=1)
 
             # add the letter at the end of the word
-            new_query[0] = base_word.copy() + [i_letter]
+            new_query[0] = base_word[:] + [i_letter]
             self._search(new_query, s_index=1)
 
         for n in range(len(base_word)):
             for i_letter in alphabet:
                 # replace the letter at position n with i_letter
-                new_word = base_word.copy()
+                new_word = base_word[:]
                 new_word[n] = i_letter
                 self._search([new_word, None, None], s_index=1)
 
@@ -130,12 +130,14 @@ class Search:
         s_start, s_end = self.mmap.calculate_select(s_index)
 
         for idx, letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
-            if letter in (42, 95, 143):
+            if letter == 143:
                 continue
+            if letter == 95 or letter == 42:  # "_" or "*"
+                letter *= -1
             next_start_part = (
-                start_part[:-1].copy()
+                start_part[:-1][:]
                 if start_part and start_part[-1] == 42
-                else start_part.copy()
+                else start_part[:]
                 if start_part
                 else []
             )
@@ -149,7 +151,7 @@ class Search:
             # Check if we can match any of the patterns in word_parts sequentially
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
-                word = "".join([chr(c) for c in next_start_part])
+                word = "".join([chr(c if c >= 0 else -1 * c) for c in next_start_part])
                 self.add_result({word: result})
             # If we have a match, continue searching
             if self.mmap.has_child(s_start + idx):
@@ -220,10 +222,11 @@ class Search:
 
         for i_letter in chr_range:
             if i_letter == 95 or i_letter == 42:  # "_" or "*"
-                continue
+                i_letter *= -1  # Escape the character
+                # continue
             if self.search_completed():
                 return
-            next_query[0] = [i_letter] + query[0][start + 1 :].copy()
+            next_query[0] = [i_letter] + query[0][start + 1 :][:]
             self._search(next_query, s_index)
 
     def _search(self, query, s_index) -> None:
@@ -233,12 +236,16 @@ class Search:
 
         for n, i_letter in enumerate(query[0]):
             # print(f"Searching for letter: {i_letter} at index {n} with s_index {s_index}")
+
             if i_letter == 42:  # "*"
                 self._wildcard_search(s_index, query[0], query[1], query[2])
                 return
             if i_letter == 95:  # "_"
                 self._underscore_search(s_index, query, n)
                 return
+            if i_letter < 0:  # Negative ASCII value means escaped character
+                i_letter = -1 * i_letter
+
             s_start, s_end = self.mmap.calculate_select(s_index)
             chr_index = self.mmap.get_trie_index_of(s_start, s_end, i_letter)
             # No such letter in the trie, so we can return
@@ -263,7 +270,9 @@ class Search:
                     end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
                     if end_of_word == 1:
                         result = self.mmap.get_result(s_start + chr_index)
-                        word = "".join([chr(c) for c in query[0][:-1]])
+                        word = "".join(
+                            [chr(c if c >= 0 else -1 * c) for c in query[0][:-1]]
+                        )
                         if (
                             len(query) > 3
                         ):  # If there is a prefix in the query from underscore search
@@ -275,7 +284,7 @@ class Search:
 
         if end_of_word == 1:
             result = self.mmap.get_result(s_start + chr_index)
-            word = "".join([chr(c) for c in query[0]])
+            word = "".join([chr(c if c >= 0 else -1 * c) for c in query[0]])
             if (
                 len(query) > 3
             ):  # If there is a prefix in the query from underscore search
@@ -283,10 +292,11 @@ class Search:
             self.add_result({word: result})
 
     def exists(self, query):
-        """Check if a word exists in the collection.
-        this method does not return the value associated with the word,
-        it only checks if the word exists.
+        """
         For faster search results.
+        Check if a word exists in the collection.
+        This method does not return the value associated with the word,
+        it only checks if the word exists.
         """
         self.mmap.set_check_key_exists(True)
         self.search(query)
@@ -326,8 +336,7 @@ class Search:
         If there are no wildcards, it returns a list with the query as the first element and None for the other two.
         """
         res = []
-        if query.count("*") > 1:
-            query = re.sub(r"\*+", "*", query)
+        esc = False  # Escape character for wildcards '\'
 
         reversed_query = (
             self.mmap.is_reversed()
@@ -350,6 +359,17 @@ class Search:
                 for i in range(0, 32, 8):
                     res.append(int(bits[i : i + 8], 2))
             else:
+                if c == "\\" and not esc:
+                    esc = True
+                    continue
+                if esc:
+                    if c in ("*", "_"):
+                        res.append(-1 * ord(c))
+                    else:
+                        res.append(ord(c))
+                    esc = False
+                    continue
+
                 res.append(ord(c))
 
         if 42 in res:  # 42 is the ASCII code for '*'
