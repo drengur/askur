@@ -24,6 +24,7 @@ class Mapping:
         self.nr_bytes_in_value_block: int = 0
         self.alphabet: mmap.mmap | bytearray = bytearray()
         self.reversed: bool = False
+        self.check_if_key_exists = False  #
 
         self._load_files()
 
@@ -140,6 +141,11 @@ class Mapping:
     def is_reversed(self) -> bool:
         """Returns True if the index is reversed"""
         return self.reversed
+
+    def set_check_key_exists(self, check_key_exists: bool) -> bool:
+        """Returns True if the key exists in the index"""
+        self.check_if_key_exists = check_key_exists
+        return self.check_if_key_exists
 
     @cython.cfunc
     def calculate_select(self, sum_ones_wanted: cython.int) -> list[int, int]:
@@ -343,6 +349,12 @@ class Mapping:
 
     def get_result(self, value_index, reversed=False) -> list[str]:
         """Returns result of the query"""
+
+        # We know that the key exists at this point and the user
+        # is only interested to know if it does exist.
+        if self.check_if_key_exists:
+            return ["1"]
+
         value_sum = self.get_value_bits_sum(value_index)
         index_value, text_len = self.get_index(value_sum)
         return self.get_short_text(index_value, text_len)
