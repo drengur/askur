@@ -30,7 +30,7 @@ class Mapping:
 
     def _load_files(self):
         confs = {}
-        with open("trie.conf", "r") as f:
+        with open("askur.conf", "r") as f:
             for line in f:
                 if line.startswith("#") or line.startswith("\n"):
                     continue

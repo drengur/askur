@@ -54,23 +54,15 @@ class Trie:
         self._short_text = []  # the short text array (the words in the trie)
         self.collection_name = collection_name
         self.reversed = reversed
-
-        # self.alphabet = Node().alphabet  # the alphabet used in the trie
+        
+        # The alphabet order used in the trie.
         alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
-        self.alphabet = {ord(item): n for n, item in enumerate(alphabet)}
-        self.used_alphabet = []  # used alphabet
-        # Add a multibyte start character to the end of the self.alphabet dict:
-        multibyte_char = 129
-        reversed_char = 143  # This is a character that is not in the alphabet
-        self.alphabet.setdefault(multibyte_char, len(self.alphabet))
-        if self.reversed:
-            # If reversed, we add a reversed character to the alphabet
-            # This is used to mark the start of the reversed index
-            self.alphabet.setdefault(reversed_char, len(self.alphabet))
-            self.used_alphabet.append(reversed_char)
+        # self.alphabet = {}
+        self.used_alphabet = []  # used alphabet is empty at the start and gets filled as words are added
+        self.prepare_alphabet(alphabet)
 
         confs = {}
-        with open("trie.conf", "r") as f:
+        with open("askur.conf", "r") as f:
             for line in f:
                 if line.startswith("#") or line.startswith("\n"):
                     continue
@@ -120,7 +112,29 @@ class Trie:
         # select superblock
         self.s_sb_file = os.path.join(FROZEN_FOLDER, "s_sb.bin")
 
-        self.root = Node()  # the root node of the trie
+        self.root = Node()  # the root node of the
+
+    def prepare_alphabet(self, init_alphabet):
+        """Prepare the alphabet for the trie."""
+        if not isinstance(init_alphabet, str) and not isinstance(init_alphabet, list):
+            raise ValueError("Alphabet must be a string or a list of characters.", type(init_alphabet), init_alphabet)
+
+        self.alphabet = {ord(item): n for n, item in enumerate(init_alphabet)}
+        self.used_alphabet = []  # used alphabet is empty at the start
+        multibyte_char = 129
+        reversed_char = 143  # This is a character that is not in the alphabet
+        self.alphabet.setdefault(multibyte_char, len(self.alphabet))
+        if self.reversed:
+            self.alphabet.setdefault(reversed_char, len(self.alphabet))
+            self.used_alphabet.append(reversed_char)
+
+    # @property
+    # def alphabet(self):
+    #     return self.alphabet()
+
+    # @alphabet.setter
+    # def alphabet(self, alphabet):
+    #     self.prepare_alphabet(alphabet)
 
     def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""

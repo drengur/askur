@@ -9,7 +9,7 @@ data/
 *.so
 *.c
 *.o
-
+*.html
 frozen_data/
 input_files/
 fil-result/

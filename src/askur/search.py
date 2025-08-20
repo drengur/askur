@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-import re
+
 import time
 import argparse
 
@@ -235,7 +235,6 @@ class Search:
             return
 
         for n, i_letter in enumerate(query[0]):
-            # print(f"Searching for letter: {i_letter} at index {n} with s_index {s_index}")
 
             if i_letter == 42:  # "*"
                 self._wildcard_search(s_index, query[0], query[1], query[2])
