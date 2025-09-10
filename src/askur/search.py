@@ -4,11 +4,12 @@ import sys
 import time
 import argparse
 
+try:
+    from filemapping import Mapping
+except ImportError:
+    from filemapping_py import Mapping
 
-from filemapping import Mapping
 
-# from filemapping_cy import Mapping
-# M = Mapping()
 arg_parser = argparse.ArgumentParser(
     description="Search for word in a collection of words."
 )
@@ -101,53 +102,68 @@ class Search:
         alphabet = [
             ord(c)
             for c in self.mmap.alphabet
-            if ord(c) not in (42, 95, 143)  # 143 is reversed start
+            if ord(c)
+            not in (42, 95, 143, 129)  # 143 is reversed start, 129 is 4(5) byte char
         ]
-        base_word = query[0][:]  # copy list to avoid modifying the original query
 
         new_query = [None, None, None]
         for i_letter in alphabet:
-            # add the letter at the start of the word
-            new_query[0] = [i_letter] + base_word[:]
+            # add extra letter at the start of the word
+            new_query[0] = [i_letter] + query[0][:]
             self._search(new_query, s_index=1)
 
-            # add the letter at the end of the word
-            new_query[0] = base_word[:] + [i_letter]
+            # add extra letter at the end of the word
+            new_query[0] = query[0][:] + [i_letter]
             self._search(new_query, s_index=1)
 
-        for n in range(len(base_word)):
+        for n in range(len(query[0])):
             for i_letter in alphabet:
                 # replace the letter at position n with i_letter
-                new_word = base_word[:]
+                new_word = query[0][:]
                 new_word[n] = i_letter
                 self._search([new_word, None, None], s_index=1)
 
-    def _wildcard_search(self, s_index, start_part, word_parts, end_part) -> None:
+    def _wildcard_search(
+        self, s_index, start_part, middle_parts, end_part, original_start_part=None
+    ) -> None:
         """Search for a word in the trie with wildcards (*) in the query."""
         if self.search_completed():
             return
 
         s_start, s_end = self.mmap.calculate_select(s_index)
+        next_start_part = (
+            start_part[:-1][:]
+            if start_part and start_part[-1] == 42
+            else start_part[:]
+            if start_part
+            else []
+        )
 
         for idx, letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
             if letter == 143:
                 continue
             if letter == 95 or letter == 42:  # "_" or "*"
                 letter *= -1
-            next_start_part = (
-                start_part[:-1][:]
-                if start_part and start_part[-1] == 42
-                else start_part[:]
-                if start_part
-                else []
-            )
-            next_start_part.append(int(letter))
 
+            next_start_part.append(int(letter))
             next_end_part = None if not end_part else next_start_part[-len(end_part) :]
+            # pattern_to_match = [end_part] þegar verið er að athuga hvort að orðið endi á vissan hátt.
             end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
-            word_parts_match = end_part_match and self._matches_pattern_sequence(
-                next_start_part, word_parts
+
+            # það sem er að gerast er að byrjunarhlutinn er að stækka án þess að tekið er í burtu
+            # sjálf byrjunin, sem á ekki að matcha við 
+            if not original_start_part:
+                original_start_part = next_start_part[:-1][:]
+
+            pattern_to_match = (
+                next_start_part[len(original_start_part) :]
+                if original_start_part
+                else next_start_part
             )
+            word_parts_match = end_part_match and self._matches_pattern_sequence(
+                pattern_to_match, middle_parts
+            )
+
             # Check if we can match any of the patterns in word_parts sequentially
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
@@ -156,7 +172,14 @@ class Search:
             # If we have a match, continue searching
             if self.mmap.has_child(s_start + idx):
                 nr_hc = self.mmap.calculate_hc(s_start + idx)
-                self._wildcard_search(nr_hc + 1, next_start_part, word_parts, end_part)
+                self._wildcard_search(
+                    nr_hc + 1,
+                    next_start_part,
+                    middle_parts,
+                    end_part,
+                    original_start_part,
+                )
+            next_start_part.pop()
 
     def _matches_pattern_sequence(self, word_part, word_parts) -> bool:
         """
@@ -235,7 +258,6 @@ class Search:
             return
 
         for n, i_letter in enumerate(query[0]):
-
             if i_letter == 42:  # "*"
                 self._wildcard_search(s_index, query[0], query[1], query[2])
                 return
@@ -287,7 +309,7 @@ class Search:
             if (
                 len(query) > 3
             ):  # If there is a prefix in the query from underscore search
-                word = "".join([chr(c) for c in query[3]]) + word
+                word = "".join([chr(c if c >= 0 else -1 * c) for c in query[3]]) + word
             self.add_result({word: result})
 
     def exists(self, query):
@@ -304,7 +326,6 @@ class Search:
 
     def search(self, query) -> str:
         modified_query = self.prepare_query(query)
-
         if modified_query is None:
             print("Query is empty or invalid.")
             sys.exit(1)
@@ -417,11 +438,6 @@ if __name__ == "__main__":
     if COLLECTION is None or QUERY is None:
         print("Usage: python3 search.py -c <collection> -w <word1,word2,word3>")
         sys.exit(1)
-    # if QUERY.startswith("*") and not QUERY.endswith("*"):
-    #     QUERY = QUERY[::-1]  # remove leading * if present
-    #     COLLECTION = (
-    #         "__" + COLLECTION
-    #     )  # prepend __ to collection name for reversed search
 
     SEARCH_RESULTS = []
     S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
