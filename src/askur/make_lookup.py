@@ -26,6 +26,31 @@ ARG_PARSER.add_argument(
 )
 
 
+class OptimizedNode:
+    __slots__ = ["end", "index", "letters"]
+
+    def __init__(self):
+        self.end = False
+        self.index = None  # Only create list when needed
+        self.letters = None  # Only create dict when needed
+
+    @property
+    def has_children(self):
+        return self.letters is not None and len(self.letters) > 0
+
+    def add_child(self, key):
+        if self.letters is None:
+            self.letters = {}
+        if key not in self.letters:
+            self.letters[key] = OptimizedNode()
+        return self.letters[key]
+
+    def add_index(self, idx):
+        if self.index is None:
+            self.index = []
+        self.index.append(idx)
+
+
 class Node:
     """A node in a tree."""
 
@@ -54,7 +79,7 @@ class Trie:
         self._short_text = []  # the short text array (the words in the trie)
         self.collection_name = collection_name
         self.reversed = reversed
-        
+
         # The alphabet order used in the trie.
         alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
         # self.alphabet = {}
@@ -62,9 +87,9 @@ class Trie:
         self.prepare_alphabet(alphabet)
 
         confs = {}
-        file_dir = os.path.dirname(os.path.abspath(__file__))
-        conf_file = os.path.join(file_dir, "askur.conf")
-        with open(conf_file, "r") as f:
+        # file_dir = os.path.dirname(os.path.abspath(__file__))
+        config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
+        with open(config_file, "r") as f:
             for line in f:
                 if line.startswith("#") or line.startswith("\n"):
                     continue
@@ -88,7 +113,6 @@ class Trie:
             return
 
         this_folder = os.path.dirname(os.path.abspath(__file__))
-
         FROZEN_FOLDER = os.path.join(this_folder, DATA_FOLDER, collection_name)
 
         os.makedirs(FROZEN_FOLDER, exist_ok=True)
@@ -114,12 +138,17 @@ class Trie:
         # select superblock
         self.s_sb_file = os.path.join(FROZEN_FOLDER, "s_sb.bin")
 
-        self.root = Node()  # the root node of the
+        # self.root = Node()  # the root node of the
+        self.root = OptimizedNode()  # the root node of the optimized trie
 
     def prepare_alphabet(self, init_alphabet):
         """Prepare the alphabet for the trie."""
         if not isinstance(init_alphabet, str) and not isinstance(init_alphabet, list):
-            raise ValueError("Alphabet must be a string or a list of characters.", type(init_alphabet), init_alphabet)
+            raise ValueError(
+                "Alphabet must be a string or a list of characters.",
+                type(init_alphabet),
+                init_alphabet,
+            )
 
         self.alphabet = {ord(item): n for n, item in enumerate(init_alphabet)}
         self.used_alphabet = []  # used alphabet is empty at the start
@@ -173,7 +202,8 @@ class Trie:
                 data_values.setdefault(word_value, index)
             else:
                 index = data_values[word_value]
-            self._add(key, index)
+            # self._add(key, index)
+            self._add_optimized(key, index)
             if self.reversed:
                 # If reversed, we add the word in reverse order
                 key.reverse()
@@ -202,8 +232,9 @@ class Trie:
 
         print(" 6/7 - Writing to file...", end="\r")
         # inverting data_values so that the key is the value and the value is the key
-        inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
-        self.write_short_text_to_file(inv_data_values)
+        # inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
+        self.write_short_text_to_file(data_values)
+        # self.write_short_text_to_file({v: self.modify_word(k) for k, v in data_values.items()})
 
         print(" 7/7 - Writing to file...", end="\r")
         alphabet_bytes = bytearray()
@@ -245,6 +276,19 @@ class Trie:
                 res.append(ord(c))
         return res
 
+    def _add_optimized(self, word, index_id):
+        """Add a word to the trie."""
+        node = self.root
+        for _, ch in enumerate(word):
+            idx = self.alphabet.get(ch)
+            if node.has_children and node.letters.get(idx):
+                node = node.letters[idx]
+            else:
+                node.add_child(idx)
+                node = node.letters[idx]
+        node.add_index(index_id)
+        node.end = True
+
     def _add(self, word, index_id):
         """Add a word to the trie."""
         node = self.root
@@ -271,7 +315,7 @@ class Trie:
         child_nodes = []
         for node in nodes:
             first = 1
-            for letter_key in sorted(node.letters.keys()):
+            for letter_key in sorted(node.letters and node.letters.keys() or []):
                 self._trie.append(self.inv_alphabet.get(letter_key))
                 self._select.append(first)
                 first = 0
@@ -295,9 +339,7 @@ class Trie:
 
     def write_tree_to_file(self):
         """Write level ordered trie to a file."""
-        with io.open(self.trie_file, "w") as f:
-            f.write("")
-            f.close()
+        io.open(self.trie_file, "w").close()
         with io.open(self.trie_file, "ab") as f:
             for chunk in self.generate_data(self._trie):
                 f.write(chunk)
@@ -305,9 +347,7 @@ class Trie:
 
     def write_hc_to_file(self, filename):
         """Write the head child array to a file."""
-        with io.open(filename, "w") as f:
-            f.write("")
-            f.close()
+        io.open(filename, "w").close()
 
         buffer = bytearray()  # Buffer to hold bytes before writing to file
         i = 0
@@ -329,9 +369,8 @@ class Trie:
 
     def write_select_to_file(self, filename):
         """Write the select array to a file."""
-        with io.open(filename, "w") as f:
-            f.write("")
-            f.close()
+        io.open(filename, "w").close()
+
         # Það þarf að bæta við 1 í enda á select fylkinu til að geta staðsett síðasta bókstafinn í trie-skránni
         # Að öðrum kosti finnst ekki verður select útreikningurinn óendanlegur
         self._select.append(1)  # Pad with 1 to make it a multiple
@@ -355,9 +394,7 @@ class Trie:
 
     def write_eow_values_to_file(self, filename):
         """Write the value array to a file."""
-        with io.open(filename, "w") as f:
-            f.write("")
-            f.close()
+        io.open(filename, "w").close()
 
         buffer = bytearray()  # Buffer to hold bytes before writing to file
         i = 0
@@ -380,8 +417,7 @@ class Trie:
     def write_eow_sums_to_file(self, filename):
         # bits in block = 32
         # sum of "1"-bits in a block of 32 bits
-        with io.open(filename, "w") as f:
-            f.write("")
+        io.open(filename, "w").close()
 
         sum = 0
         i = 0
@@ -419,23 +455,20 @@ class Trie:
                 )
                 f.close()
 
-    def write_short_text_to_file(self, inv_data_values):
+    def write_short_text_to_file(self, data_values):
         """Write the short text array to a file."""
-        with io.open(self.short_text_bits_filename, "w", encoding="utf-8") as f:
-            f.write("")
-            f.close()
+        io.open(self.short_text_bits_filename, "w", encoding="utf-8").close()
 
-        with io.open(self.index_bits_filename, "w") as f:
-            f.write("")
-            f.close()
+        io.open(self.index_bits_filename, "w").close()
 
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
         # inv_data_values = {}
         total_sum = 0
         max_tmp_short_text = 0
-
+        inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
         for _, value in inv_data_values.items():
+            # for _, value in inv_data_values.items():
             total_sum += len(value)
             max_tmp_short_text = max(max_tmp_short_text, len(value))
 
@@ -561,9 +594,7 @@ class Trie:
         # bit lengd getur verið (len(bin(self._hc)) // 8 + 1 (byte)) * 8  í stað föstu tölunnar 32
         # það ætti að spara í það minnsta 1 byte fyrir hvert 32 bita block
         # sama er hægt að gera fyrir select_lookup
-        with io.open(self.hc_sb_file, "w") as f:
-            f.write("")
-            f.close()
+        io.open(self.hc_sb_file, "w").close()
 
         res = bytearray()
         bitsum = 0
@@ -591,9 +622,7 @@ class Trie:
                 f.close()
 
     def select_to_lookup(self):
-        with io.open(self.s_sb_file, "w") as f:
-            f.write("")
-            f.close()
+        io.open(self.s_sb_file, "w").close()
 
         bib = 8
         bits = ""
