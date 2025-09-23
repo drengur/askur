@@ -62,7 +62,9 @@ class Trie:
         self.prepare_alphabet(alphabet)
 
         confs = {}
-        with open("askur.conf", "r") as f:
+        file_dir = os.path.dirname(os.path.abspath(__file__))
+        conf_file = os.path.join(file_dir, "askur.conf")
+        with open(conf_file, "r") as f:
             for line in f:
                 if line.startswith("#") or line.startswith("\n"):
                     continue
@@ -205,9 +207,10 @@ class Trie:
 
         print(" 7/7 - Writing to file...", end="\r")
         alphabet_bytes = bytearray()
-        for k in self.used_alphabet:
-            # if k in self.used_alphabet:
-            alphabet_bytes.append(k)
+        self.used_alphabet.sort()
+        for k in self.alphabet.keys():
+            if k in self.used_alphabet:
+                alphabet_bytes.append(k)
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(alphabet_bytes)
 
