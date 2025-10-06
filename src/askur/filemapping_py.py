@@ -30,7 +30,8 @@ class Mapping:
 
     def _load_files(self):
         confs = {}
-        with open("askur.conf", "r") as f:
+        config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
+        with open(config_file, "r") as f:
             for line in f:
                 if line.startswith("#") or line.startswith("\n"):
                     continue
@@ -47,7 +48,9 @@ class Mapping:
             )
             return -1
 
-        frozen_folder = os.path.join(DATA_FOLDER, self.collection)
+        frozen_folder = os.path.join(
+            os.path.dirname(__file__), DATA_FOLDER, self.collection
+        )
         if not os.path.exists(frozen_folder):
             existing_collections = os.listdir(os.path.join(DATA_FOLDER))
             raise FileNotFoundError(
@@ -147,9 +150,8 @@ class Mapping:
         self.check_if_key_exists = check_key_exists
         return self.check_if_key_exists
 
-    @cython.cfunc
     def calculate_select(self, sum_ones_wanted: cython.int) -> list[int, int]:
-        # Það eru 32 bitar í hverri superblock sem skiptist í 4 bæt (4*8 = 32)
+        # There are 32 bits/4 bytes in each superblock
 
         res_end_index: cython.int = None
         res_start_index = cython.int = None
@@ -242,7 +244,6 @@ class Mapping:
         # þá vantar summuna frá start_block til end_request_index
         start_block = superblock_start * self.bits_in_superblock // bits_in_byte
         end_block = start_block + self.bits_in_superblock // bits_in_byte + 1
-
         index = superblock_start * self.bits_in_superblock
         for byte in self._hc_bitarray[start_block:end_block]:  # bytes:
             if not byte:
@@ -254,6 +255,7 @@ class Mapping:
                     if index == end_request_index:
                         return bitsum
                 index += 1
+        return 0
 
     def has_child(self, index) -> bool:
         """Returns True if node has child = '1'"""
@@ -362,6 +364,7 @@ class Mapping:
     def get_short_text(self, index, text_len) -> list[str]:
         """Returns the short text"""
         res = self._short_text[index : index + text_len]
+
         text_arr = []
         short_texts = []
         i = 0
