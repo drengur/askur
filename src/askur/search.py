@@ -4,10 +4,11 @@ import sys
 import time
 import argparse
 
-try:
-    from filemapping import Mapping
-except ImportError:
-    from filemapping_py import Mapping
+from .filemapping_py import Mapping
+# try:
+#     from filemapping import Mapping
+# except ImportError:
+#     from filemapping_py import Mapping
 
 
 arg_parser = argparse.ArgumentParser(
@@ -36,6 +37,8 @@ class Search:
         self.use_levenstein = use_levenshtein
         self.limit = limit  # 0 means no limit
         self._results = []
+        self.multibyte_char = 129  # ASCII code for start of 4(5) byte char
+        self.reversed_char = 143  # ASCII code for start of reversed word
 
     def add_result(self, result):
         """Add a result to the search results."""
@@ -103,7 +106,7 @@ class Search:
             ord(c)
             for c in self.mmap.alphabet
             if ord(c)
-            not in (42, 95, 143, 129)  # 143 is reversed start, 129 is 4(5) byte char
+            not in (42, 95, self.reversed_char, self.multibyte_char)  # 143 is reversed start, 129 is 4(5) byte char
         ]
 
         new_query = [None, None, None]
@@ -138,20 +141,19 @@ class Search:
             if start_part
             else []
         )
-
-        for idx, letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
-            if letter == 143:
+        for idx, i_letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
+            if i_letter == self.reversed_char:
                 continue
-            if letter == 95 or letter == 42:  # "_" or "*"
-                letter *= -1
+            if i_letter == 95 or i_letter == 42:  # "_" or "*"
+                i_letter *= -1
 
-            next_start_part.append(int(letter))
+            next_start_part.append(i_letter)
             next_end_part = None if not end_part else next_start_part[-len(end_part) :]
             # pattern_to_match = [end_part] þegar verið er að athuga hvort að orðið endi á vissan hátt.
             end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
 
-            # það sem er að gerast er að byrjunarhlutinn er að stækka án þess að tekið er í burtu
-            # sjálf byrjunin, sem á ekki að matcha við 
+            # það sem er að gerast er að byrjunarhlutinn er að stækka án þess að tekið sé í burtu
+            # sjálf byrjunin, sem á ekki að matcha við
             if not original_start_part:
                 original_start_part = next_start_part[:-1][:]
 
@@ -167,13 +169,14 @@ class Search:
             # Check if we can match any of the patterns in word_parts sequentially
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
-                word = "".join([chr(c if c >= 0 else -1 * c) for c in next_start_part])
+                word = self.query_to_string(next_start_part)
                 self.add_result({word: result})
             # If we have a match, continue searching
-            if self.mmap.has_child(s_start + idx):
-                nr_hc = self.mmap.calculate_hc(s_start + idx)
+            # if self.mmap.has_child(s_start + idx):
+            bitsum = self.mmap.calculate_hc(s_start + idx)
+            if bitsum > 0:
                 self._wildcard_search(
-                    nr_hc + 1,
+                    bitsum + 1,
                     next_start_part,
                     middle_parts,
                     end_part,
@@ -256,7 +259,6 @@ class Search:
         chr_index = -1
         if self.search_completed():
             return
-
         for n, i_letter in enumerate(query[0]):
             if i_letter == 42:  # "*"
                 self._wildcard_search(s_index, query[0], query[1], query[2])
@@ -265,25 +267,23 @@ class Search:
                 self._underscore_search(s_index, query, n)
                 return
             if i_letter < 0:  # Negative ASCII value means escaped character
-                i_letter = -1 * i_letter
+                i_letter *= -1
 
             s_start, s_end = self.mmap.calculate_select(s_index)
             chr_index = self.mmap.get_trie_index_of(s_start, s_end, i_letter)
-            # No such letter in the trie, so we can return
+            # No such letter in the trie interval, so we can return
             if chr_index == -1:
                 return
 
             if n < len(query[0]) - 1:
                 nr_hc = self.mmap.calculate_hc(s_start + chr_index)
-                # No child (nr_ch is None), so we can return or get the results, if any, if a wildcard is at the end
-                if nr_hc is None:
-                    # if we are (almost) at the end of the query and the last letter is a wildcard
-                    # and we have perhaps a complete word at this point
+                if nr_hc == 0:
                     if n == len(query[0]) - 2 and query[0][-1] == 42:
                         if query[1] is None and query[2] is None:
                             break
                     # We can return here without result, because we have nothing more to search for
                     return
+
                 # if we are at the end of the query and the last letter is a wildcard
                 # and we have perhaps a complete word at this point, even if there are no more letters
                 # in the query, we can still get a possible result
@@ -291,13 +291,11 @@ class Search:
                     end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
                     if end_of_word == 1:
                         result = self.mmap.get_result(s_start + chr_index)
-                        word = "".join(
-                            [chr(c if c >= 0 else -1 * c) for c in query[0][:-1]]
-                        )
+                        word = self.query_to_string(query[0])
                         if (
                             len(query) > 3
                         ):  # If there is a prefix in the query from underscore search
-                            word = "".join([chr(c) for c in query[3]]) + word
+                            word = self.query_to_string(query[3]) + word
                         self.add_result({word: result})
 
                 s_index = nr_hc + 1
@@ -305,12 +303,38 @@ class Search:
 
         if end_of_word == 1:
             result = self.mmap.get_result(s_start + chr_index)
-            word = "".join([chr(c if c >= 0 else -1 * c) for c in query[0]])
+            word = self.query_to_string(query[0])
             if (
                 len(query) > 3
             ):  # If there is a prefix in the query from underscore search
-                word = "".join([chr(c if c >= 0 else -1 * c) for c in query[3]]) + word
+                word = self.query_to_string(query[3]) + word
             self.add_result({word: result})
+
+    def query_to_string(self, query) -> str:
+        """Convert a query list of ASCII values back to a string."""
+        if query is None:
+            return ""
+
+        if self.multibyte_char   not in query:
+            return "".join([chr(c if c >= 0 else -1 * c) for c in query])
+        # 129 is the ASCII code for start of 4(5) byte char
+        # so we need to convert the 4(5) byte char back to a character
+        # this is done by taking the next 4 bytes and converting them to a character
+        # then we continue with the rest of the query
+        res = []
+        i = 0
+        while i < len(query):
+            c = query[i]
+            if c == self.multibyte_char:  # 129
+                bits = ""
+                for j in range(1, 5):
+                    bits += bin(query[i + j])[2:].rjust(8, "0")
+                res.append(chr(int(bits, 2)))
+                i += 5
+            else:
+                res.append(chr(c if c >= 0 else -1 * c))
+                i += 1
+        return "".join(res)
 
     def exists(self, query):
         """
