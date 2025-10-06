@@ -26,45 +26,119 @@ ARG_PARSER.add_argument(
 )
 
 
-class OptimizedNode:
-    __slots__ = ["end", "index", "letters"]
+class Node:
+    __slots__ = ["index", "letters"]
 
     def __init__(self):
-        self.end = False
         self.index = None  # Only create list when needed
         self.letters = None  # Only create dict when needed
 
     @property
     def has_children(self):
-        return self.letters is not None and len(self.letters) > 0
+        return self.letters is not None
 
-    def add_child(self, key):
+    @property
+    def end(self):
+        # Is this node an end/leaf node? (end of word)
+        return self.index is not None
+
+    def get_child(self, key):
         if self.letters is None:
             self.letters = {}
         if key not in self.letters:
-            self.letters[key] = OptimizedNode()
+            self.letters[key] = Node()
         return self.letters[key]
 
     def add_index(self, idx):
+        """Add an index to the end/leaf node.
+        Leaf nodes can have multiple indices.
+        """
         if self.index is None:
             self.index = []
+        if idx in self.index:
+            return
         self.index.append(idx)
 
 
-class Node:
-    """A node in a tree."""
+class Alphabet:
+    multibyte_char = 129
+    reversed_char = 143  # This is a character that is not in the alphabet
 
-    def __init__(self):
-        self.end = False
-        self.index = []
-        self.letters = {}
-        self.has_children = False
+    def __init__(self, alphabet=None):
+        if alphabet is None:
+            alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
+        self._alphabet = {ord(c): n for n, c in enumerate(alphabet)}
+        self._alphabet.setdefault(self.multibyte_char, len(self._alphabet))
+        self._alphabet.setdefault(self.reversed_char, len(self._alphabet))
+
+        self._used_alphabet = []  # used alphabet is empty at the start and gets filled as words are added
+        self._used_alphabet.append(self.multibyte_char)
+        self._used_alphabet.append(self.reversed_char)
+
+    @property
+    def alphabet(self):
+        return self._alphabet
+
+    def add(self, key):
+        if isinstance(key, str):
+            key = ord(key)
+        self._alphabet.setdefault(key, len(self._alphabet))
+
+    def get_alphabet_index(self, key: int):
+        return self._alphabet.get(key)
+
+    @property
+    def inv_alphabet(self):
+        """Inverse alphabet. v is the index, k is the character.
+        example: {0: 'a', 1: 'b', ...}
+        """        
+        return {v: k for k, v in self._alphabet.items()}
+
+    def convert(self, word: str) -> bytearray:
+        """Convert a word to a list of alphabet indices.
+        If a character is not in the alphabet, it is added to the alphabet.
+        If a character is a multibyte character, it is converted to 5 bytes.
+        """
+        res = bytearray()
+        for c in word:
+            if ord(c) > 255:
+                bits = bin(ord(c))[2:].rjust(32, "0")
+                res.append(Alphabet.multibyte_char)
+                for i in range(0, 32, 8):
+                    num = int(bits[i : i + 8], 2)
+                    self.add(num)
+                    res.append(num)
+                    if num not in self._used_alphabet:
+                        self._used_alphabet.append(num)
+                continue
+            if ord(c) not in self._alphabet:
+                self.add(c)
+            res.append(ord(c))
+            if ord(c) not in self._used_alphabet:
+                self._used_alphabet.append(ord(c))
+        return res
+
+    @property
+    def used_alphabet(self) -> list:
+        """Return the used letters in the alphabet."""
+        return self._used_alphabet
+
+    @property
+    def get_used(self) -> bytearray:
+        """ Return the used letters in the alphabet as a bytearray."""
+        alphabet_bytes = bytearray()
+        if self.reversed_char in self._used_alphabet:
+            alphabet_bytes.append(self.reversed_char)
+        for k in self._alphabet.keys():
+            if k in self._used_alphabet and k not in alphabet_bytes:
+                alphabet_bytes.append(k)
+        return alphabet_bytes
 
 
 class Trie:
     """A trie."""
 
-    def __init__(self, collection_name=None, reversed=False):
+    def __init__(self, collection_name=None, reversed=False, alphabet=None):
         """Create a new trie and associated files.
         usage:
             trie = Trie()
@@ -81,13 +155,9 @@ class Trie:
         self.reversed = reversed
 
         # The alphabet order used in the trie.
-        alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
-        # self.alphabet = {}
-        self.used_alphabet = []  # used alphabet is empty at the start and gets filled as words are added
-        self.prepare_alphabet(alphabet)
+        self.alphabet = Alphabet(alphabet)
 
         confs = {}
-        # file_dir = os.path.dirname(os.path.abspath(__file__))
         config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
         with open(config_file, "r") as f:
             for line in f:
@@ -138,174 +208,88 @@ class Trie:
         # select superblock
         self.s_sb_file = os.path.join(FROZEN_FOLDER, "s_sb.bin")
 
-        # self.root = Node()  # the root node of the
-        self.root = OptimizedNode()  # the root node of the optimized trie
-
-    def prepare_alphabet(self, init_alphabet):
-        """Prepare the alphabet for the trie."""
-        if not isinstance(init_alphabet, str) and not isinstance(init_alphabet, list):
-            raise ValueError(
-                "Alphabet must be a string or a list of characters.",
-                type(init_alphabet),
-                init_alphabet,
-            )
-
-        self.alphabet = {ord(item): n for n, item in enumerate(init_alphabet)}
-        self.used_alphabet = []  # used alphabet is empty at the start
-        multibyte_char = 129
-        reversed_char = 143  # This is a character that is not in the alphabet
-        self.alphabet.setdefault(multibyte_char, len(self.alphabet))
-        if self.reversed:
-            self.alphabet.setdefault(reversed_char, len(self.alphabet))
-            self.used_alphabet.append(reversed_char)
-
-    # @property
-    # def alphabet(self):
-    #     return self.alphabet()
-
-    # @alphabet.setter
-    # def alphabet(self, alphabet):
-    #     self.prepare_alphabet(alphabet)
+        self.root = Node()  # the root node of the optimized trie
 
     def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
-        print(f" Reading from file {filename}")
         nr_lines_in_file = sum(1 for line in open(filename))
-        print(f" Number of lines in file: {nr_lines_in_file}")
-
+        print(f" Reading from file {filename}. Number of lines: {nr_lines_in_file}")
         data_values = {}
         index = 0
         line_nr = 0
 
-        for line in self.read_from_file(filename):
+        # for line in self.read_from_file(filename):
+        for word_key, word_value in self.read_from_file(filename):
             line_nr += 1
             if line_nr % 1000 == 0:
                 print(f"Reading {line_nr / nr_lines_in_file * 100:.2f}%", end="\r")
-            line_split = line.strip().split(";", 1)
-            word_key = line_split[0].strip()
             if word_key.startswith("#") or word_key.startswith("\n"):
                 continue
             if not word_key:
                 continue
-            word_value = None if len(line_split) == 1 else line_split[1].strip()
-            if word_value is None:
-                print(
-                    f"Error: in line {line_nr}, key:'{word_key}'.\n  No value.\n  Please add missing values and try again. \n Exiting."
-                )
-                return
-            key = self.modify_word(word_key)
+            # key = self.modify_word(word_key)
+            key = self.alphabet.convert(word_key)
+            # print(f"Key: {word_key} -> {key}")
 
             if word_value not in data_values:
                 index = len(data_values)
-                # Use setdefault to avoid storing duplicate values and save memory
                 data_values.setdefault(word_value, index)
             else:
                 index = data_values[word_value]
-            # self._add(key, index)
-            self._add_optimized(key, index)
+            self._add(key, index)
             if self.reversed:
                 # If reversed, we add the word in reverse order
                 key.reverse()
-                key.insert(0, 143)
+                key.insert(0, self.alphabet.reversed_char)
                 self._add(key, index)
 
-        self.inv_alphabet = {v: k for k, v in self.alphabet.items()}
-
-        print(" 1/7 - Writing to file...", end="\r")
-        self.level_order_tree([self.root])
-        print(" 2/7 - Writing to file...", end="\r")
+        print(" 1/7 - Writing to disk...", end="\r")
+        self.level_order_tree([self.root], self.alphabet.inv_alphabet)
+        print(" 2/7 - Writing to disk...", end="\r")
         self.write_tree_to_file()
-        del self._trie
 
-        print(" 3/7 - Writing to file...", end="\r")
+        print(" 3/7 - Writing to disk...", end="\r")
         self.write_eow_values_to_file(self.value_bits_filename)
         self.write_eow_sums_to_file(self.eow_sb)
 
-        print(" 4/7 - Writing to file...", end="\r")
+        print(" 4/7 - Writing to disk...", end="\r")
         self.write_hc_to_file(self.hc_bits_filename)
         self.hc_to_lookup()
 
-        print(" 5/7 - Writing to file...", end="\r")
+        print(" 5/7 - Writing to disk...", end="\r")
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_lookup()
 
-        print(" 6/7 - Writing to file...", end="\r")
-        # inverting data_values so that the key is the value and the value is the key
-        # inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
+        print(" 6/7 - Writing to disk...", end="\r")
         self.write_short_text_to_file(data_values)
-        # self.write_short_text_to_file({v: self.modify_word(k) for k, v in data_values.items()})
 
-        print(" 7/7 - Writing to file...", end="\r")
-        alphabet_bytes = bytearray()
-        self.used_alphabet.sort()
-        for k in self.alphabet.keys():
-            if k in self.used_alphabet:
-                alphabet_bytes.append(k)
+        print(" 7/7 - Writing to disk...", end="\r")
         with io.open(self.trie_file + ".alphabet", "wb") as f:
-            f.write(alphabet_bytes)
+            f.write(self.alphabet.get_used)
 
     def read_from_file(self, filename):
         """Read a file line by line."""
         file = io.open(filename, "r", encoding="utf-8")
         for line in file:
-            yield line
+            if not line.strip():
+                continue
+            word_key = line.split(";", 1)[0].strip()
+            word_value = (
+                None if len(line.split(";")) == 1 else line.split(";", 1)[1].strip()
+            )
+            assert word_value is not None
+            yield word_key, word_value
         file.close()
 
-    def modify_word(self, word):
-        res = bytearray()
-        for c in word:
-            if ord(c) not in self.used_alphabet:
-                self.used_alphabet.append(ord(c))
-
-            if ord(c) not in self.alphabet.keys():
-                # update the alphabet with the new character
-                idx = len(self.alphabet)
-                self.alphabet.setdefault(ord(c), idx)
-
-            if ord(c) > 255:
-                bits = bin(ord(c))[2:].rjust(32, "0")
-                res.append(129)
-                for i in range(0, 32, 8):
-                    num = int(bits[i : i + 8], 2)
-                    res.append(num)
-                    if num not in self.alphabet.keys():
-                        idx = len(self.alphabet)
-                        self.alphabet.setdefault(num, idx)
-            else:
-                res.append(ord(c))
-        return res
-
-    def _add_optimized(self, word, index_id):
+    def _add(self, word: list, index_id: int):
         """Add a word to the trie."""
         node = self.root
-        for _, ch in enumerate(word):
-            idx = self.alphabet.get(ch)
-            if node.has_children and node.letters.get(idx):
-                node = node.letters[idx]
-            else:
-                node.add_child(idx)
-                node = node.letters[idx]
+        for ch in word:
+            node = node.get_child(self.alphabet.get_alphabet_index(ch))
         node.add_index(index_id)
-        node.end = True
 
-    def _add(self, word, index_id):
-        """Add a word to the trie."""
-        node = self.root
-        for i, ch in enumerate(word):
-            idx = self.alphabet.get(ch)
-            if node.letters.get(idx):
-                node = node.letters[idx]
-            else:
-                node.letters[idx] = Node()
-                node = node.letters[idx]
-            if i < len(word) - 1:
-                node.has_children = True
-        if index_id not in node.index:
-            node.index.append(index_id)
-        node.end = True
-
-    def level_order_tree(self, nodes):
+    def level_order_tree(self, nodes, inv_alphabet):
         """Level out trie.
         Traverse the trie in level order and write to the _trie, _hc,
         _select, _is_eow and _index arrays.
@@ -315,21 +299,21 @@ class Trie:
         child_nodes = []
         for node in nodes:
             first = 1
-            for letter_key in sorted(node.letters and node.letters.keys() or []):
-                self._trie.append(self.inv_alphabet.get(letter_key))
+            for w_key in sorted(node.letters and node.letters.keys() or []):
+                self._trie.append(inv_alphabet.get(w_key))
                 self._select.append(first)
                 first = 0
-                self._hc.append(1 if node.letters[letter_key].has_children else 0)
-                if node.letters[letter_key].end:
+                self._hc.append(1 if node.letters[w_key].has_children else 0)
+                if node.letters[w_key].end:
                     self._is_eow.append(1)
-                    self._index.append(node.letters[letter_key].index)
+                    self._index.append(node.letters[w_key].index)
                 else:
                     self._is_eow.append(0)
-                child_nodes.append(node.letters[letter_key])
-        self.level_order_tree(child_nodes)
+                child_nodes.append(node.letters[w_key])
+        self.level_order_tree(child_nodes, inv_alphabet)
 
     def generate_data(self, big_string):
-        """Generate data from a big string in chunks to mimize memory usage."""
+        """Generate data from a big string in chunks to minimize memory usage."""
         # This function is a placeholder for generating data.
         i = 0
         chunk_size = 1024
@@ -349,7 +333,7 @@ class Trie:
         """Write the head child array to a file."""
         io.open(filename, "w").close()
 
-        buffer = bytearray()  # Buffer to hold bytes before writing to file
+        buffer = bytearray()  # Buffer to hold bytes before Writing to disk
         i = 0
         extra_bits = len(self._hc) % 8
         if extra_bits > 0:
@@ -374,7 +358,7 @@ class Trie:
         # Það þarf að bæta við 1 í enda á select fylkinu til að geta staðsett síðasta bókstafinn í trie-skránni
         # Að öðrum kosti finnst ekki verður select útreikningurinn óendanlegur
         self._select.append(1)  # Pad with 1 to make it a multiple
-        buffer = bytearray()  # Buffer to hold bytes before writing to file
+        buffer = bytearray()  # Buffer to hold bytes before Writing to disk
         i = 0
         extra_bits = len(self._select) % 8
         if extra_bits > 0:
@@ -396,19 +380,21 @@ class Trie:
         """Write the value array to a file."""
         io.open(filename, "w").close()
 
-        buffer = bytearray()  # Buffer to hold bytes before writing to file
+        buffer = bytearray()  # Buffer to hold bytes before Writing to disk
         i = 0
         extra_bits = len(self._is_eow) % 8
         if extra_bits > 0:
             for _ in range(8 - extra_bits):
                 self._is_eow.append(0)  # Pad with zeros to make it a multiple of 8 bits
+        # self._is_eow.append([0] * (8 - extra_bits) if extra_bits > 0 else 0)
         while i < len(self._is_eow):
             buffer.append(int("".join([str(c) for c in self._is_eow[i : i + 8]]), 2))
             i += 8
             if len(buffer) >= 10240:
                 with io.open(filename, "ab") as f:
                     f.write(buffer)
-                buffer.clear()  # Clear the buffer to free memory
+                buffer.clear()
+        # add remaining bits
         if len(buffer) > 0:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
@@ -457,18 +443,19 @@ class Trie:
 
     def write_short_text_to_file(self, data_values):
         """Write the short text array to a file."""
-        io.open(self.short_text_bits_filename, "w", encoding="utf-8").close()
-
+        io.open(self.short_text_bits_filename, "w").close()
         io.open(self.index_bits_filename, "w").close()
 
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
-        # inv_data_values = {}
+        # invert the dictionary:
+        # data_values = {v: self.modify_word(k) for k, v in data_values.items()}
+        data_values = {v: self.alphabet.convert(k) for k, v in data_values.items()}
+
         total_sum = 0
         max_tmp_short_text = 0
-        inv_data_values = {v: self.modify_word(k) for k, v in data_values.items()}
-        for _, value in inv_data_values.items():
-            # for _, value in inv_data_values.items():
+
+        for _, value in data_values.items():
             total_sum += len(value)
             max_tmp_short_text = max(max_tmp_short_text, len(value))
 
@@ -483,7 +470,7 @@ class Trie:
         for idxs in self._index:
             text_len = 0
             for idx in idxs:
-                text_len += len(inv_data_values[idx]) + 1
+                text_len += len(data_values[idx]) + 1
             max_text_len = max(max_text_len, text_len)
         if max_text_len > 0:
             nr_bytes_in_value_block = len(bin(max_text_len)[2:]) // 8 + (
@@ -508,20 +495,20 @@ class Trie:
             for idx in idxs:
                 if len(idxs) == 1:
                     if idx not in indices:
-                        short_texts.append(inv_data_values[idx])
+                        short_texts.append(data_values[idx])
                         value = bin(sum_index)[2:].rjust(
                             nr_bits_in_index_block, "0"
-                        ) + bin(len(inv_data_values[idx]))[2:].rjust(
+                        ) + bin(len(data_values[idx]))[2:].rjust(
                             nr_bits_in_value_block, "0"
                         )
                         indices[idx] = value
                         tmp_indices.append(value)
-                        sum_index += len(inv_data_values[idx])
+                        sum_index += len(data_values[idx])
 
                     else:
                         tmp_indices.append(indices[idx])
                 else:
-                    multi_text.append(inv_data_values[idx])
+                    multi_text.append(data_values[idx])
             if len(multi_text) > 1:
                 tmp_txt = []
                 for mtx in multi_text:
@@ -530,8 +517,9 @@ class Trie:
                     else:
                         tmp_txt.append(141)  # separator between words/sentences
                         tmp_txt += mtx.copy()
-                idx_n = len(inv_data_values)
+                idx_n = len(data_values)
                 short_texts.append(tmp_txt)
+
                 value = bin(sum_index)[2:].rjust(nr_bits_in_index_block, "0") + bin(
                     len(tmp_txt)
                 )[2:].rjust(nr_bits_in_value_block, "0")
@@ -573,9 +561,11 @@ class Trie:
         return buffer
 
     def bit_bytes_to_bits(self, s_bytes):
-        """Convert bytes from select and range directory (files) to bits.
-        files contain only 0 and 1, but are stored as bytes in the file.
-        Now we need to convert  the 'bit-bytes' to bits to compress their size.
+        """Convert ones and zeros from select and range series to bytes.
+        s_bytes contain only 0 and 1, but are stored as bytes on the disk.
+        We are converting the ones and zeros to bytes to compress their size.
+        example '000000010000001001000001' -> bytearray(b'\x01\x02\x41')
+        Thus reducing the size by a factor of 8.
         """
         buffer = bytearray()
         i = 0
