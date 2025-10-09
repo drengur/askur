@@ -9,6 +9,7 @@ import io
 import os
 import argparse
 import math as m
+import config
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
@@ -91,7 +92,7 @@ class Alphabet:
     def inv_alphabet(self):
         """Inverse alphabet. v is the index, k is the character.
         example: {0: 'a', 1: 'b', ...}
-        """        
+        """
         return {v: k for k, v in self._alphabet.items()}
 
     def convert(self, word: str) -> bytearray:
@@ -125,7 +126,7 @@ class Alphabet:
 
     @property
     def get_used(self) -> bytearray:
-        """ Return the used letters in the alphabet as a bytearray."""
+        """Return the used letters in the alphabet as a bytearray."""
         alphabet_bytes = bytearray()
         if self.reversed_char in self._used_alphabet:
             alphabet_bytes.append(self.reversed_char)
@@ -157,58 +158,39 @@ class Trie:
         # The alphabet order used in the trie.
         self.alphabet = Alphabet(alphabet)
 
-        confs = {}
-        config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
-        with open(config_file, "r") as f:
-            for line in f:
-                if line.startswith("#") or line.startswith("\n"):
-                    continue
-                if "=" not in line:
-                    print(
-                        f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting."
-                    )
-                    return
-                confs[line.split("=")[0].strip()] = line.split("=")[1].strip()
-        DATA_FOLDER = confs.get("DATA_FOLDER")
-        if DATA_FOLDER is None:
-            print(
-                f"Error: in line {line}.\n  No DATA_FOLDER found.\n  Please add missing DATA_FOLDER and try again. \n Exiting."
-            )
-            return
+        # Check for environment variable first, then fall back to config file
+        data_folder = os.environ.get("ASKUR_DATA_FOLDER")
 
-        # save the trie data to files
-        # if collection_name is not None:
-        if collection_name is None:
-            print("No collection name provided. \n  Exiting.")
-            return
+        assert data_folder is not None, "DATA_FOLDER environment variable is not set."
+        assert collection_name is not None, "Collection name is not set.\ Exiting."
+        frozen_folder = os.path.join(data_folder, self.collection_name)
+        if not os.path.exists(frozen_folder):
+            os.makedirs(frozen_folder, exist_ok=True)
 
-        this_folder = os.path.dirname(os.path.abspath(__file__))
-        FROZEN_FOLDER = os.path.join(this_folder, DATA_FOLDER, collection_name)
+        self.select_bits_filename = os.path.join(frozen_folder, "s_bits.bin")
 
-        os.makedirs(FROZEN_FOLDER, exist_ok=True)
+        self.trie_file = os.path.join(frozen_folder, "trie")
 
-        self.select_bits_filename = os.path.join(FROZEN_FOLDER, "s_bits.bin")
+        self.index_bits_filename = os.path.join(frozen_folder, "index_bits.bin")
+        self.hc_bits_filename = os.path.join(frozen_folder, "hc_bits.bin")
 
-        self.trie_file = os.path.join(FROZEN_FOLDER, "trie")
-
-        self.index_bits_filename = os.path.join(FROZEN_FOLDER, "index_bits.bin")
-        self.hc_bits_filename = os.path.join(FROZEN_FOLDER, "hc_bits.bin")
-
-        self.value_bits_filename = os.path.join(FROZEN_FOLDER, "eow_bits.bin")
+        self.value_bits_filename = os.path.join(frozen_folder, "eow_bits.bin")
 
         self.short_text_bits_filename = os.path.join(
-            FROZEN_FOLDER, "short_text_bits.bin"
+            frozen_folder, "short_text_bits.bin"
         )
 
         # end of word super block file
-        self.eow_sb = os.path.join(FROZEN_FOLDER, "eow_sb.bin")
+        self.eow_sb = os.path.join(frozen_folder, "eow_sb.bin")
 
         # hc superblock
-        self.hc_sb_file = os.path.join(FROZEN_FOLDER, "hc_sb.bin")
+        self.hc_sb_file = os.path.join(frozen_folder, "hc_sb.bin")
+        
         # select superblock
-        self.s_sb_file = os.path.join(FROZEN_FOLDER, "s_sb.bin")
+        self.s_sb_file = os.path.join(frozen_folder, "s_sb.bin")
 
-        self.root = Node()  # the root node of the optimized trie
+        # the root node of the trie
+        self.root = Node()
 
     def make_frozen_data(self, filename=None):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
@@ -228,10 +210,8 @@ class Trie:
                 continue
             if not word_key:
                 continue
-            # key = self.modify_word(word_key)
-            key = self.alphabet.convert(word_key)
-            # print(f"Key: {word_key} -> {key}")
 
+            key = self.alphabet.convert(word_key)
             if word_value not in data_values:
                 index = len(data_values)
                 data_values.setdefault(word_value, index)
