@@ -1,6 +1,7 @@
 """
-Using environment var tables for configuration settings.for data folder path.
-
+Using environment var tables for configuration settingsfor data folder path.
+To override the default path, set the ASKUR_DATA_FOLDER environment variable
+to your desired path before importing this module.
 """
 
 import os
