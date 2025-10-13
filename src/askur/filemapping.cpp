@@ -1530,7 +1530,7 @@ static const char* const __pyx_f[] = {
 struct __pyx_obj_5askur_11filemapping_Mapping;
 struct __pyx_opt_args_5askur_11filemapping_7Mapping_get_result;
 
-/* "askur/filemapping.pyx":344
+/* "askur/filemapping.pyx":319
  *         return start_index - 1
  * 
  *     cpdef list get_result(self, int value_index, bint reversed=False):             # <<<<<<<<<<<<<<
@@ -1962,71 +1962,8 @@ static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
 /* RaiseUnexpectedTypeError.proto */
 static int __Pyx_RaiseUnexpectedTypeError(const char *expected, PyObject *obj);
 
-/* PyObjectLookupSpecial.proto */
-#if CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
-#define __Pyx_PyObject_LookupSpecialNoError(obj, attr_name)  __Pyx__PyObject_LookupSpecial(obj, attr_name, 0)
-#define __Pyx_PyObject_LookupSpecial(obj, attr_name)  __Pyx__PyObject_LookupSpecial(obj, attr_name, 1)
-static CYTHON_INLINE PyObject* __Pyx__PyObject_LookupSpecial(PyObject* obj, PyObject* attr_name, int with_error);
-#else
-#define __Pyx_PyObject_LookupSpecialNoError(o,n) __Pyx_PyObject_GetAttrStrNoError(o,n)
-#define __Pyx_PyObject_LookupSpecial(o,n) __Pyx_PyObject_GetAttrStr(o,n)
-#endif
-
-/* unicode_tailmatch.proto */
-static int __Pyx_PyUnicode_Tailmatch(
-    PyObject* s, PyObject* substr, Py_ssize_t start, Py_ssize_t end, int direction);
-
-/* PyUnicodeContains.proto */
-static CYTHON_INLINE int __Pyx_PyUnicode_ContainsTF(PyObject* substring, PyObject* text, int eq) {
-    int result = PyUnicode_Contains(text, substring);
-    return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
-}
-
 /* PyUnicode_Unicode.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Unicode(PyObject *obj);
-
-/* JoinPyUnicode.proto */
-static PyObject* __Pyx_PyUnicode_Join(PyObject** values, Py_ssize_t value_count, Py_ssize_t result_ulength,
-                                      Py_UCS4 max_char);
-
-/* GetTopmostException.proto */
-#if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
-static _PyErr_StackItem * __Pyx_PyErr_GetTopmostException(PyThreadState *tstate);
-#endif
-
-/* SaveResetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
-static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
-#else
-#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
-#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
-#endif
-
-/* GetException.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
-#endif
-
-/* dict_getitem_default.proto */
-static PyObject* __Pyx_PyDict_GetItemDefault(PyObject* d, PyObject* key, PyObject* default_value);
-
-/* PyObjectCall2Args.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2);
-
-/* CallUnboundCMethod1.proto */
-CYTHON_UNUSED
-static PyObject* __Pyx__CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg);
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg);
-#else
-#define __Pyx_CallUnboundCMethod1(cfunc, self, arg)  __Pyx__CallUnboundCMethod1(cfunc, self, arg)
-#endif
 
 /* PyObjectFormatSimple.proto */
 #if CYTHON_COMPILING_IN_PYPY
@@ -2045,8 +1982,22 @@ static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* 
         PyObject_Format(s, f))
 #endif
 
+/* JoinPyUnicode.proto */
+static PyObject* __Pyx_PyUnicode_Join(PyObject** values, Py_ssize_t value_count, Py_ssize_t result_ulength,
+                                      Py_UCS4 max_char);
+
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
+
+/* PyObjectLookupSpecial.proto */
+#if CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+#define __Pyx_PyObject_LookupSpecialNoError(obj, attr_name)  __Pyx__PyObject_LookupSpecial(obj, attr_name, 0)
+#define __Pyx_PyObject_LookupSpecial(obj, attr_name)  __Pyx__PyObject_LookupSpecial(obj, attr_name, 1)
+static CYTHON_INLINE PyObject* __Pyx__PyObject_LookupSpecial(PyObject* obj, PyObject* attr_name, int with_error);
+#else
+#define __Pyx_PyObject_LookupSpecialNoError(o,n) __Pyx_PyObject_GetAttrStrNoError(o,n)
+#define __Pyx_PyObject_LookupSpecial(o,n) __Pyx_PyObject_GetAttrStr(o,n)
+#endif
 
 /* PyObjectVectorCallKwBuilder.proto */
 CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
@@ -2094,6 +2045,30 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(
         PyObject** py_start, PyObject** py_stop, PyObject** py_slice,
         int has_cstart, int has_cstop, int wraparound);
 
+/* GetTopmostException.proto */
+#if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
+static _PyErr_StackItem * __Pyx_PyErr_GetTopmostException(PyThreadState *tstate);
+#endif
+
+/* SaveResetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
+#else
+#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
+#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
+#endif
+
+/* GetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
+#endif
+
 /* PyLongCompare.proto */
 static CYTHON_INLINE int __Pyx_PyLong_BoolEqObjC(PyObject *op1, PyObject *op2, long intval, long inplace);
 
@@ -2110,6 +2085,18 @@ static CYTHON_INLINE PyObject* __Pyx_PyLong_AddObjC(PyObject *op1, PyObject *op2
 #define __Pyx_Object_VectorcallMethod_CallFromBuilder PyObject_VectorcallMethod
 #else
 static PyObject *__Pyx_Object_VectorcallMethod_CallFromBuilder(PyObject *name, PyObject *const *args, size_t nargsf, PyObject *kwnames);
+#endif
+
+/* PyObjectCall2Args.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2);
+
+/* CallUnboundCMethod1.proto */
+CYTHON_UNUSED
+static PyObject* __Pyx__CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg);
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg);
+#else
+#define __Pyx_CallUnboundCMethod1(cfunc, self, arg)  __Pyx__CallUnboundCMethod1(cfunc, self, arg)
 #endif
 
 /* PyUnicode_Substring.proto */
@@ -2529,24 +2516,17 @@ int __pyx_module_is_main_askur__filemapping = 0;
 
 /* Implementation of "askur.filemapping" */
 /* #### Code section: global_var ### */
-static PyObject *__pyx_builtin_open;
-static PyObject *__pyx_builtin_print;
 static PyObject *__pyx_builtin_FileNotFoundError;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_bin;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_OverflowError;
 /* #### Code section: string_decls ### */
-static const char __pyx_k_[] = "#";
+static const char __pyx_k_[] = "";
 static const char __pyx_k_0[] = "0";
 static const char __pyx_k_1[] = "1";
-static const char __pyx_k_f[] = "f";
-static const char __pyx_k_r[] = "r";
-static const char __pyx_k__2[] = "\n";
-static const char __pyx_k__3[] = "=";
-static const char __pyx_k__4[] = "";
-static const char __pyx_k__5[] = "?";
-static const char __pyx_k__6[] = ".";
+static const char __pyx_k__2[] = "?";
+static const char __pyx_k__3[] = ".";
 static const char __pyx_k_gc[] = "gc";
 static const char __pyx_k_io[] = "io";
 static const char __pyx_k_os[] = "os";
@@ -2556,7 +2536,6 @@ static const char __pyx_k_big[] = "big";
 static const char __pyx_k_bin[] = "bin";
 static const char __pyx_k_end[] = "end";
 static const char __pyx_k_get[] = "get";
-static const char __pyx_k_key[] = "key";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_pop[] = "pop";
 static const char __pyx_k_A_t1[] = "\200A\340\010\017\210t\2201";
@@ -2568,7 +2547,6 @@ static const char __pyx_k_file[] = "__file__";
 static const char __pyx_k_find[] = "find";
 static const char __pyx_k_func[] = "__func__";
 static const char __pyx_k_join[] = "join";
-static const char __pyx_k_line[] = "line";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mmap[] = "mmap";
 static const char __pyx_k_name[] = "__name__";
@@ -2578,18 +2556,13 @@ static const char __pyx_k_self[] = "self";
 static const char __pyx_k_spec[] = "__spec__";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_trie[] = "trie";
-static const char __pyx_k_confs[] = "confs";
 static const char __pyx_k_enter[] = "__enter__";
 static const char __pyx_k_index[] = "index";
 static const char __pyx_k_isabs[] = "isabs";
-static const char __pyx_k_parts[] = "parts";
-static const char __pyx_k_print[] = "print";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_rjust[] = "rjust";
 static const char __pyx_k_start[] = "start";
 static const char __pyx_k_state[] = "state";
-static const char __pyx_k_strip[] = "strip";
-static const char __pyx_k_value[] = "value";
 static const char __pyx_k_A_1_t1[] = "\200A\340\010\014\320\014#\2401\330\010\017\210t\2201";
 static const char __pyx_k_access[] = "access";
 static const char __pyx_k_dict_2[] = "_dict";
@@ -2629,7 +2602,6 @@ static const char __pyx_k_pyx_state[] = "__pyx_state";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_A_F_6_z_aq[] = "\200A\340\010 \240\004\240F\250!\2506\260\021\330\010\017\210z\230\025\230a\230q";
 static const char __pyx_k_ValueError[] = "ValueError";
-static const char __pyx_k_askur_conf[] = "askur.conf";
 static const char __pyx_k_collection[] = "collection";
 static const char __pyx_k_eow_sb_bin[] = "eow_sb.bin";
 static const char __pyx_k_f_alphabet[] = "f_alphabet";
@@ -2643,7 +2615,6 @@ static const char __pyx_k_ACCESS_READ[] = "ACCESS_READ";
 static const char __pyx_k_DATA_FOLDER[] = "DATA_FOLDER";
 static const char __pyx_k_Data_folder[] = "\n Data folder: ";
 static const char __pyx_k_PickleError[] = "PickleError";
-static const char __pyx_k_config_file[] = "config_file";
 static const char __pyx_k_data_parent[] = "data_parent";
 static const char __pyx_k_hc_bits_bin[] = "hc_bits.bin";
 static const char __pyx_k_index_value[] = "index_value";
@@ -2662,7 +2633,6 @@ static const char __pyx_k_stringsource[] = "<stringsource>";
 static const char __pyx_k_use_setstate[] = "use_setstate";
 static const char __pyx_k_ALPHABET_FILE[] = "ALPHABET_FILE";
 static const char __pyx_k_EOW_BITS_FILE[] = "EOW_BITS_FILE";
-static const char __pyx_k_Error_in_line[] = "Error: in line ";
 static const char __pyx_k_OverflowError[] = "OverflowError";
 static const char __pyx_k_f_hc_bitarray[] = "f_hc_bitarray";
 static const char __pyx_k_f_select_bits[] = "f_select_bits";
@@ -2722,12 +2692,10 @@ static const char __pyx_k_A_A_1_4Ct1_q_a_a_Q_Ba_t_4ERs_CO[] = "\200A\340\010\"\2
 static const char __pyx_k_A_Q_Q_d_avV2Q_b_Qa_3aq_Cq_1_war[] = "\200A\340\010\035\230Q\330\010 \240\001\330\010\025\220Q\360\014\000\t\017\210d\220,\230a\230v\240V\2502\250Q\340\010\016\210b\220\002\220#\220Q\220a\330\014\033\2303\230a\230q\340\014\017\210}\230C\230q\330\020\023\2201\330\024\037\230w\240a\240r\250\025\250a\250q\330\024\037\230q\330\020\025\220Q\330\020\021\340\014\017\210}\230C\230q\330\020\023\2202\220R\220r\230\022\2303\230a\230q\340\024$\240C\240q\250\002\250\"\250B\250b\260\002\260!\330\024\033\2301\230C\230q\240\002\240!\2403\240f\250A\250S\260\005\260T\270\025\270a\330\024\025\330\030&\240c\250\021\250\"\250E\260\021\260'\270\021\330\030#\2403\240a\240q\330\030 \240\007\240q\250\001\330\034(\250\001\330\030 \240\007\240q\250\001\330\024\031\230\021\340\024\031\230\021\330\020\021\340\014\024\220G\2301\230C\230q\240\001\330\014\021\220\021\340\010\013\2101\330\014\027\220w\230a\230r\240\025\240a\240q\340\010\023\2205\230\001\330\010\017\210q";
 static const char __pyx_k_A_fCq_fBa_c_AT_1_D_1_1IQc_q_1_s[] = "\200A\340\010\036\230f\240C\240q\330\010\036\230f\240B\240a\340\010\013\210;\220c\230\023\230A\230T\240\021\330\014\023\2201\340\010\034\230D\240\n\250!\2501\330\010\030\230\003\2301\230I\240Q\240c\250\026\250q\260\003\2601\330\010\017\210s\220!\2204\220q\230\013\240;\250b\260\001";
 static const char __pyx_k_A_s_Ct_DBd_Bd_A_Bd_d_az_D_AZq_C[] = "\200A\360\n\000\t\014\210<\220s\230!\330\014\030\230\001\340\014\030\230\014\240C\240t\320+D\300B\300d\310!\340\010\022\220*\230B\230d\240!\330\010\024\220A\330\010\022\220*\230B\230d\240!\360\006\000\t\027\220d\230,\240a\240z\260\021\330\010\024\220D\230\014\240A\240Z\250q\340\010\024\220C\220{\240!\240=\260\n\270'\300\027\310\001\330\010\024\220C\220{\240!\240;\250j\270\007\270w\300a\340\010\017\210q\220\013\2301";
-static const char __pyx_k_No_found_Please_add_missing_and[] = ".\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.";
 static const char __pyx_k_collection_does_not_exist_Exist[] = " collection does not exist!\n Existing collections are: ";
 static const char __pyx_k_A_6c_Q_Cq_A_0_E_9Cs_4q_4_AQ_4q_Q[] = "\200A\340\010 \240\001\330\010$\320$6\260c\270\024\270Q\330\010\032\230!\330\010\031\230\021\360\n\000\t\014\320\013\034\230C\230q\330\014\024\220A\330\014\030\230\004\320\0340\260\003\260=\300\002\300!\330\014\020\220\014\230E\240\021\240!\330\020\023\2209\230C\230s\240!\2404\240q\330\024\025\330\020\033\2304\230}\250A\250Q\330\020\023\2204\220q\330\024\035\230Q\330\024\025\330\020\024\220E\230\025\230a\230t\2404\240q\330\024\027\220y\240\003\2402\240S\250\001\330\030\"\240!\330\030\033\2306\240\023\240A\330\034#\2401\330\024\035\230Q\360\006\000\r \230t\320#4\260B\3206G\300r\310\023\310B\310c\320Qb\320bd\320dg\320gi\320ik\320km\320mn\330\014\025\220S\230\013\2401\320$6\260j\300\007\300w\310a\360\006\000\t\027\320\026'\240r\250\024\320-A\300\023\300A\330\010\024\220L\240\002\240$\320&:\270#\270]\310\"\310A\330\010\020\320\020!\240\022\2404\240q\340\010\014\210E\220\025\220a\320\027(\250\013\2603\260a\260t\2701\330\014\027\220t\230=\250\001\250\021\330\014\017\210t\2201\330\020\031\230\021\330\020\021\340\014\020\220\005\220U\230!\2304\230t\2401\330\020\023\2209\230C\230r\240\023\240A\330\024\036\230a\330\024\027\220v\230S\240\001\330\030\037\230q\330\020\031\230\021\330\010\017\210q";
 static const char __pyx_k_A_F_S_Rq_1_d_882Q_D_vRq_s_Qm_WGS[] = "\200A\340\010\034\230F\240#\240S\250\002\250#\250R\250q\330\010\031\230\030\240\022\2401\360\006\000\t\027\220d\230(\240!\2408\2508\2602\260Q\330\010\024\220D\230\010\240\001\240\026\240v\250R\250q\340\010\037\230s\240+\250Q\250m\270:\300W\310G\320ST\330\010\035\230S\240\013\2501\250K\260z\300\027\310\007\310q\340\010\013\210:\220S\230\001\330\014\023\2201\340\010\036\230f\240B\240f\250B\250b\260\002\260!\360\n\000\t\026\220T\230\032\2401\240F\250&\260\002\260!\330\010\014\210E\220\025\220a\220s\230!\2301\330\014\027\220z\240\021\240!\330\014\017\210t\2209\230D\240\013\2502\250Q\330\020\036\230a\330\020\021\340\014\020\220\005\220U\230!\2304\230t\2401\330\020\023\220;\230b\240\001\330\024\"\240!\330\024\027\220y\240\003\2402\240S\250\001\330\030'\240q\340\024\033\230<\240r\250\021\340\010\017\210|\2302\230Q";
-static const char __pyx_k_A_b_AQ_s_A_E_ar_ha_Qm81_HA_t_auC[] = "\200A\330\010\032\230!\360\n\000\t\027\220b\230\010\240\004\240A\240Q\340\010\013\210<\220s\230!\330\014\024\220A\330\014\032\230\"\230E\240\025\240a\240r\250\025\250h\260a\260{\300!\330\021\025\220Q\220m\2408\2501\330\020\024\220H\230A\330\024\027\220t\230;\240a\240u\250C\250t\260;\270a\270q\330\030\031\330\024\027\220t\2307\240!\330\030\035\230Q\230b\320 3\2601\330\030 \240\001\330\024\034\230D\240\006\240a\240u\250A\330\024\031\230\021\230%\230q\240\002\240&\250\006\250e\2601\260B\260f\270A\340\014\032\230%\230t\2401\240A\330\014\017\210|\2303\230a\330\020\025\220Q\220a\330\020\030\230\001\360\006\000\t\014\2102\210U\220&\230\001\230\021\330\014\034\230B\230e\2405\250\001\250\035\260d\270!\340\014\034\230B\230e\2405\250\001\250\022\2505\260\010\270\001\270\033\300M\320QU\320UV\340\010\013\2104\210r\220\025\220g\230Q\230a\330\014\032\230/\250\022\2505\260\006\260a\3207I\310\022\3105\320PU\320UV\320VX\320X]\320]e\320ef\320fq\320qr\330\014\017\210r\220\025\220g\230Q\230a\330\020'\240r\250\030\260\021\260!\340\020'\240q\250\001\330\014\022\320\022#\2401\240B\240d\250$\320.s\360\000\000t\001Z\002\360\000\000Z\002[\002\360\006\000\t%\240B\240e\2505\260\001\260\037\300\001\330\010 \240\002\240%\240u\250A\250_\270A\330\010\035\230R\230u\240E\250\021\250/\270\021\330\010\034\230B\230e\2405\250\001\250\037\270\001\330\010\035\230R\230u\240E\250\021\250/\270\021\330\010!\240\022\2405\250\005\250Q\250o\270Q\330\010)\250\022\2505\260\005\260Q\260o\300Q\330\010#\2402\240U\250%\250q\260\017\270q\330\010(\250\002\250%\250u\260A\260_\300A\330\010!\240\022\2405\250\005\250Q\250o\270Q\360\006\000\016\020\210u\220A\220Z\230y\250\001\330\014\020\320\020\"\240$\240e\2501\250O\2707\300$\300c\310\027\320PT\320TU\330\014\020\320\020&\240d\250/\270\021\270!\330\014\020\320\020\"\240$\240o\260Q\260a\340\r\017\210u\220A\220[\240\t\250\021\330\014\020\220\t\230\024\230U\240!\2406\250\027\260\004\260C\260w\270d\300!\340\r\017\210u\220A\220^\2409\250A\330\014\020\320\020 \240\004\240E\250\021""\250-\260w\270d\300#\300W\310D\320PQ\340\r\017\210u\220A\220[\240\t\250\021\330\014\020\320\020$\240D\250\005\250Q\320.?\270w\300d\310#\310W\320TX\320XY\340\r\017\210u\220A\320\025'\240y\260\001\330\014\020\220\013\2304\230u\240A\240]\260'\270\024\270S\300\007\300t\3101\340\r\017\210u\220A\220_\240I\250Q\330\014\020\220\r\230T\240\025\240a\240|\2607\270$\270c\300\027\310\004\310A\340\r\017\210u\220A\320\025,\250I\260Q\330\014\020\220\013\2304\230u\240A\320%7\260w\270d\300#\300W\310D\320PQ\340\r\017\210u\220A\320\025&\240i\250q\330\014\020\220\017\230t\2405\250\001\250\034\260W\270D\300\003\3007\310$\310a\330\014\020\320\020+\2504\250|\2701\270A\330\014\020\320\020+\2504\250|\2701\270A\330\014\020\220\017\230t\240<\250q\260\001\340\r\017\210u\220A\320\025+\2509\260A\330\014\020\220\017\230t\2405\250\001\250\034\260W\270D\300\003\3007\310$\310a\340\r\017\210u\220A\220_\240I\250Q\330\014\020\220\014\230D\240\005\240Q\240j\260\007\260t\2703\270g\300T\310\021\360\006\000\t\014\2103\210a\210t\220;\230b\240\002\240$\240d\250)\2601\260C\260s\270!\330\014\020\220\014\230A";
-static const char __pyx_k_Error_No_DATA_FOLDER_found_in_co[] = "Error: No DATA_FOLDER found in config or environment.\n  Set ASKUR_DATA_FOLDER environment variable or update askur.conf. \n Exiting.";
+static const char __pyx_k_A_b_AQ_uA_a_4r_gQa_5_a7I_5PUUVVX[] = "\200A\360\010\000\t\027\220b\230\010\240\004\240A\240Q\330\010\030\230\002\230%\230u\240A\240]\260$\260a\340\010\013\2104\210r\220\025\220g\230Q\230a\330\014\032\230/\250\022\2505\260\006\260a\3207I\310\022\3105\320PU\320UV\320VX\320X]\320]e\320ef\320fq\320qr\330\014\017\210r\220\025\220g\230Q\230a\330\020'\240r\250\030\260\021\260!\340\020'\240q\250\001\330\014\022\320\022#\2401\240B\240d\250$\320.s\360\000\000t\001Z\002\360\000\000Z\002[\002\360\006\000\t%\240B\240e\2505\260\001\260\037\300\001\330\010 \240\002\240%\240u\250A\250_\270A\330\010\035\230R\230u\240E\250\021\250/\270\021\330\010\034\230B\230e\2405\250\001\250\037\270\001\330\010\035\230R\230u\240E\250\021\250/\270\021\330\010!\240\022\2405\250\005\250Q\250o\270Q\330\010)\250\022\2505\260\005\260Q\260o\300Q\330\010#\2402\240U\250%\250q\260\017\270q\330\010(\250\002\250%\250u\260A\260_\300A\330\010!\240\022\2405\250\005\250Q\250o\270Q\360\006\000\016\020\210u\220A\220Z\230y\250\001\330\014\020\320\020\"\240$\240e\2501\250O\2707\300$\300c\310\027\320PT\320TU\330\014\020\320\020&\240d\250/\270\021\270!\330\014\020\320\020\"\240$\240o\260Q\260a\340\r\017\210u\220A\220[\240\t\250\021\330\014\020\220\t\230\024\230U\240!\2406\250\027\260\004\260C\260w\270d\300!\340\r\017\210u\220A\220^\2409\250A\330\014\020\320\020 \240\004\240E\250\021\250-\260w\270d\300#\300W\310D\320PQ\340\r\017\210u\220A\220[\240\t\250\021\330\014\020\320\020$\240D\250\005\250Q\320.?\270w\300d\310#\310W\320TX\320XY\340\r\017\210u\220A\320\025'\240y\260\001\330\014\020\220\013\2304\230u\240A\240]\260'\270\024\270S\300\007\300t\3101\340\r\017\210u\220A\220_\240I\250Q\330\014\020\220\r\230T\240\025\240a\240|\2607\270$\270c\300\027\310\004\310A\340\r\017\210u\220A\320\025,\250I\260Q\330\014\020\220\013\2304\230u\240A\320%7\260w\270d\300#\300W\310D\320PQ\340\r\017\210u\220A\320\025&\240i\250q\330\014\020\220\017\230t\2405\250\001\250\034\260W\270D\300\003\3007\310$\310a\330\014\020\320\020+\2504\250|\2701\270A\330\014\020\320\020+\2504\250|""\2701\270A\330\014\020\220\017\230t\240<\250q\260\001\340\r\017\210u\220A\320\025+\2509\260A\330\014\020\220\017\230t\2405\250\001\250\034\260W\270D\300\003\3007\310$\310a\340\r\017\210u\220A\220_\240I\250Q\330\014\020\220\014\230D\240\005\240Q\240j\260\007\260t\2703\270g\300T\310\021\360\006\000\t\014\2103\210a\210t\220;\230b\240\002\240$\240d\250)\2601\260C\260s\270!\330\014\020\220\014\230A";
 static const char __pyx_k_Incompatible_checksums_0x_x_vs_0[] = "Incompatible checksums (0x%x vs (0x860e898, 0x66b6c4e, 0x7b8dacf) = (_eow_bits, _eow_sb, _hc_bitarray, _hc_lookup_blocks, _hc_super_blocks, _index_bits, _s_bits, _s_lookup_blocks, _s_superblocks, _short_text, _trie, alphabet, bits_in_superblock, check_if_key_exists, collection, nr_bytes_in_index_block, nr_bytes_in_value_block, reversed, short_text_len))";
 static const char __pyx_k_Note_that_Cython_is_deliberately[] = "Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.";
 /* #### Code section: decls ### */
@@ -2840,13 +2808,12 @@ typedef struct {
   #endif
   PyObject *__pyx_type_5askur_11filemapping_Mapping;
   PyTypeObject *__pyx_ptype_5askur_11filemapping_Mapping;
-  __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_get;
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop;
   __Pyx_CachedCFunction __pyx_umethod_PyBytes_Type__find;
   PyObject *__pyx_slice[2];
   PyObject *__pyx_tuple[4];
   PyObject *__pyx_codeobj_tab[16];
-  PyObject *__pyx_string_tab[177];
+  PyObject *__pyx_string_tab[160];
   PyObject *__pyx_int_0;
   PyObject *__pyx_int_1;
   PyObject *__pyx_int_2;
@@ -2855,7 +2822,6 @@ typedef struct {
   PyObject *__pyx_int_107703374;
   PyObject *__pyx_int_129555151;
   PyObject *__pyx_int_140568728;
-  PyObject *__pyx_int_neg_1;
 /* #### Code section: module_state_contents ### */
 /* CommonTypesMetaclass.module_state_decls */
 PyTypeObject *__pyx_CommonTypesMetaclassType;
@@ -2903,173 +2869,156 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_kp_u_Data_folder __pyx_string_tab[7]
 #define __pyx_n_u_EOW_BITS_FILE __pyx_string_tab[8]
 #define __pyx_n_u_EOW_BITS_SUMMARY_FILE __pyx_string_tab[9]
-#define __pyx_kp_u_Error_No_DATA_FOLDER_found_in_co __pyx_string_tab[10]
-#define __pyx_kp_u_Error_in_line __pyx_string_tab[11]
-#define __pyx_n_u_FileNotFoundError __pyx_string_tab[12]
-#define __pyx_n_u_HC_BITS_FILE __pyx_string_tab[13]
-#define __pyx_n_u_HC_SB_BIN __pyx_string_tab[14]
-#define __pyx_n_u_INDEX_BITS_FILE __pyx_string_tab[15]
-#define __pyx_kp_u_Incompatible_checksums_0x_x_vs_0 __pyx_string_tab[16]
-#define __pyx_n_u_Mapping __pyx_string_tab[17]
-#define __pyx_n_u_Mapping___reduce_cython __pyx_string_tab[18]
-#define __pyx_n_u_Mapping___setstate_cython __pyx_string_tab[19]
-#define __pyx_n_u_Mapping__load_files __pyx_string_tab[20]
-#define __pyx_n_u_Mapping_calculate_hc __pyx_string_tab[21]
-#define __pyx_n_u_Mapping_calculate_select __pyx_string_tab[22]
-#define __pyx_n_u_Mapping_get_index __pyx_string_tab[23]
-#define __pyx_n_u_Mapping_get_result __pyx_string_tab[24]
-#define __pyx_n_u_Mapping_get_short_text __pyx_string_tab[25]
-#define __pyx_n_u_Mapping_get_trie_index_of __pyx_string_tab[26]
-#define __pyx_n_u_Mapping_get_trie_range __pyx_string_tab[27]
-#define __pyx_n_u_Mapping_get_value_bits_sum __pyx_string_tab[28]
-#define __pyx_n_u_Mapping_has_child __pyx_string_tab[29]
-#define __pyx_n_u_Mapping_is_end_of_word __pyx_string_tab[30]
-#define __pyx_n_u_Mapping_is_reversed __pyx_string_tab[31]
-#define __pyx_n_u_Mapping_set_check_key_exists __pyx_string_tab[32]
-#define __pyx_kp_u_No_data_directory_found __pyx_string_tab[33]
-#define __pyx_kp_u_No_found_Please_add_missing_and __pyx_string_tab[34]
-#define __pyx_kp_u_None __pyx_string_tab[35]
-#define __pyx_kp_u_Note_that_Cython_is_deliberately __pyx_string_tab[36]
-#define __pyx_n_u_OverflowError __pyx_string_tab[37]
-#define __pyx_n_u_PickleError __pyx_string_tab[38]
-#define __pyx_n_u_SELECT_BITS_FILE __pyx_string_tab[39]
-#define __pyx_n_u_SHORT_TEXT_BITS_FILE __pyx_string_tab[40]
-#define __pyx_n_u_S_SB_BIN __pyx_string_tab[41]
-#define __pyx_n_u_TRIE_FILE __pyx_string_tab[42]
-#define __pyx_n_u_ValueError __pyx_string_tab[43]
-#define __pyx_kp_u__2 __pyx_string_tab[44]
-#define __pyx_kp_u__3 __pyx_string_tab[45]
-#define __pyx_kp_u__4 __pyx_string_tab[46]
-#define __pyx_kp_u__5 __pyx_string_tab[47]
-#define __pyx_kp_u__6 __pyx_string_tab[48]
-#define __pyx_n_u_access __pyx_string_tab[49]
-#define __pyx_kp_u_add_note __pyx_string_tab[50]
-#define __pyx_kp_u_askur_conf __pyx_string_tab[51]
-#define __pyx_n_u_askur_filemapping __pyx_string_tab[52]
-#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[53]
-#define __pyx_n_u_big __pyx_string_tab[54]
-#define __pyx_n_u_bin __pyx_string_tab[55]
-#define __pyx_n_u_byteorder __pyx_string_tab[56]
-#define __pyx_n_u_calculate_hc __pyx_string_tab[57]
-#define __pyx_n_u_calculate_select __pyx_string_tab[58]
-#define __pyx_n_u_check_key_exists __pyx_string_tab[59]
-#define __pyx_n_u_cline_in_traceback __pyx_string_tab[60]
-#define __pyx_n_u_collection __pyx_string_tab[61]
-#define __pyx_kp_u_collection_does_not_exist_Exist __pyx_string_tab[62]
-#define __pyx_n_u_config_file __pyx_string_tab[63]
-#define __pyx_n_u_confs __pyx_string_tab[64]
-#define __pyx_n_u_data_parent __pyx_string_tab[65]
-#define __pyx_n_u_dict __pyx_string_tab[66]
-#define __pyx_n_u_dict_2 __pyx_string_tab[67]
-#define __pyx_n_u_dirname __pyx_string_tab[68]
-#define __pyx_kp_u_disable __pyx_string_tab[69]
-#define __pyx_kp_u_enable __pyx_string_tab[70]
-#define __pyx_n_u_end __pyx_string_tab[71]
-#define __pyx_n_u_end_request_index __pyx_string_tab[72]
-#define __pyx_n_u_enter __pyx_string_tab[73]
-#define __pyx_n_u_environ __pyx_string_tab[74]
-#define __pyx_kp_u_eow_bits_bin __pyx_string_tab[75]
-#define __pyx_kp_u_eow_sb_bin __pyx_string_tab[76]
-#define __pyx_n_u_existing_collections __pyx_string_tab[77]
-#define __pyx_n_u_exists __pyx_string_tab[78]
-#define __pyx_n_u_exit __pyx_string_tab[79]
-#define __pyx_n_u_f __pyx_string_tab[80]
-#define __pyx_n_u_f_alphabet __pyx_string_tab[81]
-#define __pyx_n_u_f_eow_bits_summary __pyx_string_tab[82]
-#define __pyx_n_u_f_hc_bitarray __pyx_string_tab[83]
-#define __pyx_n_u_f_hc_super_blocks __pyx_string_tab[84]
-#define __pyx_n_u_f_index_bits __pyx_string_tab[85]
-#define __pyx_n_u_f_s_superblocks __pyx_string_tab[86]
-#define __pyx_n_u_f_select_bits __pyx_string_tab[87]
-#define __pyx_n_u_f_short_text __pyx_string_tab[88]
-#define __pyx_n_u_f_trie __pyx_string_tab[89]
-#define __pyx_n_u_f_value_bits __pyx_string_tab[90]
-#define __pyx_n_u_file __pyx_string_tab[91]
-#define __pyx_n_u_fileno __pyx_string_tab[92]
-#define __pyx_n_u_find __pyx_string_tab[93]
-#define __pyx_n_u_from_bytes __pyx_string_tab[94]
-#define __pyx_n_u_frozen_folder __pyx_string_tab[95]
-#define __pyx_n_u_func __pyx_string_tab[96]
-#define __pyx_kp_u_gc __pyx_string_tab[97]
-#define __pyx_n_u_get __pyx_string_tab[98]
-#define __pyx_n_u_get_index __pyx_string_tab[99]
-#define __pyx_n_u_get_result __pyx_string_tab[100]
-#define __pyx_n_u_get_short_text __pyx_string_tab[101]
-#define __pyx_n_u_get_trie_index_of __pyx_string_tab[102]
-#define __pyx_n_u_get_trie_range __pyx_string_tab[103]
-#define __pyx_n_u_get_value_bits_sum __pyx_string_tab[104]
-#define __pyx_n_u_getstate __pyx_string_tab[105]
-#define __pyx_n_u_has_child __pyx_string_tab[106]
-#define __pyx_kp_u_hc_bits_bin __pyx_string_tab[107]
-#define __pyx_kp_u_hc_sb_bin __pyx_string_tab[108]
-#define __pyx_n_u_index __pyx_string_tab[109]
-#define __pyx_kp_u_index_bits_bin __pyx_string_tab[110]
-#define __pyx_n_u_index_value __pyx_string_tab[111]
-#define __pyx_n_u_initializing __pyx_string_tab[112]
-#define __pyx_n_u_io __pyx_string_tab[113]
-#define __pyx_n_u_is_coroutine __pyx_string_tab[114]
-#define __pyx_n_u_is_end_of_word __pyx_string_tab[115]
-#define __pyx_n_u_is_reversed __pyx_string_tab[116]
-#define __pyx_n_u_isabs __pyx_string_tab[117]
-#define __pyx_kp_u_isenabled __pyx_string_tab[118]
-#define __pyx_n_u_join __pyx_string_tab[119]
-#define __pyx_n_u_key __pyx_string_tab[120]
-#define __pyx_n_u_letter __pyx_string_tab[121]
-#define __pyx_n_u_line __pyx_string_tab[122]
-#define __pyx_n_u_listdir __pyx_string_tab[123]
-#define __pyx_n_u_load_files __pyx_string_tab[124]
-#define __pyx_n_u_main __pyx_string_tab[125]
-#define __pyx_n_u_mmap __pyx_string_tab[126]
-#define __pyx_n_u_module __pyx_string_tab[127]
-#define __pyx_n_u_name __pyx_string_tab[128]
-#define __pyx_n_u_new __pyx_string_tab[129]
-#define __pyx_n_u_open __pyx_string_tab[130]
-#define __pyx_n_u_os __pyx_string_tab[131]
-#define __pyx_n_u_parts __pyx_string_tab[132]
-#define __pyx_n_u_path __pyx_string_tab[133]
-#define __pyx_n_u_pickle __pyx_string_tab[134]
-#define __pyx_n_u_pop __pyx_string_tab[135]
-#define __pyx_n_u_print __pyx_string_tab[136]
-#define __pyx_n_u_pyx_PickleError __pyx_string_tab[137]
-#define __pyx_n_u_pyx_checksum __pyx_string_tab[138]
-#define __pyx_n_u_pyx_result __pyx_string_tab[139]
-#define __pyx_n_u_pyx_state __pyx_string_tab[140]
-#define __pyx_n_u_pyx_type __pyx_string_tab[141]
-#define __pyx_n_u_pyx_unpickle_Mapping __pyx_string_tab[142]
-#define __pyx_n_u_pyx_vtable __pyx_string_tab[143]
-#define __pyx_n_u_qualname __pyx_string_tab[144]
-#define __pyx_n_u_r __pyx_string_tab[145]
-#define __pyx_n_u_range __pyx_string_tab[146]
-#define __pyx_n_u_rb __pyx_string_tab[147]
-#define __pyx_n_u_reduce __pyx_string_tab[148]
-#define __pyx_n_u_reduce_cython __pyx_string_tab[149]
-#define __pyx_n_u_reduce_ex __pyx_string_tab[150]
-#define __pyx_n_u_reversed __pyx_string_tab[151]
-#define __pyx_n_u_rjust __pyx_string_tab[152]
-#define __pyx_kp_u_s_bits_bin __pyx_string_tab[153]
-#define __pyx_kp_u_s_sb_bin __pyx_string_tab[154]
-#define __pyx_n_u_self __pyx_string_tab[155]
-#define __pyx_n_u_set_check_key_exists __pyx_string_tab[156]
-#define __pyx_n_u_set_name __pyx_string_tab[157]
-#define __pyx_n_u_setstate __pyx_string_tab[158]
-#define __pyx_n_u_setstate_cython __pyx_string_tab[159]
-#define __pyx_kp_u_short_text_bits_bin __pyx_string_tab[160]
-#define __pyx_n_u_signed __pyx_string_tab[161]
-#define __pyx_n_u_spec __pyx_string_tab[162]
-#define __pyx_kp_u_src_askur_filemapping_pyx __pyx_string_tab[163]
-#define __pyx_n_u_start __pyx_string_tab[164]
-#define __pyx_n_u_state __pyx_string_tab[165]
-#define __pyx_kp_u_stringsource __pyx_string_tab[166]
-#define __pyx_n_u_strip __pyx_string_tab[167]
-#define __pyx_n_u_sum_ones_wanted __pyx_string_tab[168]
-#define __pyx_n_u_test __pyx_string_tab[169]
-#define __pyx_n_u_text_len __pyx_string_tab[170]
-#define __pyx_n_u_trie __pyx_string_tab[171]
-#define __pyx_kp_u_trie_alphabet __pyx_string_tab[172]
-#define __pyx_n_u_update __pyx_string_tab[173]
-#define __pyx_n_u_use_setstate __pyx_string_tab[174]
-#define __pyx_n_u_value __pyx_string_tab[175]
-#define __pyx_n_u_value_index __pyx_string_tab[176]
+#define __pyx_n_u_FileNotFoundError __pyx_string_tab[10]
+#define __pyx_n_u_HC_BITS_FILE __pyx_string_tab[11]
+#define __pyx_n_u_HC_SB_BIN __pyx_string_tab[12]
+#define __pyx_n_u_INDEX_BITS_FILE __pyx_string_tab[13]
+#define __pyx_kp_u_Incompatible_checksums_0x_x_vs_0 __pyx_string_tab[14]
+#define __pyx_n_u_Mapping __pyx_string_tab[15]
+#define __pyx_n_u_Mapping___reduce_cython __pyx_string_tab[16]
+#define __pyx_n_u_Mapping___setstate_cython __pyx_string_tab[17]
+#define __pyx_n_u_Mapping__load_files __pyx_string_tab[18]
+#define __pyx_n_u_Mapping_calculate_hc __pyx_string_tab[19]
+#define __pyx_n_u_Mapping_calculate_select __pyx_string_tab[20]
+#define __pyx_n_u_Mapping_get_index __pyx_string_tab[21]
+#define __pyx_n_u_Mapping_get_result __pyx_string_tab[22]
+#define __pyx_n_u_Mapping_get_short_text __pyx_string_tab[23]
+#define __pyx_n_u_Mapping_get_trie_index_of __pyx_string_tab[24]
+#define __pyx_n_u_Mapping_get_trie_range __pyx_string_tab[25]
+#define __pyx_n_u_Mapping_get_value_bits_sum __pyx_string_tab[26]
+#define __pyx_n_u_Mapping_has_child __pyx_string_tab[27]
+#define __pyx_n_u_Mapping_is_end_of_word __pyx_string_tab[28]
+#define __pyx_n_u_Mapping_is_reversed __pyx_string_tab[29]
+#define __pyx_n_u_Mapping_set_check_key_exists __pyx_string_tab[30]
+#define __pyx_kp_u_No_data_directory_found __pyx_string_tab[31]
+#define __pyx_kp_u_None __pyx_string_tab[32]
+#define __pyx_kp_u_Note_that_Cython_is_deliberately __pyx_string_tab[33]
+#define __pyx_n_u_OverflowError __pyx_string_tab[34]
+#define __pyx_n_u_PickleError __pyx_string_tab[35]
+#define __pyx_n_u_SELECT_BITS_FILE __pyx_string_tab[36]
+#define __pyx_n_u_SHORT_TEXT_BITS_FILE __pyx_string_tab[37]
+#define __pyx_n_u_S_SB_BIN __pyx_string_tab[38]
+#define __pyx_n_u_TRIE_FILE __pyx_string_tab[39]
+#define __pyx_n_u_ValueError __pyx_string_tab[40]
+#define __pyx_kp_u__2 __pyx_string_tab[41]
+#define __pyx_kp_u__3 __pyx_string_tab[42]
+#define __pyx_n_u_access __pyx_string_tab[43]
+#define __pyx_kp_u_add_note __pyx_string_tab[44]
+#define __pyx_n_u_askur_filemapping __pyx_string_tab[45]
+#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[46]
+#define __pyx_n_u_big __pyx_string_tab[47]
+#define __pyx_n_u_bin __pyx_string_tab[48]
+#define __pyx_n_u_byteorder __pyx_string_tab[49]
+#define __pyx_n_u_calculate_hc __pyx_string_tab[50]
+#define __pyx_n_u_calculate_select __pyx_string_tab[51]
+#define __pyx_n_u_check_key_exists __pyx_string_tab[52]
+#define __pyx_n_u_cline_in_traceback __pyx_string_tab[53]
+#define __pyx_n_u_collection __pyx_string_tab[54]
+#define __pyx_kp_u_collection_does_not_exist_Exist __pyx_string_tab[55]
+#define __pyx_n_u_data_parent __pyx_string_tab[56]
+#define __pyx_n_u_dict __pyx_string_tab[57]
+#define __pyx_n_u_dict_2 __pyx_string_tab[58]
+#define __pyx_n_u_dirname __pyx_string_tab[59]
+#define __pyx_kp_u_disable __pyx_string_tab[60]
+#define __pyx_kp_u_enable __pyx_string_tab[61]
+#define __pyx_n_u_end __pyx_string_tab[62]
+#define __pyx_n_u_end_request_index __pyx_string_tab[63]
+#define __pyx_n_u_enter __pyx_string_tab[64]
+#define __pyx_n_u_environ __pyx_string_tab[65]
+#define __pyx_kp_u_eow_bits_bin __pyx_string_tab[66]
+#define __pyx_kp_u_eow_sb_bin __pyx_string_tab[67]
+#define __pyx_n_u_existing_collections __pyx_string_tab[68]
+#define __pyx_n_u_exists __pyx_string_tab[69]
+#define __pyx_n_u_exit __pyx_string_tab[70]
+#define __pyx_n_u_f_alphabet __pyx_string_tab[71]
+#define __pyx_n_u_f_eow_bits_summary __pyx_string_tab[72]
+#define __pyx_n_u_f_hc_bitarray __pyx_string_tab[73]
+#define __pyx_n_u_f_hc_super_blocks __pyx_string_tab[74]
+#define __pyx_n_u_f_index_bits __pyx_string_tab[75]
+#define __pyx_n_u_f_s_superblocks __pyx_string_tab[76]
+#define __pyx_n_u_f_select_bits __pyx_string_tab[77]
+#define __pyx_n_u_f_short_text __pyx_string_tab[78]
+#define __pyx_n_u_f_trie __pyx_string_tab[79]
+#define __pyx_n_u_f_value_bits __pyx_string_tab[80]
+#define __pyx_n_u_file __pyx_string_tab[81]
+#define __pyx_n_u_fileno __pyx_string_tab[82]
+#define __pyx_n_u_find __pyx_string_tab[83]
+#define __pyx_n_u_from_bytes __pyx_string_tab[84]
+#define __pyx_n_u_frozen_folder __pyx_string_tab[85]
+#define __pyx_n_u_func __pyx_string_tab[86]
+#define __pyx_kp_u_gc __pyx_string_tab[87]
+#define __pyx_n_u_get __pyx_string_tab[88]
+#define __pyx_n_u_get_index __pyx_string_tab[89]
+#define __pyx_n_u_get_result __pyx_string_tab[90]
+#define __pyx_n_u_get_short_text __pyx_string_tab[91]
+#define __pyx_n_u_get_trie_index_of __pyx_string_tab[92]
+#define __pyx_n_u_get_trie_range __pyx_string_tab[93]
+#define __pyx_n_u_get_value_bits_sum __pyx_string_tab[94]
+#define __pyx_n_u_getstate __pyx_string_tab[95]
+#define __pyx_n_u_has_child __pyx_string_tab[96]
+#define __pyx_kp_u_hc_bits_bin __pyx_string_tab[97]
+#define __pyx_kp_u_hc_sb_bin __pyx_string_tab[98]
+#define __pyx_n_u_index __pyx_string_tab[99]
+#define __pyx_kp_u_index_bits_bin __pyx_string_tab[100]
+#define __pyx_n_u_index_value __pyx_string_tab[101]
+#define __pyx_n_u_initializing __pyx_string_tab[102]
+#define __pyx_n_u_io __pyx_string_tab[103]
+#define __pyx_n_u_is_coroutine __pyx_string_tab[104]
+#define __pyx_n_u_is_end_of_word __pyx_string_tab[105]
+#define __pyx_n_u_is_reversed __pyx_string_tab[106]
+#define __pyx_n_u_isabs __pyx_string_tab[107]
+#define __pyx_kp_u_isenabled __pyx_string_tab[108]
+#define __pyx_n_u_join __pyx_string_tab[109]
+#define __pyx_n_u_letter __pyx_string_tab[110]
+#define __pyx_n_u_listdir __pyx_string_tab[111]
+#define __pyx_n_u_load_files __pyx_string_tab[112]
+#define __pyx_n_u_main __pyx_string_tab[113]
+#define __pyx_n_u_mmap __pyx_string_tab[114]
+#define __pyx_n_u_module __pyx_string_tab[115]
+#define __pyx_n_u_name __pyx_string_tab[116]
+#define __pyx_n_u_new __pyx_string_tab[117]
+#define __pyx_n_u_open __pyx_string_tab[118]
+#define __pyx_n_u_os __pyx_string_tab[119]
+#define __pyx_n_u_path __pyx_string_tab[120]
+#define __pyx_n_u_pickle __pyx_string_tab[121]
+#define __pyx_n_u_pop __pyx_string_tab[122]
+#define __pyx_n_u_pyx_PickleError __pyx_string_tab[123]
+#define __pyx_n_u_pyx_checksum __pyx_string_tab[124]
+#define __pyx_n_u_pyx_result __pyx_string_tab[125]
+#define __pyx_n_u_pyx_state __pyx_string_tab[126]
+#define __pyx_n_u_pyx_type __pyx_string_tab[127]
+#define __pyx_n_u_pyx_unpickle_Mapping __pyx_string_tab[128]
+#define __pyx_n_u_pyx_vtable __pyx_string_tab[129]
+#define __pyx_n_u_qualname __pyx_string_tab[130]
+#define __pyx_n_u_range __pyx_string_tab[131]
+#define __pyx_n_u_rb __pyx_string_tab[132]
+#define __pyx_n_u_reduce __pyx_string_tab[133]
+#define __pyx_n_u_reduce_cython __pyx_string_tab[134]
+#define __pyx_n_u_reduce_ex __pyx_string_tab[135]
+#define __pyx_n_u_reversed __pyx_string_tab[136]
+#define __pyx_n_u_rjust __pyx_string_tab[137]
+#define __pyx_kp_u_s_bits_bin __pyx_string_tab[138]
+#define __pyx_kp_u_s_sb_bin __pyx_string_tab[139]
+#define __pyx_n_u_self __pyx_string_tab[140]
+#define __pyx_n_u_set_check_key_exists __pyx_string_tab[141]
+#define __pyx_n_u_set_name __pyx_string_tab[142]
+#define __pyx_n_u_setstate __pyx_string_tab[143]
+#define __pyx_n_u_setstate_cython __pyx_string_tab[144]
+#define __pyx_kp_u_short_text_bits_bin __pyx_string_tab[145]
+#define __pyx_n_u_signed __pyx_string_tab[146]
+#define __pyx_n_u_spec __pyx_string_tab[147]
+#define __pyx_kp_u_src_askur_filemapping_pyx __pyx_string_tab[148]
+#define __pyx_n_u_start __pyx_string_tab[149]
+#define __pyx_n_u_state __pyx_string_tab[150]
+#define __pyx_kp_u_stringsource __pyx_string_tab[151]
+#define __pyx_n_u_sum_ones_wanted __pyx_string_tab[152]
+#define __pyx_n_u_test __pyx_string_tab[153]
+#define __pyx_n_u_text_len __pyx_string_tab[154]
+#define __pyx_n_u_trie __pyx_string_tab[155]
+#define __pyx_kp_u_trie_alphabet __pyx_string_tab[156]
+#define __pyx_n_u_update __pyx_string_tab[157]
+#define __pyx_n_u_use_setstate __pyx_string_tab[158]
+#define __pyx_n_u_value_index __pyx_string_tab[159]
 /* #### Code section: module_state_clear ### */
 #if CYTHON_USE_MODULE_STATE
 static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
@@ -3095,7 +3044,7 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   for (int i=0; i<2; ++i) { Py_CLEAR(clear_module_state->__pyx_slice[i]); }
   for (int i=0; i<4; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
   for (int i=0; i<16; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<177; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<160; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
   Py_CLEAR(clear_module_state->__pyx_int_0);
   Py_CLEAR(clear_module_state->__pyx_int_1);
   Py_CLEAR(clear_module_state->__pyx_int_2);
@@ -3104,7 +3053,6 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_int_107703374);
   Py_CLEAR(clear_module_state->__pyx_int_129555151);
   Py_CLEAR(clear_module_state->__pyx_int_140568728);
-  Py_CLEAR(clear_module_state->__pyx_int_neg_1);
   return 0;
 }
 #endif
@@ -3130,7 +3078,7 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   for (int i=0; i<2; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_slice[i]); }
   for (int i=0; i<4; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
   for (int i=0; i<16; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<177; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<160; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_0);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_1);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_2);
@@ -3139,7 +3087,6 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_107703374);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_129555151);
   __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_140568728);
-  __Pyx_VISIT_CONST(traverse_module_state->__pyx_int_neg_1);
   return 0;
 }
 #endif
@@ -3380,8 +3327,8 @@ static int __pyx_pf_5askur_11filemapping_7Mapping___init__(struct __pyx_obj_5ask
  *         self._load_files()
  * 
  *     def _load_files(self):             # <<<<<<<<<<<<<<
- *         cdef dict confs = {}
- *         cdef str line, key, value
+ *         cdef str DATA_FOLDER, frozen_folder
+ * 
 */
 
 /* Python wrapper */
@@ -3428,13 +3375,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 }
 
 static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __pyx_obj_5askur_11filemapping_Mapping *__pyx_v_self) {
-  PyObject *__pyx_v_confs = 0;
-  PyObject *__pyx_v_line = 0;
   PyObject *__pyx_v_DATA_FOLDER = 0;
   PyObject *__pyx_v_frozen_folder = 0;
-  PyObject *__pyx_v_config_file = NULL;
-  PyObject *__pyx_v_f = NULL;
-  PyObject *__pyx_v_parts = NULL;
   PyObject *__pyx_v_data_parent = NULL;
   PyObject *__pyx_v_existing_collections = NULL;
   PyObject *__pyx_v_SELECT_BITS_FILE = 0;
@@ -3465,48 +3407,34 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
   PyObject *__pyx_t_4 = NULL;
   size_t __pyx_t_5;
   int __pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
+  int __pyx_t_7;
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
   PyObject *__pyx_t_10 = NULL;
   PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_12[5];
   PyObject *__pyx_t_13 = NULL;
-  Py_ssize_t __pyx_t_14;
-  PyObject *(*__pyx_t_15)(PyObject *);
-  int __pyx_t_16;
-  PyObject *__pyx_t_17[3];
+  PyObject *__pyx_t_14 = NULL;
+  PyObject *__pyx_t_15 = NULL;
+  PyObject *__pyx_t_16 = NULL;
+  int __pyx_t_17;
   PyObject *__pyx_t_18 = NULL;
-  PyObject *__pyx_t_19 = NULL;
-  PyObject *__pyx_t_20[5];
-  int __pyx_t_21;
+  Py_ssize_t __pyx_t_19;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_load_files", 0);
 
-  /* "askur/filemapping.pyx":46
- * 
- *     def _load_files(self):
- *         cdef dict confs = {}             # <<<<<<<<<<<<<<
- *         cdef str line, key, value
- *         cdef str DATA_FOLDER, frozen_folder
-*/
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_confs = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "askur/filemapping.pyx":51
+  /* "askur/filemapping.pyx":49
  * 
  *         # Check for environment variable first, then fall back to config file
  *         DATA_FOLDER = os.environ.get('ASKUR_DATA_FOLDER')             # <<<<<<<<<<<<<<
+ *         frozen_folder = os.path.join(DATA_FOLDER, self.collection)
  * 
- *         if DATA_FOLDER is None:
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_environ); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_environ); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_2 = __pyx_t_4;
@@ -3517,109 +3445,182 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
     __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_get, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 49, __pyx_L1_error)
   __pyx_v_DATA_FOLDER = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":53
+  /* "askur/filemapping.pyx":50
+ *         # Check for environment variable first, then fall back to config file
  *         DATA_FOLDER = os.environ.get('ASKUR_DATA_FOLDER')
+ *         frozen_folder = os.path.join(DATA_FOLDER, self.collection)             # <<<<<<<<<<<<<<
  * 
- *         if DATA_FOLDER is None:             # <<<<<<<<<<<<<<
- *             confs = {}
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
+ *         if not os.path.exists(frozen_folder):
 */
-  __pyx_t_6 = (__pyx_v_DATA_FOLDER == ((PyObject*)Py_None));
-  if (__pyx_t_6) {
-
-    /* "askur/filemapping.pyx":54
- * 
- *         if DATA_FOLDER is None:
- *             confs = {}             # <<<<<<<<<<<<<<
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
- *             with open(config_file, "r") as f:
-*/
-    __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_4 = __pyx_t_3;
+  __Pyx_INCREF(__pyx_t_4);
+  __pyx_t_5 = 0;
+  {
+    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_DATA_FOLDER, __pyx_v_self->collection};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 50, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF_SET(__pyx_v_confs, ((PyObject*)__pyx_t_1));
-    __pyx_t_1 = 0;
+  }
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_v_frozen_folder = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-    /* "askur/filemapping.pyx":55
- *         if DATA_FOLDER is None:
- *             confs = {}
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")             # <<<<<<<<<<<<<<
- *             with open(config_file, "r") as f:
- *                 for line in f:
+  /* "askur/filemapping.pyx":52
+ *         frozen_folder = os.path.join(DATA_FOLDER, self.collection)
+ * 
+ *         if not os.path.exists(frozen_folder):             # <<<<<<<<<<<<<<
+ *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
+ *             if os.path.exists(data_parent):
 */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 55, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_3 = __pyx_t_2;
+  __Pyx_INCREF(__pyx_t_3);
+  __pyx_t_5 = 0;
+  {
+    PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_frozen_folder};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_exists, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_4 = __pyx_t_3;
-    __Pyx_INCREF(__pyx_t_4);
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 55, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+  }
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_7 = (!__pyx_t_6);
+  if (__pyx_t_7) {
+
+    /* "askur/filemapping.pyx":53
+ * 
+ *         if not os.path.exists(frozen_folder):
+ *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)             # <<<<<<<<<<<<<<
+ *             if os.path.exists(data_parent):
+ *                 existing_collections = os.listdir(data_parent)
+*/
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 53, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 53, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 55, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_7 = __pyx_t_9;
-    __Pyx_INCREF(__pyx_t_7);
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_file); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 55, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_3 = __pyx_t_8;
+    __Pyx_INCREF(__pyx_t_3);
     __pyx_t_5 = 0;
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_8};
-      __pyx_t_2 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_dirname, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_DATA_FOLDER};
+      __pyx_t_2 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_isabs, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
     }
-    __pyx_t_5 = 0;
-    {
-      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_t_2, __pyx_mstate_global->__pyx_kp_u_askur_conf};
-      __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 53, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (__pyx_t_7) {
+      __Pyx_INCREF(__pyx_v_DATA_FOLDER);
+      __pyx_t_1 = __pyx_v_DATA_FOLDER;
+    } else {
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 53, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_8 = __pyx_t_4;
+      __Pyx_INCREF(__pyx_t_8);
+      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 53, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 53, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_9 = __pyx_t_11;
+      __Pyx_INCREF(__pyx_t_9);
+      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_file); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 53, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_5 = 0;
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_t_10};
+        __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_dirname, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+      }
+      __pyx_t_5 = 0;
+      {
+        PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_t_3, __pyx_v_DATA_FOLDER};
+        __pyx_t_2 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+      }
+      __pyx_t_1 = __pyx_t_2;
+      __pyx_t_2 = 0;
     }
-    __pyx_v_config_file = __pyx_t_1;
+    __pyx_v_data_parent = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "askur/filemapping.pyx":56
- *             confs = {}
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
- *             with open(config_file, "r") as f:             # <<<<<<<<<<<<<<
- *                 for line in f:
- *                     if line.startswith("#") or line.startswith("\n"):
+    /* "askur/filemapping.pyx":54
+ *         if not os.path.exists(frozen_folder):
+ *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
+ *             if os.path.exists(data_parent):             # <<<<<<<<<<<<<<
+ *                 existing_collections = os.listdir(data_parent)
+ *             else:
 */
-    /*with:*/ {
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 54, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_2 = __pyx_t_3;
+    __Pyx_INCREF(__pyx_t_2);
+    __pyx_t_5 = 0;
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_data_parent};
+      __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_exists, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+    }
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_7 < 0))) __PYX_ERR(0, 54, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    if (__pyx_t_7) {
+
+      /* "askur/filemapping.pyx":55
+ *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
+ *             if os.path.exists(data_parent):
+ *                 existing_collections = os.listdir(data_parent)             # <<<<<<<<<<<<<<
+ *             else:
+ *                 existing_collections = ["No data directory found"]
+*/
       __pyx_t_3 = NULL;
-      __Pyx_INCREF(__pyx_builtin_open);
-      __pyx_t_2 = __pyx_builtin_open; 
-      __pyx_t_5 = 1;
-      {
-        PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_config_file, __pyx_mstate_global->__pyx_n_u_r};
-        __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-      }
-      __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 56, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_3 = NULL;
-      __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 56, __pyx_L4_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_listdir); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 55, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_t_5 = 1;
       #if CYTHON_UNPACK_METHODS
-      if (likely(PyMethod_Check(__pyx_t_4))) {
+      if (unlikely(PyMethod_Check(__pyx_t_4))) {
         __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_4);
         assert(__pyx_t_3);
         PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
@@ -3630,722 +3631,27 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
       }
       #endif
       {
-        PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
-        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_data_parent};
+        __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L4_error)
-        __Pyx_GOTREF(__pyx_t_2);
-      }
-      __pyx_t_4 = __pyx_t_2;
-      __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      /*try:*/ {
-        {
-          __Pyx_PyThreadState_declare
-          __Pyx_PyThreadState_assign
-          __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-          __Pyx_XGOTREF(__pyx_t_11);
-          __Pyx_XGOTREF(__pyx_t_12);
-          __Pyx_XGOTREF(__pyx_t_13);
-          /*try:*/ {
-            __pyx_v_f = __pyx_t_4;
-            __pyx_t_4 = 0;
-
-            /* "askur/filemapping.pyx":57
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
- *             with open(config_file, "r") as f:
- *                 for line in f:             # <<<<<<<<<<<<<<
- *                     if line.startswith("#") or line.startswith("\n"):
- *                         continue
-*/
-            if (likely(PyList_CheckExact(__pyx_v_f)) || PyTuple_CheckExact(__pyx_v_f)) {
-              __pyx_t_4 = __pyx_v_f; __Pyx_INCREF(__pyx_t_4);
-              __pyx_t_14 = 0;
-              __pyx_t_15 = NULL;
-            } else {
-              __pyx_t_14 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_f); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 57, __pyx_L8_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __pyx_t_15 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 57, __pyx_L8_error)
-            }
-            for (;;) {
-              if (likely(!__pyx_t_15)) {
-                if (likely(PyList_CheckExact(__pyx_t_4))) {
-                  {
-                    Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_4);
-                    #if !CYTHON_ASSUME_SAFE_SIZE
-                    if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 57, __pyx_L8_error)
-                    #endif
-                    if (__pyx_t_14 >= __pyx_temp) break;
-                  }
-                  __pyx_t_1 = __Pyx_PyList_GetItemRef(__pyx_t_4, __pyx_t_14);
-                  ++__pyx_t_14;
-                } else {
-                  {
-                    Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_4);
-                    #if !CYTHON_ASSUME_SAFE_SIZE
-                    if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 57, __pyx_L8_error)
-                    #endif
-                    if (__pyx_t_14 >= __pyx_temp) break;
-                  }
-                  #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-                  __pyx_t_1 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_14));
-                  #else
-                  __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_4, __pyx_t_14);
-                  #endif
-                  ++__pyx_t_14;
-                }
-                if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L8_error)
-              } else {
-                __pyx_t_1 = __pyx_t_15(__pyx_t_4);
-                if (unlikely(!__pyx_t_1)) {
-                  PyObject* exc_type = PyErr_Occurred();
-                  if (exc_type) {
-                    if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 57, __pyx_L8_error)
-                    PyErr_Clear();
-                  }
-                  break;
-                }
-              }
-              __Pyx_GOTREF(__pyx_t_1);
-              if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 57, __pyx_L8_error)
-              __Pyx_XDECREF_SET(__pyx_v_line, ((PyObject*)__pyx_t_1));
-              __pyx_t_1 = 0;
-
-              /* "askur/filemapping.pyx":58
- *             with open(config_file, "r") as f:
- *                 for line in f:
- *                     if line.startswith("#") or line.startswith("\n"):             # <<<<<<<<<<<<<<
- *                         continue
- *                     if "=" not in line:
-*/
-              if (unlikely(__pyx_v_line == Py_None)) {
-                PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "startswith");
-                __PYX_ERR(0, 58, __pyx_L8_error)
-              }
-              __pyx_t_16 = __Pyx_PyUnicode_Tailmatch(__pyx_v_line, __pyx_mstate_global->__pyx_kp_u_, 0, PY_SSIZE_T_MAX, -1); if (unlikely(__pyx_t_16 == ((int)-1))) __PYX_ERR(0, 58, __pyx_L8_error)
-              if (!__pyx_t_16) {
-              } else {
-                __pyx_t_6 = __pyx_t_16;
-                goto __pyx_L17_bool_binop_done;
-              }
-              if (unlikely(__pyx_v_line == Py_None)) {
-                PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "startswith");
-                __PYX_ERR(0, 58, __pyx_L8_error)
-              }
-              __pyx_t_16 = __Pyx_PyUnicode_Tailmatch(__pyx_v_line, __pyx_mstate_global->__pyx_kp_u__2, 0, PY_SSIZE_T_MAX, -1); if (unlikely(__pyx_t_16 == ((int)-1))) __PYX_ERR(0, 58, __pyx_L8_error)
-              __pyx_t_6 = __pyx_t_16;
-              __pyx_L17_bool_binop_done:;
-              if (__pyx_t_6) {
-
-                /* "askur/filemapping.pyx":59
- *                 for line in f:
- *                     if line.startswith("#") or line.startswith("\n"):
- *                         continue             # <<<<<<<<<<<<<<
- *                     if "=" not in line:
- *                         print(f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.")
-*/
-                goto __pyx_L14_continue;
-
-                /* "askur/filemapping.pyx":58
- *             with open(config_file, "r") as f:
- *                 for line in f:
- *                     if line.startswith("#") or line.startswith("\n"):             # <<<<<<<<<<<<<<
- *                         continue
- *                     if "=" not in line:
-*/
-              }
-
-              /* "askur/filemapping.pyx":60
- *                     if line.startswith("#") or line.startswith("\n"):
- *                         continue
- *                     if "=" not in line:             # <<<<<<<<<<<<<<
- *                         print(f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.")
- *                         return -1
-*/
-              if (unlikely(__pyx_v_line == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-                __PYX_ERR(0, 60, __pyx_L8_error)
-              }
-              __pyx_t_6 = (__Pyx_PyUnicode_ContainsTF(__pyx_mstate_global->__pyx_kp_u__3, __pyx_v_line, Py_NE)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 60, __pyx_L8_error)
-              if (__pyx_t_6) {
-
-                /* "askur/filemapping.pyx":61
- *                         continue
- *                     if "=" not in line:
- *                         print(f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.")             # <<<<<<<<<<<<<<
- *                         return -1
- *                     parts = line.split("=", 1)
-*/
-                __pyx_t_2 = NULL;
-                __Pyx_INCREF(__pyx_builtin_print);
-                __pyx_t_3 = __pyx_builtin_print; 
-                __pyx_t_9 = __Pyx_PyUnicode_Unicode(__pyx_v_line); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 61, __pyx_L8_error)
-                __Pyx_GOTREF(__pyx_t_9);
-                __pyx_t_17[0] = __pyx_mstate_global->__pyx_kp_u_Error_in_line;
-                __pyx_t_17[1] = __pyx_t_9;
-                __pyx_t_17[2] = __pyx_mstate_global->__pyx_kp_u_No_found_Please_add_missing_and;
-                __pyx_t_8 = __Pyx_PyUnicode_Join(__pyx_t_17, 3, 15 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_9) + 68, 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9));
-                if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 61, __pyx_L8_error)
-                __Pyx_GOTREF(__pyx_t_8);
-                __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-                __pyx_t_5 = 1;
-                {
-                  PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_t_8};
-                  __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-                  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-                  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L8_error)
-                  __Pyx_GOTREF(__pyx_t_1);
-                }
-                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-                /* "askur/filemapping.pyx":62
- *                     if "=" not in line:
- *                         print(f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.")
- *                         return -1             # <<<<<<<<<<<<<<
- *                     parts = line.split("=", 1)
- *                     confs[parts[0].strip()] = parts[1].strip()
-*/
-                __Pyx_XDECREF(__pyx_r);
-                __Pyx_INCREF(__pyx_mstate_global->__pyx_int_neg_1);
-                __pyx_r = __pyx_mstate_global->__pyx_int_neg_1;
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-                goto __pyx_L12_try_return;
-
-                /* "askur/filemapping.pyx":60
- *                     if line.startswith("#") or line.startswith("\n"):
- *                         continue
- *                     if "=" not in line:             # <<<<<<<<<<<<<<
- *                         print(f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.")
- *                         return -1
-*/
-              }
-
-              /* "askur/filemapping.pyx":63
- *                         print(f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.")
- *                         return -1
- *                     parts = line.split("=", 1)             # <<<<<<<<<<<<<<
- *                     confs[parts[0].strip()] = parts[1].strip()
- * 
-*/
-              if (unlikely(__pyx_v_line == Py_None)) {
-                PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "split");
-                __PYX_ERR(0, 63, __pyx_L8_error)
-              }
-              __pyx_t_1 = PyUnicode_Split(__pyx_v_line, __Pyx_NoneAsNull(__pyx_mstate_global->__pyx_kp_u__3), 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L8_error)
-              __Pyx_GOTREF(__pyx_t_1);
-              __Pyx_XDECREF_SET(__pyx_v_parts, ((PyObject*)__pyx_t_1));
-              __pyx_t_1 = 0;
-
-              /* "askur/filemapping.pyx":64
- *                         return -1
- *                     parts = line.split("=", 1)
- *                     confs[parts[0].strip()] = parts[1].strip()             # <<<<<<<<<<<<<<
- * 
- *             DATA_FOLDER = confs.get("DATA_FOLDER")
-*/
-              __pyx_t_3 = __Pyx_PyList_GET_ITEM(__pyx_v_parts, 1);
-              __Pyx_INCREF(__pyx_t_3);
-              __pyx_t_5 = 0;
-              {
-                PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
-                __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_strip, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-                if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L8_error)
-                __Pyx_GOTREF(__pyx_t_1);
-              }
-              __pyx_t_8 = __Pyx_PyList_GET_ITEM(__pyx_v_parts, 0);
-              __Pyx_INCREF(__pyx_t_8);
-              __pyx_t_5 = 0;
-              {
-                PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-                __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_strip, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-                __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-                if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 64, __pyx_L8_error)
-                __Pyx_GOTREF(__pyx_t_3);
-              }
-              if (unlikely((PyDict_SetItem(__pyx_v_confs, __pyx_t_3, __pyx_t_1) < 0))) __PYX_ERR(0, 64, __pyx_L8_error)
-              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-              /* "askur/filemapping.pyx":57
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
- *             with open(config_file, "r") as f:
- *                 for line in f:             # <<<<<<<<<<<<<<
- *                     if line.startswith("#") or line.startswith("\n"):
- *                         continue
-*/
-              __pyx_L14_continue:;
-            }
-            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-            /* "askur/filemapping.pyx":56
- *             confs = {}
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
- *             with open(config_file, "r") as f:             # <<<<<<<<<<<<<<
- *                 for line in f:
- *                     if line.startswith("#") or line.startswith("\n"):
-*/
-          }
-          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-          __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-          __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-          goto __pyx_L13_try_end;
-          __pyx_L8_error:;
-          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-          /*except:*/ {
-            __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-            if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_1, &__pyx_t_3) < 0) __PYX_ERR(0, 56, __pyx_L10_except_error)
-            __Pyx_XGOTREF(__pyx_t_4);
-            __Pyx_XGOTREF(__pyx_t_1);
-            __Pyx_XGOTREF(__pyx_t_3);
-            __pyx_t_8 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 56, __pyx_L10_except_error)
-            __Pyx_GOTREF(__pyx_t_8);
-            __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_8, NULL);
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 56, __pyx_L10_except_error)
-            __Pyx_GOTREF(__pyx_t_18);
-            __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
-            __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-            if (__pyx_t_6 < 0) __PYX_ERR(0, 56, __pyx_L10_except_error)
-            __pyx_t_16 = (!__pyx_t_6);
-            if (unlikely(__pyx_t_16)) {
-              __Pyx_GIVEREF(__pyx_t_4);
-              __Pyx_GIVEREF(__pyx_t_1);
-              __Pyx_XGIVEREF(__pyx_t_3);
-              __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_1, __pyx_t_3);
-              __pyx_t_4 = 0;  __pyx_t_1 = 0;  __pyx_t_3 = 0; 
-              __PYX_ERR(0, 56, __pyx_L10_except_error)
-            }
-            __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            goto __pyx_L9_exception_handled;
-          }
-          __pyx_L10_except_error:;
-          __Pyx_XGIVEREF(__pyx_t_11);
-          __Pyx_XGIVEREF(__pyx_t_12);
-          __Pyx_XGIVEREF(__pyx_t_13);
-          __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-          goto __pyx_L1_error;
-          __pyx_L12_try_return:;
-          __Pyx_XGIVEREF(__pyx_t_11);
-          __Pyx_XGIVEREF(__pyx_t_12);
-          __Pyx_XGIVEREF(__pyx_t_13);
-          __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-          goto __pyx_L5_return;
-          __pyx_L9_exception_handled:;
-          __Pyx_XGIVEREF(__pyx_t_11);
-          __Pyx_XGIVEREF(__pyx_t_12);
-          __Pyx_XGIVEREF(__pyx_t_13);
-          __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-          __pyx_L13_try_end:;
-        }
-      }
-      /*finally:*/ {
-        /*normal exit:*/{
-          if (__pyx_t_10) {
-            __pyx_t_13 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-            if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 56, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_13);
-            __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-          }
-          goto __pyx_L7;
-        }
-        __pyx_L5_return: {
-          __pyx_t_13 = __pyx_r;
-          __pyx_r = 0;
-          if (__pyx_t_10) {
-            __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 56, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_12);
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-          }
-          __pyx_r = __pyx_t_13;
-          __pyx_t_13 = 0;
-          goto __pyx_L0;
-        }
-        __pyx_L7:;
-      }
-      goto __pyx_L24;
-      __pyx_L4_error:;
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      goto __pyx_L1_error;
-      __pyx_L24:;
-    }
-
-    /* "askur/filemapping.pyx":66
- *                     confs[parts[0].strip()] = parts[1].strip()
- * 
- *             DATA_FOLDER = confs.get("DATA_FOLDER")             # <<<<<<<<<<<<<<
- *             if DATA_FOLDER is None:
- *                 print("Error: No DATA_FOLDER found in config or environment.\n  Set ASKUR_DATA_FOLDER environment variable or update askur.conf. \n Exiting.")
-*/
-    __pyx_t_3 = __Pyx_PyDict_GetItemDefault(__pyx_v_confs, __pyx_mstate_global->__pyx_n_u_DATA_FOLDER, Py_None); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 66, __pyx_L1_error)
-    __Pyx_DECREF_SET(__pyx_v_DATA_FOLDER, ((PyObject*)__pyx_t_3));
-    __pyx_t_3 = 0;
-
-    /* "askur/filemapping.pyx":67
- * 
- *             DATA_FOLDER = confs.get("DATA_FOLDER")
- *             if DATA_FOLDER is None:             # <<<<<<<<<<<<<<
- *                 print("Error: No DATA_FOLDER found in config or environment.\n  Set ASKUR_DATA_FOLDER environment variable or update askur.conf. \n Exiting.")
- *                 return -1
-*/
-    __pyx_t_16 = (__pyx_v_DATA_FOLDER == ((PyObject*)Py_None));
-    if (__pyx_t_16) {
-
-      /* "askur/filemapping.pyx":68
- *             DATA_FOLDER = confs.get("DATA_FOLDER")
- *             if DATA_FOLDER is None:
- *                 print("Error: No DATA_FOLDER found in config or environment.\n  Set ASKUR_DATA_FOLDER environment variable or update askur.conf. \n Exiting.")             # <<<<<<<<<<<<<<
- *                 return -1
- * 
-*/
-      __pyx_t_1 = NULL;
-      __Pyx_INCREF(__pyx_builtin_print);
-      __pyx_t_4 = __pyx_builtin_print; 
-      __pyx_t_5 = 1;
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_mstate_global->__pyx_kp_u_Error_No_DATA_FOLDER_found_in_co};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-      }
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-      /* "askur/filemapping.pyx":69
- *             if DATA_FOLDER is None:
- *                 print("Error: No DATA_FOLDER found in config or environment.\n  Set ASKUR_DATA_FOLDER environment variable or update askur.conf. \n Exiting.")
- *                 return -1             # <<<<<<<<<<<<<<
- * 
- *         # Support both absolute and relative paths
-*/
-      __Pyx_XDECREF(__pyx_r);
-      __Pyx_INCREF(__pyx_mstate_global->__pyx_int_neg_1);
-      __pyx_r = __pyx_mstate_global->__pyx_int_neg_1;
-      goto __pyx_L0;
-
-      /* "askur/filemapping.pyx":67
- * 
- *             DATA_FOLDER = confs.get("DATA_FOLDER")
- *             if DATA_FOLDER is None:             # <<<<<<<<<<<<<<
- *                 print("Error: No DATA_FOLDER found in config or environment.\n  Set ASKUR_DATA_FOLDER environment variable or update askur.conf. \n Exiting.")
- *                 return -1
-*/
-    }
-
-    /* "askur/filemapping.pyx":53
- *         DATA_FOLDER = os.environ.get('ASKUR_DATA_FOLDER')
- * 
- *         if DATA_FOLDER is None:             # <<<<<<<<<<<<<<
- *             confs = {}
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
-*/
-  }
-
-  /* "askur/filemapping.pyx":72
- * 
- *         # Support both absolute and relative paths
- *         if os.path.isabs(DATA_FOLDER):             # <<<<<<<<<<<<<<
- *             frozen_folder = os.path.join(DATA_FOLDER, self.collection)
- *         else:
-*/
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 72, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_4 = __pyx_t_8;
-  __Pyx_INCREF(__pyx_t_4);
-  __pyx_t_5 = 0;
-  {
-    PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_DATA_FOLDER};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_isabs, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-  }
-  __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 72, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__pyx_t_16) {
-
-    /* "askur/filemapping.pyx":73
- *         # Support both absolute and relative paths
- *         if os.path.isabs(DATA_FOLDER):
- *             frozen_folder = os.path.join(DATA_FOLDER, self.collection)             # <<<<<<<<<<<<<<
- *         else:
- *             frozen_folder = os.path.join(os.path.dirname(__file__), DATA_FOLDER, self.collection)
-*/
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 73, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_8 = __pyx_t_1;
-    __Pyx_INCREF(__pyx_t_8);
-    __pyx_t_5 = 0;
-    {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_DATA_FOLDER, __pyx_v_self->collection};
-      __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 73, __pyx_L1_error)
-    __pyx_v_frozen_folder = ((PyObject*)__pyx_t_3);
-    __pyx_t_3 = 0;
-
-    /* "askur/filemapping.pyx":72
- * 
- *         # Support both absolute and relative paths
- *         if os.path.isabs(DATA_FOLDER):             # <<<<<<<<<<<<<<
- *             frozen_folder = os.path.join(DATA_FOLDER, self.collection)
- *         else:
-*/
-    goto __pyx_L26;
-  }
-
-  /* "askur/filemapping.pyx":75
- *             frozen_folder = os.path.join(DATA_FOLDER, self.collection)
- *         else:
- *             frozen_folder = os.path.join(os.path.dirname(__file__), DATA_FOLDER, self.collection)             # <<<<<<<<<<<<<<
- * 
- *         if not os.path.exists(frozen_folder):
-*/
-  /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 75, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_1 = __pyx_t_4;
-    __Pyx_INCREF(__pyx_t_1);
-    __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 75, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 75, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_2 = __pyx_t_7;
-    __Pyx_INCREF(__pyx_t_2);
-    __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_mstate_global->__pyx_n_u_file); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 75, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_5 = 0;
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_t_9};
-      __pyx_t_8 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_dirname, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-    }
-    __pyx_t_5 = 0;
-    {
-      PyObject *__pyx_callargs[4] = {__pyx_t_1, __pyx_t_8, __pyx_v_DATA_FOLDER, __pyx_v_self->collection};
-      __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (4-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 75, __pyx_L1_error)
-    __pyx_v_frozen_folder = ((PyObject*)__pyx_t_3);
-    __pyx_t_3 = 0;
-  }
-  __pyx_L26:;
-
-  /* "askur/filemapping.pyx":77
- *             frozen_folder = os.path.join(os.path.dirname(__file__), DATA_FOLDER, self.collection)
- * 
- *         if not os.path.exists(frozen_folder):             # <<<<<<<<<<<<<<
- *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
- *             if os.path.exists(data_parent):
-*/
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 77, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_4 = __pyx_t_1;
-  __Pyx_INCREF(__pyx_t_4);
-  __pyx_t_5 = 0;
-  {
-    PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_frozen_folder};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_exists, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 77, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-  }
-  __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 77, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_6 = (!__pyx_t_16);
-  if (__pyx_t_6) {
-
-    /* "askur/filemapping.pyx":78
- * 
- *         if not os.path.exists(frozen_folder):
- *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)             # <<<<<<<<<<<<<<
- *             if os.path.exists(data_parent):
- *                 existing_collections = os.listdir(data_parent)
-*/
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_4 = __pyx_t_7;
-    __Pyx_INCREF(__pyx_t_4);
-    __pyx_t_5 = 0;
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_DATA_FOLDER};
-      __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_isabs, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-    }
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (__pyx_t_6) {
-      __Pyx_INCREF(__pyx_v_DATA_FOLDER);
-      __pyx_t_3 = __pyx_v_DATA_FOLDER;
-    } else {
-      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 78, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 78, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_7 = __pyx_t_8;
-      __Pyx_INCREF(__pyx_t_7);
-      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 78, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_19);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_9 = __pyx_t_19;
-      __Pyx_INCREF(__pyx_t_9);
-      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_file); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_5 = 0;
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_t_2};
-        __pyx_t_4 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_dirname, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 78, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-      }
-      __pyx_t_5 = 0;
-      {
-        PyObject *__pyx_callargs[3] = {__pyx_t_7, __pyx_t_4, __pyx_v_DATA_FOLDER};
-        __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
       }
-      __pyx_t_3 = __pyx_t_1;
+      __pyx_v_existing_collections = __pyx_t_1;
       __pyx_t_1 = 0;
-    }
-    __pyx_v_data_parent = __pyx_t_3;
-    __pyx_t_3 = 0;
 
-    /* "askur/filemapping.pyx":79
+      /* "askur/filemapping.pyx":54
  *         if not os.path.exists(frozen_folder):
  *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
  *             if os.path.exists(data_parent):             # <<<<<<<<<<<<<<
  *                 existing_collections = os.listdir(data_parent)
  *             else:
 */
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 79, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 79, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_1 = __pyx_t_4;
-    __Pyx_INCREF(__pyx_t_1);
-    __pyx_t_5 = 0;
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_v_data_parent};
-      __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_exists, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 79, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (__pyx_t_6) {
-
-      /* "askur/filemapping.pyx":80
- *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
- *             if os.path.exists(data_parent):
- *                 existing_collections = os.listdir(data_parent)             # <<<<<<<<<<<<<<
- *             else:
- *                 existing_collections = ["No data directory found"]
-*/
-      __pyx_t_4 = NULL;
-      __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_listdir); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 80, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_5 = 1;
-      #if CYTHON_UNPACK_METHODS
-      if (unlikely(PyMethod_Check(__pyx_t_8))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_8);
-        assert(__pyx_t_4);
-        PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-        __Pyx_INCREF(__pyx_t_4);
-        __Pyx_INCREF(__pyx__function);
-        __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
-        __pyx_t_5 = 0;
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_data_parent};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_8, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-      }
-      __pyx_v_existing_collections = __pyx_t_3;
-      __pyx_t_3 = 0;
-
-      /* "askur/filemapping.pyx":79
- *         if not os.path.exists(frozen_folder):
- *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
- *             if os.path.exists(data_parent):             # <<<<<<<<<<<<<<
- *                 existing_collections = os.listdir(data_parent)
- *             else:
-*/
-      goto __pyx_L28;
+      goto __pyx_L4;
     }
 
-    /* "askur/filemapping.pyx":82
+    /* "askur/filemapping.pyx":57
  *                 existing_collections = os.listdir(data_parent)
  *             else:
  *                 existing_collections = ["No data directory found"]             # <<<<<<<<<<<<<<
@@ -4353,59 +3659,59 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
     /*else*/ {
-      __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_u_No_data_directory_found);
       __Pyx_GIVEREF(__pyx_mstate_global->__pyx_kp_u_No_data_directory_found);
-      if (__Pyx_PyList_SET_ITEM(__pyx_t_3, 0, __pyx_mstate_global->__pyx_kp_u_No_data_directory_found) != (0)) __PYX_ERR(0, 82, __pyx_L1_error);
-      __pyx_v_existing_collections = __pyx_t_3;
-      __pyx_t_3 = 0;
+      if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 0, __pyx_mstate_global->__pyx_kp_u_No_data_directory_found) != (0)) __PYX_ERR(0, 57, __pyx_L1_error);
+      __pyx_v_existing_collections = __pyx_t_1;
+      __pyx_t_1 = 0;
     }
-    __pyx_L28:;
+    __pyx_L4:;
 
-    /* "askur/filemapping.pyx":83
+    /* "askur/filemapping.pyx":58
  *             else:
  *                 existing_collections = ["No data directory found"]
  *             raise FileNotFoundError(f"{self.collection} collection does not exist!\n Existing collections are: {existing_collections}\n Data folder: {data_parent}")             # <<<<<<<<<<<<<<
  * 
  *         # File paths
 */
-    __pyx_t_8 = NULL;
+    __pyx_t_4 = NULL;
     __Pyx_INCREF(__pyx_builtin_FileNotFoundError);
-    __pyx_t_4 = __pyx_builtin_FileNotFoundError; 
-    __pyx_t_1 = __Pyx_PyUnicode_Unicode(__pyx_v_self->collection); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_7 = __Pyx_PyObject_FormatSimple(__pyx_v_existing_collections, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_19 = __Pyx_PyObject_FormatSimple(__pyx_v_data_parent, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_19);
-    __pyx_t_20[0] = __pyx_t_1;
-    __pyx_t_20[1] = __pyx_mstate_global->__pyx_kp_u_collection_does_not_exist_Exist;
-    __pyx_t_20[2] = __pyx_t_7;
-    __pyx_t_20[3] = __pyx_mstate_global->__pyx_kp_u_Data_folder;
-    __pyx_t_20[4] = __pyx_t_19;
-    __pyx_t_2 = __Pyx_PyUnicode_Join(__pyx_t_20, 5, __Pyx_PyUnicode_GET_LENGTH(__pyx_t_1) + 55 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_7) + 15 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_19), 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_1) | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_7) | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_19));
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __pyx_t_3 = __pyx_builtin_FileNotFoundError; 
+    __pyx_t_2 = __Pyx_PyUnicode_Unicode(__pyx_v_self->collection); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+    __pyx_t_8 = __Pyx_PyObject_FormatSimple(__pyx_v_existing_collections, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __pyx_t_11 = __Pyx_PyObject_FormatSimple(__pyx_v_data_parent, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __pyx_t_12[0] = __pyx_t_2;
+    __pyx_t_12[1] = __pyx_mstate_global->__pyx_kp_u_collection_does_not_exist_Exist;
+    __pyx_t_12[2] = __pyx_t_8;
+    __pyx_t_12[3] = __pyx_mstate_global->__pyx_kp_u_Data_folder;
+    __pyx_t_12[4] = __pyx_t_11;
+    __pyx_t_10 = __Pyx_PyUnicode_Join(__pyx_t_12, 5, __Pyx_PyUnicode_GET_LENGTH(__pyx_t_2) + 55 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_8) + 15 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_11), 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_2) | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_8) | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_11));
+    if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_10);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     __pyx_t_5 = 1;
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_t_2};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_10};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
     }
-    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 83, __pyx_L1_error)
+    __Pyx_Raise(__pyx_t_1, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __PYX_ERR(0, 58, __pyx_L1_error)
 
-    /* "askur/filemapping.pyx":77
- *             frozen_folder = os.path.join(os.path.dirname(__file__), DATA_FOLDER, self.collection)
+    /* "askur/filemapping.pyx":52
+ *         frozen_folder = os.path.join(DATA_FOLDER, self.collection)
  * 
  *         if not os.path.exists(frozen_folder):             # <<<<<<<<<<<<<<
  *             data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
@@ -4413,277 +3719,277 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
 */
   }
 
-  /* "askur/filemapping.pyx":86
+  /* "askur/filemapping.pyx":61
  * 
  *         # File paths
  *         cdef str SELECT_BITS_FILE = os.path.join(frozen_folder, "s_bits.bin")             # <<<<<<<<<<<<<<
  *         cdef str HC_BITS_FILE = os.path.join(frozen_folder, "hc_bits.bin")
  *         cdef str HC_SB_BIN = os.path.join(frozen_folder, "hc_sb.bin")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 86, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __pyx_t_8;
-  __Pyx_INCREF(__pyx_t_4);
+  __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+  __pyx_t_3 = __pyx_t_4;
+  __Pyx_INCREF(__pyx_t_3);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_s_bits_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_s_bits_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 86, __pyx_L1_error)
-  __pyx_v_SELECT_BITS_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_v_SELECT_BITS_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":87
+  /* "askur/filemapping.pyx":62
  *         # File paths
  *         cdef str SELECT_BITS_FILE = os.path.join(frozen_folder, "s_bits.bin")
  *         cdef str HC_BITS_FILE = os.path.join(frozen_folder, "hc_bits.bin")             # <<<<<<<<<<<<<<
  *         cdef str HC_SB_BIN = os.path.join(frozen_folder, "hc_sb.bin")
  *         cdef str S_SB_BIN = os.path.join(frozen_folder, "s_sb.bin")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 87, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_8 = __pyx_t_2;
-  __Pyx_INCREF(__pyx_t_8);
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __pyx_t_10;
+  __Pyx_INCREF(__pyx_t_4);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_hc_bits_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_hc_bits_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 87, __pyx_L1_error)
-  __pyx_v_HC_BITS_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_v_HC_BITS_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":88
+  /* "askur/filemapping.pyx":63
  *         cdef str SELECT_BITS_FILE = os.path.join(frozen_folder, "s_bits.bin")
  *         cdef str HC_BITS_FILE = os.path.join(frozen_folder, "hc_bits.bin")
  *         cdef str HC_SB_BIN = os.path.join(frozen_folder, "hc_sb.bin")             # <<<<<<<<<<<<<<
  *         cdef str S_SB_BIN = os.path.join(frozen_folder, "s_sb.bin")
  *         cdef str TRIE_FILE = os.path.join(frozen_folder, "trie")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 88, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_2 = __pyx_t_4;
-  __Pyx_INCREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_10 = __pyx_t_3;
+  __Pyx_INCREF(__pyx_t_10);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_2, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_hc_sb_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_10, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_hc_sb_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 88, __pyx_L1_error)
-  __pyx_v_HC_SB_BIN = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_v_HC_SB_BIN = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":89
+  /* "askur/filemapping.pyx":64
  *         cdef str HC_BITS_FILE = os.path.join(frozen_folder, "hc_bits.bin")
  *         cdef str HC_SB_BIN = os.path.join(frozen_folder, "hc_sb.bin")
  *         cdef str S_SB_BIN = os.path.join(frozen_folder, "s_sb.bin")             # <<<<<<<<<<<<<<
  *         cdef str TRIE_FILE = os.path.join(frozen_folder, "trie")
  *         cdef str EOW_BITS_FILE = os.path.join(frozen_folder, "eow_bits.bin")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 89, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __pyx_t_8;
-  __Pyx_INCREF(__pyx_t_4);
+  __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+  __pyx_t_3 = __pyx_t_4;
+  __Pyx_INCREF(__pyx_t_3);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_s_sb_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_s_sb_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 89, __pyx_L1_error)
-  __pyx_v_S_SB_BIN = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_v_S_SB_BIN = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":90
+  /* "askur/filemapping.pyx":65
  *         cdef str HC_SB_BIN = os.path.join(frozen_folder, "hc_sb.bin")
  *         cdef str S_SB_BIN = os.path.join(frozen_folder, "s_sb.bin")
  *         cdef str TRIE_FILE = os.path.join(frozen_folder, "trie")             # <<<<<<<<<<<<<<
  *         cdef str EOW_BITS_FILE = os.path.join(frozen_folder, "eow_bits.bin")
  *         cdef str EOW_BITS_SUMMARY_FILE = os.path.join(frozen_folder, "eow_sb.bin")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_8 = __pyx_t_2;
-  __Pyx_INCREF(__pyx_t_8);
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __pyx_t_10;
+  __Pyx_INCREF(__pyx_t_4);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_n_u_trie};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_n_u_trie};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 90, __pyx_L1_error)
-  __pyx_v_TRIE_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_v_TRIE_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":91
+  /* "askur/filemapping.pyx":66
  *         cdef str S_SB_BIN = os.path.join(frozen_folder, "s_sb.bin")
  *         cdef str TRIE_FILE = os.path.join(frozen_folder, "trie")
  *         cdef str EOW_BITS_FILE = os.path.join(frozen_folder, "eow_bits.bin")             # <<<<<<<<<<<<<<
  *         cdef str EOW_BITS_SUMMARY_FILE = os.path.join(frozen_folder, "eow_sb.bin")
  *         cdef str INDEX_BITS_FILE = os.path.join(frozen_folder, "index_bits.bin")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 91, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_2 = __pyx_t_4;
-  __Pyx_INCREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_10 = __pyx_t_3;
+  __Pyx_INCREF(__pyx_t_10);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_2, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_eow_bits_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_10, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_eow_bits_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 91, __pyx_L1_error)
-  __pyx_v_EOW_BITS_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_v_EOW_BITS_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":92
+  /* "askur/filemapping.pyx":67
  *         cdef str TRIE_FILE = os.path.join(frozen_folder, "trie")
  *         cdef str EOW_BITS_FILE = os.path.join(frozen_folder, "eow_bits.bin")
  *         cdef str EOW_BITS_SUMMARY_FILE = os.path.join(frozen_folder, "eow_sb.bin")             # <<<<<<<<<<<<<<
  *         cdef str INDEX_BITS_FILE = os.path.join(frozen_folder, "index_bits.bin")
  *         cdef str SHORT_TEXT_BITS_FILE = os.path.join(frozen_folder, "short_text_bits.bin")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 92, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __pyx_t_8;
-  __Pyx_INCREF(__pyx_t_4);
+  __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+  __pyx_t_3 = __pyx_t_4;
+  __Pyx_INCREF(__pyx_t_3);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_eow_sb_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_eow_sb_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 92, __pyx_L1_error)
-  __pyx_v_EOW_BITS_SUMMARY_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_v_EOW_BITS_SUMMARY_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":93
+  /* "askur/filemapping.pyx":68
  *         cdef str EOW_BITS_FILE = os.path.join(frozen_folder, "eow_bits.bin")
  *         cdef str EOW_BITS_SUMMARY_FILE = os.path.join(frozen_folder, "eow_sb.bin")
  *         cdef str INDEX_BITS_FILE = os.path.join(frozen_folder, "index_bits.bin")             # <<<<<<<<<<<<<<
  *         cdef str SHORT_TEXT_BITS_FILE = os.path.join(frozen_folder, "short_text_bits.bin")
  *         cdef str ALPHABET_FILE = os.path.join(frozen_folder, "trie.alphabet")
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_8 = __pyx_t_2;
-  __Pyx_INCREF(__pyx_t_8);
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 68, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __pyx_t_10;
+  __Pyx_INCREF(__pyx_t_4);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_index_bits_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_index_bits_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 93, __pyx_L1_error)
-  __pyx_v_INDEX_BITS_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_v_INDEX_BITS_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":94
+  /* "askur/filemapping.pyx":69
  *         cdef str EOW_BITS_SUMMARY_FILE = os.path.join(frozen_folder, "eow_sb.bin")
  *         cdef str INDEX_BITS_FILE = os.path.join(frozen_folder, "index_bits.bin")
  *         cdef str SHORT_TEXT_BITS_FILE = os.path.join(frozen_folder, "short_text_bits.bin")             # <<<<<<<<<<<<<<
  *         cdef str ALPHABET_FILE = os.path.join(frozen_folder, "trie.alphabet")
  * 
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 94, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 69, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_2 = __pyx_t_4;
-  __Pyx_INCREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_10 = __pyx_t_3;
+  __Pyx_INCREF(__pyx_t_10);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_2, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_short_text_bits_bin};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_10, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_short_text_bits_bin};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 94, __pyx_L1_error)
-  __pyx_v_SHORT_TEXT_BITS_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_v_SHORT_TEXT_BITS_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":95
+  /* "askur/filemapping.pyx":70
  *         cdef str INDEX_BITS_FILE = os.path.join(frozen_folder, "index_bits.bin")
  *         cdef str SHORT_TEXT_BITS_FILE = os.path.join(frozen_folder, "short_text_bits.bin")
  *         cdef str ALPHABET_FILE = os.path.join(frozen_folder, "trie.alphabet")             # <<<<<<<<<<<<<<
  * 
  *         # Load files without pointer caching
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 95, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __pyx_t_8;
-  __Pyx_INCREF(__pyx_t_4);
+  __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_os); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_path); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+  __pyx_t_3 = __pyx_t_4;
+  __Pyx_INCREF(__pyx_t_3);
   __pyx_t_5 = 0;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_trie_alphabet};
-    __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_frozen_folder, __pyx_mstate_global->__pyx_kp_u_trie_alphabet};
+    __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_join, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_3))) __PYX_ERR(0, 95, __pyx_L1_error)
-  __pyx_v_ALPHABET_FILE = ((PyObject*)__pyx_t_3);
-  __pyx_t_3 = 0;
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_v_ALPHABET_FILE = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":98
+  /* "askur/filemapping.pyx":73
  * 
  *         # Load files without pointer caching
  *         with io.open(S_SB_BIN, "rb") as f_s_superblocks:             # <<<<<<<<<<<<<<
@@ -4691,161 +3997,161 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  *             self.bits_in_superblock = self._s_superblocks[0]
 */
   /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_2);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_2, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_S_SB_BIN, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 98, __pyx_L1_error)
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 73, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L29_error)
-    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
+    if (unlikely(PyMethod_Check(__pyx_t_10))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_10);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L29_error)
-      __Pyx_GOTREF(__pyx_t_2);
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_S_SB_BIN, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_4 = __pyx_t_2;
-    __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 73, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_10);
+    }
+    __pyx_t_3 = __pyx_t_10;
+    __pyx_t_10 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_13, &__pyx_t_12, &__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_11);
+        __Pyx_ExceptionSave(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_16);
         /*try:*/ {
-          __pyx_v_f_s_superblocks = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_f_s_superblocks = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":99
+          /* "askur/filemapping.pyx":74
  *         # Load files without pointer caching
  *         with io.open(S_SB_BIN, "rb") as f_s_superblocks:
  *             self._s_superblocks = mmap.mmap(f_s_superblocks.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
  *             self.bits_in_superblock = self._s_superblocks[0]
  *             self._s_superblocks = self._s_superblocks[1:]
 */
-          __pyx_t_3 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L33_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 99, __pyx_L33_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_19 = __pyx_v_f_s_superblocks;
-          __Pyx_INCREF(__pyx_t_19);
+          __pyx_t_1 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 74, __pyx_L9_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 74, __pyx_L9_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __pyx_t_11 = __pyx_v_f_s_superblocks;
+          __Pyx_INCREF(__pyx_t_11);
           __pyx_t_5 = 0;
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_19, NULL};
-            __pyx_t_2 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L33_error)
-            __Pyx_GOTREF(__pyx_t_2);
+            PyObject *__pyx_callargs[2] = {__pyx_t_11, NULL};
+            __pyx_t_10 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 74, __pyx_L9_error)
+            __Pyx_GOTREF(__pyx_t_10);
           }
-          __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 99, __pyx_L33_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 99, __pyx_L33_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 74, __pyx_L9_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 74, __pyx_L9_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           __pyx_t_5 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_3);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_3);
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_1);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_1);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
             __pyx_t_5 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_3, __pyx_t_2, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_19 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 99, __pyx_L33_error)
-            __Pyx_GOTREF(__pyx_t_19);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_7, __pyx_t_19, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 99, __pyx_L33_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_19);
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_1, __pyx_t_10, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_11 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 74, __pyx_L9_error)
+            __Pyx_GOTREF(__pyx_t_11);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_8, __pyx_t_11, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 74, __pyx_L9_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_11);
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 99, __pyx_L33_error)
-            __Pyx_GOTREF(__pyx_t_4);
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L9_error)
+            __Pyx_GOTREF(__pyx_t_3);
           }
-          __Pyx_GIVEREF(__pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_s_superblocks);
           __Pyx_DECREF(__pyx_v_self->_s_superblocks);
-          __pyx_v_self->_s_superblocks = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_s_superblocks = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":100
+          /* "askur/filemapping.pyx":75
  *         with io.open(S_SB_BIN, "rb") as f_s_superblocks:
  *             self._s_superblocks = mmap.mmap(f_s_superblocks.fileno(), 0, access=mmap.ACCESS_READ)
  *             self.bits_in_superblock = self._s_superblocks[0]             # <<<<<<<<<<<<<<
  *             self._s_superblocks = self._s_superblocks[1:]
  * 
 */
-          __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_self->_s_superblocks, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 100, __pyx_L33_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_21 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_21 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L33_error)
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_v_self->bits_in_superblock = __pyx_t_21;
+          __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_self->_s_superblocks, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L9_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_17 = __Pyx_PyLong_As_int(__pyx_t_3); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 75, __pyx_L9_error)
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __pyx_v_self->bits_in_superblock = __pyx_t_17;
 
-          /* "askur/filemapping.pyx":101
+          /* "askur/filemapping.pyx":76
  *             self._s_superblocks = mmap.mmap(f_s_superblocks.fileno(), 0, access=mmap.ACCESS_READ)
  *             self.bits_in_superblock = self._s_superblocks[0]
  *             self._s_superblocks = self._s_superblocks[1:]             # <<<<<<<<<<<<<<
  * 
  *         with io.open(TRIE_FILE, "rb") as f_trie:
 */
-          __pyx_t_4 = __Pyx_PyObject_GetSlice(__pyx_v_self->_s_superblocks, 1, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[0], 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 101, __pyx_L33_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __Pyx_GIVEREF(__pyx_t_4);
+          __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_v_self->_s_superblocks, 1, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[0], 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L9_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_s_superblocks);
           __Pyx_DECREF(__pyx_v_self->_s_superblocks);
-          __pyx_v_self->_s_superblocks = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_s_superblocks = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":98
+          /* "askur/filemapping.pyx":73
  * 
  *         # Load files without pointer caching
  *         with io.open(S_SB_BIN, "rb") as f_s_superblocks:             # <<<<<<<<<<<<<<
@@ -4853,84 +4159,84 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  *             self.bits_in_superblock = self._s_superblocks[0]
 */
         }
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L38_try_end;
-        __pyx_L33_error:;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        goto __pyx_L14_try_end;
+        __pyx_L9_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_19) < 0) __PYX_ERR(0, 98, __pyx_L35_except_error)
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_11) < 0) __PYX_ERR(0, 73, __pyx_L11_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
           __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_19);
-          __pyx_t_7 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_19); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 98, __pyx_L35_except_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_7, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 98, __pyx_L35_except_error)
+          __Pyx_XGOTREF(__pyx_t_11);
+          __pyx_t_8 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_11); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 73, __pyx_L11_except_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_8, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 73, __pyx_L11_except_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_6 < 0) __PYX_ERR(0, 98, __pyx_L35_except_error)
-          __pyx_t_16 = (!__pyx_t_6);
-          if (unlikely(__pyx_t_16)) {
+          if (__pyx_t_7 < 0) __PYX_ERR(0, 73, __pyx_L11_except_error)
+          __pyx_t_6 = (!__pyx_t_7);
+          if (unlikely(__pyx_t_6)) {
+            __Pyx_GIVEREF(__pyx_t_3);
             __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_19);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_19);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_19 = 0; 
-            __PYX_ERR(0, 98, __pyx_L35_except_error)
+            __Pyx_XGIVEREF(__pyx_t_11);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_11);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_11 = 0; 
+            __PYX_ERR(0, 73, __pyx_L11_except_error)
           }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-          goto __pyx_L34_exception_handled;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          goto __pyx_L10_exception_handled;
         }
-        __pyx_L35_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
+        __pyx_L11_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
         goto __pyx_L1_error;
-        __pyx_L34_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
-        __pyx_L38_try_end:;
+        __pyx_L10_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        __pyx_L14_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 98, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (__pyx_t_13) {
+          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 73, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_16);
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
         }
-        goto __pyx_L32;
+        goto __pyx_L8;
       }
-      __pyx_L32:;
+      __pyx_L8:;
     }
-    goto __pyx_L42;
-    __pyx_L29_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    goto __pyx_L18;
+    __pyx_L5_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     goto __pyx_L1_error;
-    __pyx_L42:;
+    __pyx_L18:;
   }
 
-  /* "askur/filemapping.pyx":103
+  /* "askur/filemapping.pyx":78
  *             self._s_superblocks = self._s_superblocks[1:]
  * 
  *         with io.open(TRIE_FILE, "rb") as f_trie:             # <<<<<<<<<<<<<<
@@ -4938,133 +4244,133 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
   /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 103, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_7))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_8);
+    if (unlikely(PyMethod_Check(__pyx_t_8))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_8);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_7, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_TRIE_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_19 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 103, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_19);
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_TRIE_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
     }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 103, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L43_error)
-    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L19_error)
+    __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 103, __pyx_L43_error)
-      __Pyx_GOTREF(__pyx_t_7);
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 78, __pyx_L19_error)
+      __Pyx_GOTREF(__pyx_t_8);
     }
-    __pyx_t_4 = __pyx_t_7;
-    __pyx_t_7 = 0;
-    __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+    __pyx_t_3 = __pyx_t_8;
+    __pyx_t_8 = 0;
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_13);
+        __Pyx_ExceptionSave(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_14);
         /*try:*/ {
-          __pyx_v_f_trie = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_f_trie = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":104
+          /* "askur/filemapping.pyx":79
  * 
  *         with io.open(TRIE_FILE, "rb") as f_trie:
  *             self._trie = mmap.mmap(f_trie.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
  * 
  *         with io.open(HC_BITS_FILE, "rb") as f_hc_bitarray:
 */
-          __pyx_t_19 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 104, __pyx_L47_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 104, __pyx_L47_error)
+          __pyx_t_11 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 79, __pyx_L23_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_2 = __pyx_v_f_trie;
-          __Pyx_INCREF(__pyx_t_2);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 79, __pyx_L23_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __pyx_t_10 = __pyx_v_f_trie;
+          __Pyx_INCREF(__pyx_t_10);
           __pyx_t_5 = 0;
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
-            __pyx_t_7 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 104, __pyx_L47_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
+            __pyx_t_8 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 79, __pyx_L23_error)
+            __Pyx_GOTREF(__pyx_t_8);
           }
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L47_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L47_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 79, __pyx_L23_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L23_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __pyx_t_5 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_19 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_19);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_19);
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_11);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_11);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
             __pyx_t_5 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_19, __pyx_t_7, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_2 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L47_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_3, __pyx_t_2, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 104, __pyx_L47_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_2);
-            __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_11, __pyx_t_8, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_10 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 79, __pyx_L23_error)
+            __Pyx_GOTREF(__pyx_t_10);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_1, __pyx_t_10, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 79, __pyx_L23_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_10);
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 104, __pyx_L47_error)
-            __Pyx_GOTREF(__pyx_t_4);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L23_error)
+            __Pyx_GOTREF(__pyx_t_3);
           }
-          __Pyx_GIVEREF(__pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_trie);
           __Pyx_DECREF(__pyx_v_self->_trie);
-          __pyx_v_self->_trie = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_trie = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":103
+          /* "askur/filemapping.pyx":78
  *             self._s_superblocks = self._s_superblocks[1:]
  * 
  *         with io.open(TRIE_FILE, "rb") as f_trie:             # <<<<<<<<<<<<<<
@@ -5072,84 +4378,84 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
         }
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        goto __pyx_L52_try_end;
-        __pyx_L47_error:;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        goto __pyx_L28_try_end;
+        __pyx_L23_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_2) < 0) __PYX_ERR(0, 103, __pyx_L49_except_error)
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_10) < 0) __PYX_ERR(0, 78, __pyx_L25_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
           __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_2);
-          __pyx_t_3 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 103, __pyx_L49_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_3, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 103, __pyx_L49_except_error)
+          __Pyx_XGOTREF(__pyx_t_10);
+          __pyx_t_1 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L25_except_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_1, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 78, __pyx_L25_except_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_16 < 0) __PYX_ERR(0, 103, __pyx_L49_except_error)
-          __pyx_t_6 = (!__pyx_t_16);
-          if (unlikely(__pyx_t_6)) {
+          if (__pyx_t_6 < 0) __PYX_ERR(0, 78, __pyx_L25_except_error)
+          __pyx_t_7 = (!__pyx_t_6);
+          if (unlikely(__pyx_t_7)) {
+            __Pyx_GIVEREF(__pyx_t_3);
             __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_2);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_2);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_2 = 0; 
-            __PYX_ERR(0, 103, __pyx_L49_except_error)
+            __Pyx_XGIVEREF(__pyx_t_10);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_10);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_10 = 0; 
+            __PYX_ERR(0, 78, __pyx_L25_except_error)
           }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          goto __pyx_L48_exception_handled;
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          goto __pyx_L24_exception_handled;
         }
-        __pyx_L49_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
+        __pyx_L25_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
         goto __pyx_L1_error;
-        __pyx_L48_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        __pyx_L52_try_end:;
+        __pyx_L24_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+        __pyx_L28_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_13 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 103, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_13);
+        if (__pyx_t_13) {
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 78, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         }
-        goto __pyx_L46;
+        goto __pyx_L22;
       }
-      __pyx_L46:;
+      __pyx_L22:;
     }
-    goto __pyx_L56;
-    __pyx_L43_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    goto __pyx_L32;
+    __pyx_L19_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     goto __pyx_L1_error;
-    __pyx_L56:;
+    __pyx_L32:;
   }
 
-  /* "askur/filemapping.pyx":106
+  /* "askur/filemapping.pyx":81
  *             self._trie = mmap.mmap(f_trie.fileno(), 0, access=mmap.ACCESS_READ)
  * 
  *         with io.open(HC_BITS_FILE, "rb") as f_hc_bitarray:             # <<<<<<<<<<<<<<
@@ -5157,133 +4463,133 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
   /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_3))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_3);
-      assert(__pyx_t_8);
+    if (unlikely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_1);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_1, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_HC_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+    }
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 81, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 81, __pyx_L33_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
       PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
       __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_HC_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L33_error)
+      __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 106, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L57_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L57_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    __pyx_t_4 = __pyx_t_3;
-    __pyx_t_3 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_3 = __pyx_t_1;
+    __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_13, &__pyx_t_12, &__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_11);
+        __Pyx_ExceptionSave(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_16);
         /*try:*/ {
-          __pyx_v_f_hc_bitarray = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_f_hc_bitarray = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":107
+          /* "askur/filemapping.pyx":82
  * 
  *         with io.open(HC_BITS_FILE, "rb") as f_hc_bitarray:
  *             self._hc_bitarray = mmap.mmap(f_hc_bitarray.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
  * 
  *         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:
 */
-          __pyx_t_2 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L61_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 107, __pyx_L61_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_7 = __pyx_v_f_hc_bitarray;
-          __Pyx_INCREF(__pyx_t_7);
+          __pyx_t_10 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L37_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 82, __pyx_L37_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_8 = __pyx_v_f_hc_bitarray;
+          __Pyx_INCREF(__pyx_t_8);
           __pyx_t_5 = 0;
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_7, NULL};
-            __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L61_error)
-            __Pyx_GOTREF(__pyx_t_3);
+            PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
+            __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L37_error)
+            __Pyx_GOTREF(__pyx_t_1);
           }
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 107, __pyx_L61_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 107, __pyx_L61_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 82, __pyx_L37_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 82, __pyx_L37_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           __pyx_t_5 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_2);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_2);
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_10);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_10);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
             __pyx_t_5 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_2, __pyx_t_3, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_7 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 107, __pyx_L61_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_19, __pyx_t_7, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 107, __pyx_L61_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_7);
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_10, __pyx_t_1, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_8 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 82, __pyx_L37_error)
+            __Pyx_GOTREF(__pyx_t_8);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_11, __pyx_t_8, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 82, __pyx_L37_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_8);
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L61_error)
-            __Pyx_GOTREF(__pyx_t_4);
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L37_error)
+            __Pyx_GOTREF(__pyx_t_3);
           }
-          __Pyx_GIVEREF(__pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_hc_bitarray);
           __Pyx_DECREF(__pyx_v_self->_hc_bitarray);
-          __pyx_v_self->_hc_bitarray = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_hc_bitarray = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":106
+          /* "askur/filemapping.pyx":81
  *             self._trie = mmap.mmap(f_trie.fileno(), 0, access=mmap.ACCESS_READ)
  * 
  *         with io.open(HC_BITS_FILE, "rb") as f_hc_bitarray:             # <<<<<<<<<<<<<<
@@ -5291,875 +4597,875 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
         }
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L66_try_end;
-        __pyx_L61_error:;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        goto __pyx_L42_try_end;
+        __pyx_L37_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_7) < 0) __PYX_ERR(0, 106, __pyx_L63_except_error)
-          __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_7);
-          __pyx_t_19 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_7); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 106, __pyx_L63_except_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_19, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 106, __pyx_L63_except_error)
-          __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
-          __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_6 < 0) __PYX_ERR(0, 106, __pyx_L63_except_error)
-          __pyx_t_16 = (!__pyx_t_6);
-          if (unlikely(__pyx_t_16)) {
-            __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_7);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_7);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_7 = 0; 
-            __PYX_ERR(0, 106, __pyx_L63_except_error)
-          }
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          goto __pyx_L62_exception_handled;
-        }
-        __pyx_L63_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
-        goto __pyx_L1_error;
-        __pyx_L62_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
-        __pyx_L66_try_end:;
-      }
-    }
-    /*finally:*/ {
-      /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 106, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        }
-        goto __pyx_L60;
-      }
-      __pyx_L60:;
-    }
-    goto __pyx_L70;
-    __pyx_L57_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    goto __pyx_L1_error;
-    __pyx_L70:;
-  }
-
-  /* "askur/filemapping.pyx":109
- *             self._hc_bitarray = mmap.mmap(f_hc_bitarray.fileno(), 0, access=mmap.ACCESS_READ)
- * 
- *         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:             # <<<<<<<<<<<<<<
- *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
- * 
-*/
-  /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 109, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 109, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_19);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_19))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_19);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_19);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_19, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_HC_SB_BIN, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_19, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 109, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-    }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 109, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 109, __pyx_L71_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_19 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 109, __pyx_L71_error)
-      __Pyx_GOTREF(__pyx_t_19);
-    }
-    __pyx_t_4 = __pyx_t_19;
-    __pyx_t_19 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    /*try:*/ {
-      {
-        __Pyx_PyThreadState_declare
-        __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_13);
-        /*try:*/ {
-          __pyx_v_f_hc_super_blocks = __pyx_t_4;
-          __pyx_t_4 = 0;
-
-          /* "askur/filemapping.pyx":110
- * 
- *         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:
- *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
- * 
- *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:
-*/
-          __pyx_t_7 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 110, __pyx_L75_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 110, __pyx_L75_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          __pyx_t_3 = __pyx_v_f_hc_super_blocks;
-          __Pyx_INCREF(__pyx_t_3);
-          __pyx_t_5 = 0;
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
-            __pyx_t_19 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 110, __pyx_L75_error)
-            __Pyx_GOTREF(__pyx_t_19);
-          }
-          __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 110, __pyx_L75_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 110, __pyx_L75_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_5 = 1;
-          #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_7);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_7);
-            __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
-            __pyx_t_5 = 0;
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_7, __pyx_t_19, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_3 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 110, __pyx_L75_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_2, __pyx_t_3, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 110, __pyx_L75_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_3);
-            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 110, __pyx_L75_error)
-            __Pyx_GOTREF(__pyx_t_4);
-          }
-          __Pyx_GIVEREF(__pyx_t_4);
-          __Pyx_GOTREF(__pyx_v_self->_hc_super_blocks);
-          __Pyx_DECREF(__pyx_v_self->_hc_super_blocks);
-          __pyx_v_self->_hc_super_blocks = __pyx_t_4;
-          __pyx_t_4 = 0;
-
-          /* "askur/filemapping.pyx":109
- *             self._hc_bitarray = mmap.mmap(f_hc_bitarray.fileno(), 0, access=mmap.ACCESS_READ)
- * 
- *         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:             # <<<<<<<<<<<<<<
- *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
- * 
-*/
-        }
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        goto __pyx_L80_try_end;
-        __pyx_L75_error:;
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        /*except:*/ {
-          __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_3) < 0) __PYX_ERR(0, 109, __pyx_L77_except_error)
-          __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_8) < 0) __PYX_ERR(0, 81, __pyx_L39_except_error)
           __Pyx_XGOTREF(__pyx_t_3);
-          __pyx_t_2 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 109, __pyx_L77_except_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_2, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 109, __pyx_L77_except_error)
-          __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_18);
-          __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_16 < 0) __PYX_ERR(0, 109, __pyx_L77_except_error)
-          __pyx_t_6 = (!__pyx_t_16);
-          if (unlikely(__pyx_t_6)) {
-            __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_3);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_3);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_3 = 0; 
-            __PYX_ERR(0, 109, __pyx_L77_except_error)
-          }
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-          goto __pyx_L76_exception_handled;
-        }
-        __pyx_L77_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        goto __pyx_L1_error;
-        __pyx_L76_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        __pyx_L80_try_end:;
-      }
-    }
-    /*finally:*/ {
-      /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_13 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 109, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_13);
-          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-        }
-        goto __pyx_L74;
-      }
-      __pyx_L74:;
-    }
-    goto __pyx_L84;
-    __pyx_L71_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    goto __pyx_L1_error;
-    __pyx_L84:;
-  }
-
-  /* "askur/filemapping.pyx":112
- *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
- * 
- *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:             # <<<<<<<<<<<<<<
- *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
- * 
-*/
-  /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 112, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_2);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_2, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_SELECT_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 112, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 112, __pyx_L85_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L85_error)
-      __Pyx_GOTREF(__pyx_t_2);
-    }
-    __pyx_t_4 = __pyx_t_2;
-    __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    /*try:*/ {
-      {
-        __Pyx_PyThreadState_declare
-        __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_13, &__pyx_t_12, &__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_11);
-        /*try:*/ {
-          __pyx_v_f_select_bits = __pyx_t_4;
-          __pyx_t_4 = 0;
-
-          /* "askur/filemapping.pyx":113
- * 
- *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:
- *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
- * 
- *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:
-*/
-          __pyx_t_3 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 113, __pyx_L89_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 113, __pyx_L89_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_19 = __pyx_v_f_select_bits;
-          __Pyx_INCREF(__pyx_t_19);
-          __pyx_t_5 = 0;
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_19, NULL};
-            __pyx_t_2 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 113, __pyx_L89_error)
-            __Pyx_GOTREF(__pyx_t_2);
-          }
-          __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 113, __pyx_L89_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 113, __pyx_L89_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          __pyx_t_5 = 1;
-          #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_3);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_3);
-            __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
-            __pyx_t_5 = 0;
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_3, __pyx_t_2, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_19 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 113, __pyx_L89_error)
-            __Pyx_GOTREF(__pyx_t_19);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_7, __pyx_t_19, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 113, __pyx_L89_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_19);
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 113, __pyx_L89_error)
-            __Pyx_GOTREF(__pyx_t_4);
-          }
-          __Pyx_GIVEREF(__pyx_t_4);
-          __Pyx_GOTREF(__pyx_v_self->_s_bits);
-          __Pyx_DECREF(__pyx_v_self->_s_bits);
-          __pyx_v_self->_s_bits = __pyx_t_4;
-          __pyx_t_4 = 0;
-
-          /* "askur/filemapping.pyx":112
- *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
- * 
- *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:             # <<<<<<<<<<<<<<
- *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
- * 
-*/
-        }
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L94_try_end;
-        __pyx_L89_error:;
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        /*except:*/ {
-          __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_19) < 0) __PYX_ERR(0, 112, __pyx_L91_except_error)
           __Pyx_XGOTREF(__pyx_t_4);
           __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_19);
-          __pyx_t_7 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_19); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 112, __pyx_L91_except_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_7, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 112, __pyx_L91_except_error)
-          __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
-          __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_6 < 0) __PYX_ERR(0, 112, __pyx_L91_except_error)
-          __pyx_t_16 = (!__pyx_t_6);
-          if (unlikely(__pyx_t_16)) {
-            __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_19);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_19);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_19 = 0; 
-            __PYX_ERR(0, 112, __pyx_L91_except_error)
-          }
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-          goto __pyx_L90_exception_handled;
-        }
-        __pyx_L91_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
-        goto __pyx_L1_error;
-        __pyx_L90_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
-        __pyx_L94_try_end:;
-      }
-    }
-    /*finally:*/ {
-      /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 112, __pyx_L1_error)
+          __pyx_t_11 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 81, __pyx_L39_except_error)
           __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_11, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        }
-        goto __pyx_L88;
-      }
-      __pyx_L88:;
-    }
-    goto __pyx_L98;
-    __pyx_L85_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    goto __pyx_L1_error;
-    __pyx_L98:;
-  }
-
-  /* "askur/filemapping.pyx":115
- *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
- * 
- *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:             # <<<<<<<<<<<<<<
- *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
- * 
-*/
-  /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 115, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 115, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_7))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_7, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_EOW_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_19 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 115, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_19);
-    }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 115, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 115, __pyx_L99_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 115, __pyx_L99_error)
-      __Pyx_GOTREF(__pyx_t_7);
-    }
-    __pyx_t_4 = __pyx_t_7;
-    __pyx_t_7 = 0;
-    __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-    /*try:*/ {
-      {
-        __Pyx_PyThreadState_declare
-        __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_13);
-        /*try:*/ {
-          __pyx_v_f_value_bits = __pyx_t_4;
-          __pyx_t_4 = 0;
-
-          /* "askur/filemapping.pyx":116
- * 
- *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:
- *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
- * 
- *         with io.open(EOW_BITS_SUMMARY_FILE, "rb") as f_eow_bits_summary:
-*/
-          __pyx_t_19 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 116, __pyx_L103_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 116, __pyx_L103_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_2 = __pyx_v_f_value_bits;
-          __Pyx_INCREF(__pyx_t_2);
-          __pyx_t_5 = 0;
-          {
-            PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
-            __pyx_t_7 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 116, __pyx_L103_error)
-            __Pyx_GOTREF(__pyx_t_7);
-          }
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L103_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 116, __pyx_L103_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_5 = 1;
-          #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_19 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_19);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_19);
-            __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
-            __pyx_t_5 = 0;
-          }
-          #endif
-          {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_19, __pyx_t_7, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_2 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L103_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_3, __pyx_t_2, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 116, __pyx_L103_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_2);
-            __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 116, __pyx_L103_error)
-            __Pyx_GOTREF(__pyx_t_4);
-          }
-          __Pyx_GIVEREF(__pyx_t_4);
-          __Pyx_GOTREF(__pyx_v_self->_eow_bits);
-          __Pyx_DECREF(__pyx_v_self->_eow_bits);
-          __pyx_v_self->_eow_bits = __pyx_t_4;
-          __pyx_t_4 = 0;
-
-          /* "askur/filemapping.pyx":115
- *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
- * 
- *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:             # <<<<<<<<<<<<<<
- *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
- * 
-*/
-        }
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        goto __pyx_L108_try_end;
-        __pyx_L103_error:;
-        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        /*except:*/ {
-          __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_2) < 0) __PYX_ERR(0, 115, __pyx_L105_except_error)
-          __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_2);
-          __pyx_t_3 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 115, __pyx_L105_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_3, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 115, __pyx_L105_except_error)
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 81, __pyx_L39_except_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_16 < 0) __PYX_ERR(0, 115, __pyx_L105_except_error)
-          __pyx_t_6 = (!__pyx_t_16);
+          if (__pyx_t_7 < 0) __PYX_ERR(0, 81, __pyx_L39_except_error)
+          __pyx_t_6 = (!__pyx_t_7);
           if (unlikely(__pyx_t_6)) {
+            __Pyx_GIVEREF(__pyx_t_3);
             __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_2);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_2);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_2 = 0; 
-            __PYX_ERR(0, 115, __pyx_L105_except_error)
+            __Pyx_XGIVEREF(__pyx_t_8);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_8);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_8 = 0; 
+            __PYX_ERR(0, 81, __pyx_L39_except_error)
           }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          goto __pyx_L104_exception_handled;
+          goto __pyx_L38_exception_handled;
         }
-        __pyx_L105_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
+        __pyx_L39_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
         goto __pyx_L1_error;
-        __pyx_L104_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        __pyx_L108_try_end:;
+        __pyx_L38_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        __pyx_L42_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_13 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 115, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_13);
+        if (__pyx_t_13) {
+          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 81, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_16);
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
         }
-        goto __pyx_L102;
+        goto __pyx_L36;
       }
-      __pyx_L102:;
+      __pyx_L36:;
     }
-    goto __pyx_L112;
-    __pyx_L99_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    goto __pyx_L46;
+    __pyx_L33_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     goto __pyx_L1_error;
-    __pyx_L112:;
+    __pyx_L46:;
   }
 
-  /* "askur/filemapping.pyx":118
- *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
+  /* "askur/filemapping.pyx":84
+ *             self._hc_bitarray = mmap.mmap(f_hc_bitarray.fileno(), 0, access=mmap.ACCESS_READ)
  * 
- *         with io.open(EOW_BITS_SUMMARY_FILE, "rb") as f_eow_bits_summary:             # <<<<<<<<<<<<<<
- *             self._eow_sb = mmap.mmap(f_eow_bits_summary.fileno(), 0, access=mmap.ACCESS_READ)
+ *         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:             # <<<<<<<<<<<<<<
+ *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
  * 
 */
   /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 118, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 84, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_3))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_3);
-      assert(__pyx_t_8);
+    if (unlikely(PyMethod_Check(__pyx_t_11))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_11);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_11);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_11, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_HC_SB_BIN, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_11, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 84, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+    }
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 84, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L47_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
       PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
       __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_EOW_BITS_SUMMARY_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 84, __pyx_L47_error)
+      __Pyx_GOTREF(__pyx_t_11);
     }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 118, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 118, __pyx_L113_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L113_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    __pyx_t_4 = __pyx_t_3;
-    __pyx_t_3 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_3 = __pyx_t_11;
+    __pyx_t_11 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_13, &__pyx_t_12, &__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_11);
+        __Pyx_ExceptionSave(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_14);
         /*try:*/ {
-          __pyx_v_f_eow_bits_summary = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_f_hc_super_blocks = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":119
+          /* "askur/filemapping.pyx":85
+ * 
+ *         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:
+ *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
+ * 
+ *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:
+*/
+          __pyx_t_8 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 85, __pyx_L51_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 85, __pyx_L51_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __pyx_t_1 = __pyx_v_f_hc_super_blocks;
+          __Pyx_INCREF(__pyx_t_1);
+          __pyx_t_5 = 0;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_1, NULL};
+            __pyx_t_11 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 85, __pyx_L51_error)
+            __Pyx_GOTREF(__pyx_t_11);
+          }
+          __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 85, __pyx_L51_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 85, __pyx_L51_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_5 = 1;
+          #if CYTHON_UNPACK_METHODS
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_8);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_8);
+            __Pyx_INCREF(__pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+            __pyx_t_5 = 0;
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_8, __pyx_t_11, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_1 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 85, __pyx_L51_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_10, __pyx_t_1, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 85, __pyx_L51_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_1);
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L51_error)
+            __Pyx_GOTREF(__pyx_t_3);
+          }
+          __Pyx_GIVEREF(__pyx_t_3);
+          __Pyx_GOTREF(__pyx_v_self->_hc_super_blocks);
+          __Pyx_DECREF(__pyx_v_self->_hc_super_blocks);
+          __pyx_v_self->_hc_super_blocks = __pyx_t_3;
+          __pyx_t_3 = 0;
+
+          /* "askur/filemapping.pyx":84
+ *             self._hc_bitarray = mmap.mmap(f_hc_bitarray.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+ *         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:             # <<<<<<<<<<<<<<
+ *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+*/
+        }
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        goto __pyx_L56_try_end;
+        __pyx_L51_error:;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        /*except:*/ {
+          __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_1) < 0) __PYX_ERR(0, 84, __pyx_L53_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
+          __Pyx_XGOTREF(__pyx_t_4);
+          __Pyx_XGOTREF(__pyx_t_1);
+          __pyx_t_10 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 84, __pyx_L53_except_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_10, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 84, __pyx_L53_except_error)
+          __Pyx_GOTREF(__pyx_t_18);
+          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
+          if (__pyx_t_6 < 0) __PYX_ERR(0, 84, __pyx_L53_except_error)
+          __pyx_t_7 = (!__pyx_t_6);
+          if (unlikely(__pyx_t_7)) {
+            __Pyx_GIVEREF(__pyx_t_3);
+            __Pyx_GIVEREF(__pyx_t_4);
+            __Pyx_XGIVEREF(__pyx_t_1);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_1);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_1 = 0; 
+            __PYX_ERR(0, 84, __pyx_L53_except_error)
+          }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          goto __pyx_L52_exception_handled;
+        }
+        __pyx_L53_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+        goto __pyx_L1_error;
+        __pyx_L52_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+        __pyx_L56_try_end:;
+      }
+    }
+    /*finally:*/ {
+      /*normal exit:*/{
+        if (__pyx_t_13) {
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 84, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        }
+        goto __pyx_L50;
+      }
+      __pyx_L50:;
+    }
+    goto __pyx_L60;
+    __pyx_L47_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+    goto __pyx_L1_error;
+    __pyx_L60:;
+  }
+
+  /* "askur/filemapping.pyx":87
+ *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+ *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:             # <<<<<<<<<<<<<<
+ *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+*/
+  /*with:*/ {
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_10);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_10))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_10);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_SELECT_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+    }
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 87, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L61_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 87, __pyx_L61_error)
+      __Pyx_GOTREF(__pyx_t_10);
+    }
+    __pyx_t_3 = __pyx_t_10;
+    __pyx_t_10 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    /*try:*/ {
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_16);
+        /*try:*/ {
+          __pyx_v_f_select_bits = __pyx_t_3;
+          __pyx_t_3 = 0;
+
+          /* "askur/filemapping.pyx":88
+ * 
+ *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:
+ *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
+ * 
+ *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:
+*/
+          __pyx_t_1 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 88, __pyx_L65_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 88, __pyx_L65_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __pyx_t_11 = __pyx_v_f_select_bits;
+          __Pyx_INCREF(__pyx_t_11);
+          __pyx_t_5 = 0;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_11, NULL};
+            __pyx_t_10 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 88, __pyx_L65_error)
+            __Pyx_GOTREF(__pyx_t_10);
+          }
+          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 88, __pyx_L65_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 88, __pyx_L65_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __pyx_t_5 = 1;
+          #if CYTHON_UNPACK_METHODS
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_1);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_1);
+            __Pyx_INCREF(__pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+            __pyx_t_5 = 0;
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_1, __pyx_t_10, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_11 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 88, __pyx_L65_error)
+            __Pyx_GOTREF(__pyx_t_11);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_8, __pyx_t_11, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 88, __pyx_L65_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_11);
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L65_error)
+            __Pyx_GOTREF(__pyx_t_3);
+          }
+          __Pyx_GIVEREF(__pyx_t_3);
+          __Pyx_GOTREF(__pyx_v_self->_s_bits);
+          __Pyx_DECREF(__pyx_v_self->_s_bits);
+          __pyx_v_self->_s_bits = __pyx_t_3;
+          __pyx_t_3 = 0;
+
+          /* "askur/filemapping.pyx":87
+ *             self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+ *         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:             # <<<<<<<<<<<<<<
+ *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+*/
+        }
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        goto __pyx_L70_try_end;
+        __pyx_L65_error:;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        /*except:*/ {
+          __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_11) < 0) __PYX_ERR(0, 87, __pyx_L67_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
+          __Pyx_XGOTREF(__pyx_t_4);
+          __Pyx_XGOTREF(__pyx_t_11);
+          __pyx_t_8 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_11); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 87, __pyx_L67_except_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_8, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 87, __pyx_L67_except_error)
+          __Pyx_GOTREF(__pyx_t_18);
+          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
+          if (__pyx_t_7 < 0) __PYX_ERR(0, 87, __pyx_L67_except_error)
+          __pyx_t_6 = (!__pyx_t_7);
+          if (unlikely(__pyx_t_6)) {
+            __Pyx_GIVEREF(__pyx_t_3);
+            __Pyx_GIVEREF(__pyx_t_4);
+            __Pyx_XGIVEREF(__pyx_t_11);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_11);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_11 = 0; 
+            __PYX_ERR(0, 87, __pyx_L67_except_error)
+          }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          goto __pyx_L66_exception_handled;
+        }
+        __pyx_L67_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        goto __pyx_L1_error;
+        __pyx_L66_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        __pyx_L70_try_end:;
+      }
+    }
+    /*finally:*/ {
+      /*normal exit:*/{
+        if (__pyx_t_13) {
+          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 87, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_16);
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+        }
+        goto __pyx_L64;
+      }
+      __pyx_L64:;
+    }
+    goto __pyx_L74;
+    __pyx_L61_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+    goto __pyx_L1_error;
+    __pyx_L74:;
+  }
+
+  /* "askur/filemapping.pyx":90
+ *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+ *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:             # <<<<<<<<<<<<<<
+ *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+*/
+  /*with:*/ {
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 90, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_8))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_8);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_EOW_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 90, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
+    }
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 90, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L75_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 90, __pyx_L75_error)
+      __Pyx_GOTREF(__pyx_t_8);
+    }
+    __pyx_t_3 = __pyx_t_8;
+    __pyx_t_8 = 0;
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+    /*try:*/ {
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_14);
+        /*try:*/ {
+          __pyx_v_f_value_bits = __pyx_t_3;
+          __pyx_t_3 = 0;
+
+          /* "askur/filemapping.pyx":91
+ * 
+ *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:
+ *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
+ * 
+ *         with io.open(EOW_BITS_SUMMARY_FILE, "rb") as f_eow_bits_summary:
+*/
+          __pyx_t_11 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 91, __pyx_L79_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 91, __pyx_L79_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __pyx_t_10 = __pyx_v_f_value_bits;
+          __Pyx_INCREF(__pyx_t_10);
+          __pyx_t_5 = 0;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
+            __pyx_t_8 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 91, __pyx_L79_error)
+            __Pyx_GOTREF(__pyx_t_8);
+          }
+          __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 91, __pyx_L79_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L79_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __pyx_t_5 = 1;
+          #if CYTHON_UNPACK_METHODS
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_11);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_11);
+            __Pyx_INCREF(__pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+            __pyx_t_5 = 0;
+          }
+          #endif
+          {
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_11, __pyx_t_8, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_10 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 91, __pyx_L79_error)
+            __Pyx_GOTREF(__pyx_t_10);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_1, __pyx_t_10, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 91, __pyx_L79_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_10);
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L79_error)
+            __Pyx_GOTREF(__pyx_t_3);
+          }
+          __Pyx_GIVEREF(__pyx_t_3);
+          __Pyx_GOTREF(__pyx_v_self->_eow_bits);
+          __Pyx_DECREF(__pyx_v_self->_eow_bits);
+          __pyx_v_self->_eow_bits = __pyx_t_3;
+          __pyx_t_3 = 0;
+
+          /* "askur/filemapping.pyx":90
+ *             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+ *         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:             # <<<<<<<<<<<<<<
+ *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+*/
+        }
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        goto __pyx_L84_try_end;
+        __pyx_L79_error:;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        /*except:*/ {
+          __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_10) < 0) __PYX_ERR(0, 90, __pyx_L81_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
+          __Pyx_XGOTREF(__pyx_t_4);
+          __Pyx_XGOTREF(__pyx_t_10);
+          __pyx_t_1 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L81_except_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_1, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 90, __pyx_L81_except_error)
+          __Pyx_GOTREF(__pyx_t_18);
+          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
+          if (__pyx_t_6 < 0) __PYX_ERR(0, 90, __pyx_L81_except_error)
+          __pyx_t_7 = (!__pyx_t_6);
+          if (unlikely(__pyx_t_7)) {
+            __Pyx_GIVEREF(__pyx_t_3);
+            __Pyx_GIVEREF(__pyx_t_4);
+            __Pyx_XGIVEREF(__pyx_t_10);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_10);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_10 = 0; 
+            __PYX_ERR(0, 90, __pyx_L81_except_error)
+          }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          goto __pyx_L80_exception_handled;
+        }
+        __pyx_L81_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+        goto __pyx_L1_error;
+        __pyx_L80_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+        __pyx_L84_try_end:;
+      }
+    }
+    /*finally:*/ {
+      /*normal exit:*/{
+        if (__pyx_t_13) {
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 90, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        }
+        goto __pyx_L78;
+      }
+      __pyx_L78:;
+    }
+    goto __pyx_L88;
+    __pyx_L75_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+    goto __pyx_L1_error;
+    __pyx_L88:;
+  }
+
+  /* "askur/filemapping.pyx":93
+ *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+ *         with io.open(EOW_BITS_SUMMARY_FILE, "rb") as f_eow_bits_summary:             # <<<<<<<<<<<<<<
+ *             self._eow_sb = mmap.mmap(f_eow_bits_summary.fileno(), 0, access=mmap.ACCESS_READ)
+ * 
+*/
+  /*with:*/ {
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (unlikely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_1);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_1, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_EOW_BITS_SUMMARY_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+    }
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L89_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L89_error)
+      __Pyx_GOTREF(__pyx_t_1);
+    }
+    __pyx_t_3 = __pyx_t_1;
+    __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    /*try:*/ {
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_16);
+        /*try:*/ {
+          __pyx_v_f_eow_bits_summary = __pyx_t_3;
+          __pyx_t_3 = 0;
+
+          /* "askur/filemapping.pyx":94
  * 
  *         with io.open(EOW_BITS_SUMMARY_FILE, "rb") as f_eow_bits_summary:
  *             self._eow_sb = mmap.mmap(f_eow_bits_summary.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
  * 
  *         with io.open(INDEX_BITS_FILE, "rb") as f_index_bits:
 */
-          __pyx_t_2 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L117_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 119, __pyx_L117_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_7 = __pyx_v_f_eow_bits_summary;
-          __Pyx_INCREF(__pyx_t_7);
+          __pyx_t_10 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L93_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 94, __pyx_L93_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_8 = __pyx_v_f_eow_bits_summary;
+          __Pyx_INCREF(__pyx_t_8);
           __pyx_t_5 = 0;
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_7, NULL};
-            __pyx_t_3 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L117_error)
-            __Pyx_GOTREF(__pyx_t_3);
+            PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
+            __pyx_t_1 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L93_error)
+            __Pyx_GOTREF(__pyx_t_1);
           }
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 119, __pyx_L117_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 119, __pyx_L117_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 94, __pyx_L93_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 94, __pyx_L93_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           __pyx_t_5 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_2);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_2);
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_10);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_10);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
             __pyx_t_5 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_2, __pyx_t_3, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_7 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 119, __pyx_L117_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_19, __pyx_t_7, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 119, __pyx_L117_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_7);
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_10, __pyx_t_1, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_8 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 94, __pyx_L93_error)
+            __Pyx_GOTREF(__pyx_t_8);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_11, __pyx_t_8, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 94, __pyx_L93_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_8);
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 119, __pyx_L117_error)
-            __Pyx_GOTREF(__pyx_t_4);
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L93_error)
+            __Pyx_GOTREF(__pyx_t_3);
           }
-          __Pyx_GIVEREF(__pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_eow_sb);
           __Pyx_DECREF(__pyx_v_self->_eow_sb);
-          __pyx_v_self->_eow_sb = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_eow_sb = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":118
+          /* "askur/filemapping.pyx":93
  *             self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
  * 
  *         with io.open(EOW_BITS_SUMMARY_FILE, "rb") as f_eow_bits_summary:             # <<<<<<<<<<<<<<
@@ -6167,84 +5473,84 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
         }
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L122_try_end;
-        __pyx_L117_error:;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        goto __pyx_L98_try_end;
+        __pyx_L93_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_7) < 0) __PYX_ERR(0, 118, __pyx_L119_except_error)
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_8) < 0) __PYX_ERR(0, 93, __pyx_L95_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
           __Pyx_XGOTREF(__pyx_t_4);
           __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_7);
-          __pyx_t_19 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_7); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 118, __pyx_L119_except_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_19, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 118, __pyx_L119_except_error)
+          __pyx_t_11 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 93, __pyx_L95_except_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_11, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 93, __pyx_L95_except_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_6 < 0) __PYX_ERR(0, 118, __pyx_L119_except_error)
-          __pyx_t_16 = (!__pyx_t_6);
-          if (unlikely(__pyx_t_16)) {
+          if (__pyx_t_7 < 0) __PYX_ERR(0, 93, __pyx_L95_except_error)
+          __pyx_t_6 = (!__pyx_t_7);
+          if (unlikely(__pyx_t_6)) {
+            __Pyx_GIVEREF(__pyx_t_3);
             __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_7);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_7);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_7 = 0; 
-            __PYX_ERR(0, 118, __pyx_L119_except_error)
+            __Pyx_XGIVEREF(__pyx_t_8);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_8);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_8 = 0; 
+            __PYX_ERR(0, 93, __pyx_L95_except_error)
           }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          goto __pyx_L118_exception_handled;
+          goto __pyx_L94_exception_handled;
         }
-        __pyx_L119_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
+        __pyx_L95_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
         goto __pyx_L1_error;
-        __pyx_L118_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
-        __pyx_L122_try_end:;
+        __pyx_L94_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        __pyx_L98_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 118, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (__pyx_t_13) {
+          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 93, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_16);
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
         }
-        goto __pyx_L116;
+        goto __pyx_L92;
       }
-      __pyx_L116:;
+      __pyx_L92:;
     }
-    goto __pyx_L126;
-    __pyx_L113_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    goto __pyx_L102;
+    __pyx_L89_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     goto __pyx_L1_error;
-    __pyx_L126:;
+    __pyx_L102:;
   }
 
-  /* "askur/filemapping.pyx":121
+  /* "askur/filemapping.pyx":96
  *             self._eow_sb = mmap.mmap(f_eow_bits_summary.fileno(), 0, access=mmap.ACCESS_READ)
  * 
  *         with io.open(INDEX_BITS_FILE, "rb") as f_index_bits:             # <<<<<<<<<<<<<<
@@ -6252,174 +5558,174 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  *             self.nr_bytes_in_index_block = self._index_bits[0]
 */
   /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 121, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_19);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 96, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_19))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_19);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_19);
-      __Pyx_INCREF(__pyx_t_8);
+    if (unlikely(PyMethod_Check(__pyx_t_11))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_11);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_11);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_19, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_11, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_INDEX_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_19, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 121, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_INDEX_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_11, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 96, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
     }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 121, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L127_error)
-    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 96, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L103_error)
+    __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_19 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 121, __pyx_L127_error)
-      __Pyx_GOTREF(__pyx_t_19);
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 96, __pyx_L103_error)
+      __Pyx_GOTREF(__pyx_t_11);
     }
-    __pyx_t_4 = __pyx_t_19;
-    __pyx_t_19 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_3 = __pyx_t_11;
+    __pyx_t_11 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_13);
+        __Pyx_ExceptionSave(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_14);
         /*try:*/ {
-          __pyx_v_f_index_bits = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_f_index_bits = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":122
+          /* "askur/filemapping.pyx":97
  * 
  *         with io.open(INDEX_BITS_FILE, "rb") as f_index_bits:
  *             self._index_bits = mmap.mmap(f_index_bits.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
  *             self.nr_bytes_in_index_block = self._index_bits[0]
  *             self.nr_bytes_in_value_block = self._index_bits[1]
 */
-          __pyx_t_7 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 122, __pyx_L131_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 122, __pyx_L131_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          __pyx_t_3 = __pyx_v_f_index_bits;
-          __Pyx_INCREF(__pyx_t_3);
+          __pyx_t_8 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 97, __pyx_L107_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L107_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __pyx_t_1 = __pyx_v_f_index_bits;
+          __Pyx_INCREF(__pyx_t_1);
           __pyx_t_5 = 0;
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_3, NULL};
-            __pyx_t_19 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 122, __pyx_L131_error)
-            __Pyx_GOTREF(__pyx_t_19);
+            PyObject *__pyx_callargs[2] = {__pyx_t_1, NULL};
+            __pyx_t_11 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 97, __pyx_L107_error)
+            __Pyx_GOTREF(__pyx_t_11);
           }
-          __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L131_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L131_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L107_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 97, __pyx_L107_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __pyx_t_5 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_7);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_7);
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_8);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_8);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
             __pyx_t_5 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_7, __pyx_t_19, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_3 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L131_error)
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_8, __pyx_t_11, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_1 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L107_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_10, __pyx_t_1, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 97, __pyx_L107_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_1);
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 97, __pyx_L107_error)
             __Pyx_GOTREF(__pyx_t_3);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_2, __pyx_t_3, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 122, __pyx_L131_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_3);
-            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 122, __pyx_L131_error)
-            __Pyx_GOTREF(__pyx_t_4);
           }
-          __Pyx_GIVEREF(__pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_index_bits);
           __Pyx_DECREF(__pyx_v_self->_index_bits);
-          __pyx_v_self->_index_bits = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_index_bits = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":123
+          /* "askur/filemapping.pyx":98
  *         with io.open(INDEX_BITS_FILE, "rb") as f_index_bits:
  *             self._index_bits = mmap.mmap(f_index_bits.fileno(), 0, access=mmap.ACCESS_READ)
  *             self.nr_bytes_in_index_block = self._index_bits[0]             # <<<<<<<<<<<<<<
  *             self.nr_bytes_in_value_block = self._index_bits[1]
  *             self._index_bits = self._index_bits[2:]
 */
-          __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_self->_index_bits, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 123, __pyx_L131_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_21 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_21 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L131_error)
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_v_self->nr_bytes_in_index_block = __pyx_t_21;
+          __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_self->_index_bits, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L107_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_17 = __Pyx_PyLong_As_int(__pyx_t_3); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 98, __pyx_L107_error)
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __pyx_v_self->nr_bytes_in_index_block = __pyx_t_17;
 
-          /* "askur/filemapping.pyx":124
+          /* "askur/filemapping.pyx":99
  *             self._index_bits = mmap.mmap(f_index_bits.fileno(), 0, access=mmap.ACCESS_READ)
  *             self.nr_bytes_in_index_block = self._index_bits[0]
  *             self.nr_bytes_in_value_block = self._index_bits[1]             # <<<<<<<<<<<<<<
  *             self._index_bits = self._index_bits[2:]
  * 
 */
-          __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_self->_index_bits, 1, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 124, __pyx_L131_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_21 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_21 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L131_error)
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_v_self->nr_bytes_in_value_block = __pyx_t_21;
+          __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_self->_index_bits, 1, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L107_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_17 = __Pyx_PyLong_As_int(__pyx_t_3); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L107_error)
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __pyx_v_self->nr_bytes_in_value_block = __pyx_t_17;
 
-          /* "askur/filemapping.pyx":125
+          /* "askur/filemapping.pyx":100
  *             self.nr_bytes_in_index_block = self._index_bits[0]
  *             self.nr_bytes_in_value_block = self._index_bits[1]
  *             self._index_bits = self._index_bits[2:]             # <<<<<<<<<<<<<<
  * 
  *         with io.open(SHORT_TEXT_BITS_FILE, "rb") as f_short_text:
 */
-          __pyx_t_4 = __Pyx_PyObject_GetSlice(__pyx_v_self->_index_bits, 2, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[1], 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 125, __pyx_L131_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __Pyx_GIVEREF(__pyx_t_4);
+          __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_v_self->_index_bits, 2, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[1], 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 100, __pyx_L107_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_index_bits);
           __Pyx_DECREF(__pyx_v_self->_index_bits);
-          __pyx_v_self->_index_bits = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_index_bits = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":121
+          /* "askur/filemapping.pyx":96
  *             self._eow_sb = mmap.mmap(f_eow_bits_summary.fileno(), 0, access=mmap.ACCESS_READ)
  * 
  *         with io.open(INDEX_BITS_FILE, "rb") as f_index_bits:             # <<<<<<<<<<<<<<
@@ -6427,84 +5733,84 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  *             self.nr_bytes_in_index_block = self._index_bits[0]
 */
         }
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        goto __pyx_L136_try_end;
-        __pyx_L131_error:;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        goto __pyx_L112_try_end;
+        __pyx_L107_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_3) < 0) __PYX_ERR(0, 121, __pyx_L133_except_error)
-          __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_1) < 0) __PYX_ERR(0, 96, __pyx_L109_except_error)
           __Pyx_XGOTREF(__pyx_t_3);
-          __pyx_t_2 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L133_except_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_2, NULL);
+          __Pyx_XGOTREF(__pyx_t_4);
+          __Pyx_XGOTREF(__pyx_t_1);
+          __pyx_t_10 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 96, __pyx_L109_except_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_10, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 121, __pyx_L133_except_error)
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 96, __pyx_L109_except_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_16 < 0) __PYX_ERR(0, 121, __pyx_L133_except_error)
-          __pyx_t_6 = (!__pyx_t_16);
-          if (unlikely(__pyx_t_6)) {
+          if (__pyx_t_6 < 0) __PYX_ERR(0, 96, __pyx_L109_except_error)
+          __pyx_t_7 = (!__pyx_t_6);
+          if (unlikely(__pyx_t_7)) {
+            __Pyx_GIVEREF(__pyx_t_3);
             __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_3);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_3);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_3 = 0; 
-            __PYX_ERR(0, 121, __pyx_L133_except_error)
+            __Pyx_XGIVEREF(__pyx_t_1);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_1);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_1 = 0; 
+            __PYX_ERR(0, 96, __pyx_L109_except_error)
           }
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-          goto __pyx_L132_exception_handled;
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          goto __pyx_L108_exception_handled;
         }
-        __pyx_L133_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
+        __pyx_L109_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
         goto __pyx_L1_error;
-        __pyx_L132_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        __pyx_L136_try_end:;
+        __pyx_L108_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+        __pyx_L112_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_13 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 121, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_13);
+        if (__pyx_t_13) {
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 96, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         }
-        goto __pyx_L130;
+        goto __pyx_L106;
       }
-      __pyx_L130:;
+      __pyx_L106:;
     }
-    goto __pyx_L140;
-    __pyx_L127_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    goto __pyx_L116;
+    __pyx_L103_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     goto __pyx_L1_error;
-    __pyx_L140:;
+    __pyx_L116:;
   }
 
-  /* "askur/filemapping.pyx":127
+  /* "askur/filemapping.pyx":102
  *             self._index_bits = self._index_bits[2:]
  * 
  *         with io.open(SHORT_TEXT_BITS_FILE, "rb") as f_short_text:             # <<<<<<<<<<<<<<
@@ -6512,133 +5818,133 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
   /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 127, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_5 = 1;
-    #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_2);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_2, __pyx__function);
-      __pyx_t_5 = 0;
-    }
-    #endif
-    {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_SHORT_TEXT_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-    }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 102, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 102, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 127, __pyx_L141_error)
-    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
+    if (unlikely(PyMethod_Check(__pyx_t_10))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_10);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_10);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_10, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L141_error)
-      __Pyx_GOTREF(__pyx_t_2);
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_SHORT_TEXT_BITS_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_4 = __pyx_t_2;
-    __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 102, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 102, __pyx_L117_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = 1;
+    #if CYTHON_UNPACK_METHODS
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
+      __pyx_t_5 = 0;
+    }
+    #endif
+    {
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_10 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 102, __pyx_L117_error)
+      __Pyx_GOTREF(__pyx_t_10);
+    }
+    __pyx_t_3 = __pyx_t_10;
+    __pyx_t_10 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_13, &__pyx_t_12, &__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_11);
+        __Pyx_ExceptionSave(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_16);
         /*try:*/ {
-          __pyx_v_f_short_text = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_f_short_text = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":128
+          /* "askur/filemapping.pyx":103
  * 
  *         with io.open(SHORT_TEXT_BITS_FILE, "rb") as f_short_text:
  *             self._short_text = mmap.mmap(f_short_text.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
  * 
  *         with io.open(ALPHABET_FILE, "rb") as f_alphabet:
 */
-          __pyx_t_3 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L145_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 128, __pyx_L145_error)
-          __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_19 = __pyx_v_f_short_text;
-          __Pyx_INCREF(__pyx_t_19);
+          __pyx_t_1 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 103, __pyx_L121_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L121_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          __pyx_t_11 = __pyx_v_f_short_text;
+          __Pyx_INCREF(__pyx_t_11);
           __pyx_t_5 = 0;
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_19, NULL};
-            __pyx_t_2 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L145_error)
-            __Pyx_GOTREF(__pyx_t_2);
+            PyObject *__pyx_callargs[2] = {__pyx_t_11, NULL};
+            __pyx_t_10 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 103, __pyx_L121_error)
+            __Pyx_GOTREF(__pyx_t_10);
           }
-          __Pyx_GetModuleGlobalName(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 128, __pyx_L145_error)
-          __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 128, __pyx_L145_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 103, __pyx_L121_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 103, __pyx_L121_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           __pyx_t_5 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_3);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_3);
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_1);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_1);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
             __pyx_t_5 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_3, __pyx_t_2, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_19 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 128, __pyx_L145_error)
-            __Pyx_GOTREF(__pyx_t_19);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_7, __pyx_t_19, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 128, __pyx_L145_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_19);
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_1, __pyx_t_10, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_11 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 103, __pyx_L121_error)
+            __Pyx_GOTREF(__pyx_t_11);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_8, __pyx_t_11, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 103, __pyx_L121_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_11);
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 128, __pyx_L145_error)
-            __Pyx_GOTREF(__pyx_t_4);
+            __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 103, __pyx_L121_error)
+            __Pyx_GOTREF(__pyx_t_3);
           }
-          __Pyx_GIVEREF(__pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->_short_text);
           __Pyx_DECREF(__pyx_v_self->_short_text);
-          __pyx_v_self->_short_text = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->_short_text = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":127
+          /* "askur/filemapping.pyx":102
  *             self._index_bits = self._index_bits[2:]
  * 
  *         with io.open(SHORT_TEXT_BITS_FILE, "rb") as f_short_text:             # <<<<<<<<<<<<<<
@@ -6646,84 +5952,84 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
         }
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L150_try_end;
-        __pyx_L145_error:;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        goto __pyx_L126_try_end;
+        __pyx_L121_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_19) < 0) __PYX_ERR(0, 127, __pyx_L147_except_error)
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_11) < 0) __PYX_ERR(0, 102, __pyx_L123_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
           __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_19);
-          __pyx_t_7 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_19); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 127, __pyx_L147_except_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_7, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 127, __pyx_L147_except_error)
+          __Pyx_XGOTREF(__pyx_t_11);
+          __pyx_t_8 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_11); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 102, __pyx_L123_except_error)
+          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_8, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 102, __pyx_L123_except_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_6 < 0) __PYX_ERR(0, 127, __pyx_L147_except_error)
-          __pyx_t_16 = (!__pyx_t_6);
-          if (unlikely(__pyx_t_16)) {
+          if (__pyx_t_7 < 0) __PYX_ERR(0, 102, __pyx_L123_except_error)
+          __pyx_t_6 = (!__pyx_t_7);
+          if (unlikely(__pyx_t_6)) {
+            __Pyx_GIVEREF(__pyx_t_3);
             __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_19);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_19);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_19 = 0; 
-            __PYX_ERR(0, 127, __pyx_L147_except_error)
+            __Pyx_XGIVEREF(__pyx_t_11);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_11);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_11 = 0; 
+            __PYX_ERR(0, 102, __pyx_L123_except_error)
           }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-          goto __pyx_L146_exception_handled;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          goto __pyx_L122_exception_handled;
         }
-        __pyx_L147_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
+        __pyx_L123_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
         goto __pyx_L1_error;
-        __pyx_L146_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_12, __pyx_t_11);
-        __pyx_L150_try_end:;
+        __pyx_L122_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        __pyx_L126_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 127, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (__pyx_t_13) {
+          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 102, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_16);
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
         }
-        goto __pyx_L144;
+        goto __pyx_L120;
       }
-      __pyx_L144:;
+      __pyx_L120:;
     }
-    goto __pyx_L154;
-    __pyx_L141_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    goto __pyx_L130;
+    __pyx_L117_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     goto __pyx_L1_error;
-    __pyx_L154:;
+    __pyx_L130:;
   }
 
-  /* "askur/filemapping.pyx":130
+  /* "askur/filemapping.pyx":105
  *             self._short_text = mmap.mmap(f_short_text.fileno(), 0, access=mmap.ACCESS_READ)
  * 
  *         with io.open(ALPHABET_FILE, "rb") as f_alphabet:             # <<<<<<<<<<<<<<
@@ -6731,133 +6037,133 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
   /*with:*/ {
-    __pyx_t_8 = NULL;
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 130, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 130, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_4 = NULL;
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_io); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_open); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (unlikely(PyMethod_Check(__pyx_t_7))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_8);
+    if (unlikely(PyMethod_Check(__pyx_t_8))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_8);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_7, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[3] = {__pyx_t_8, __pyx_v_ALPHABET_FILE, __pyx_mstate_global->__pyx_n_u_rb};
-      __pyx_t_19 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 130, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_19);
+      PyObject *__pyx_callargs[3] = {__pyx_t_4, __pyx_v_ALPHABET_FILE, __pyx_mstate_global->__pyx_n_u_rb};
+      __pyx_t_11 = __Pyx_PyObject_FastCall(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 105, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_11);
     }
-    __pyx_t_10 = __Pyx_PyObject_LookupSpecial(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 130, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_8 = NULL;
-    __pyx_t_4 = __Pyx_PyObject_LookupSpecial(__pyx_t_19, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 130, __pyx_L155_error)
-    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_13 = __Pyx_PyObject_LookupSpecial(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_exit); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_13);
+    __pyx_t_4 = NULL;
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L131_error)
+    __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_5 = 1;
     #if CYTHON_UNPACK_METHODS
-    if (likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
-      assert(__pyx_t_8);
-      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_8);
+    if (likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      assert(__pyx_t_4);
+      PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx__function);
-      __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
+      __Pyx_DECREF_SET(__pyx_t_3, __pyx__function);
       __pyx_t_5 = 0;
     }
     #endif
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, NULL};
-      __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 130, __pyx_L155_error)
-      __Pyx_GOTREF(__pyx_t_7);
+      PyObject *__pyx_callargs[2] = {__pyx_t_4, NULL};
+      __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 105, __pyx_L131_error)
+      __Pyx_GOTREF(__pyx_t_8);
     }
-    __pyx_t_4 = __pyx_t_7;
-    __pyx_t_7 = 0;
-    __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+    __pyx_t_3 = __pyx_t_8;
+    __pyx_t_8 = 0;
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
-        __Pyx_XGOTREF(__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_12);
-        __Pyx_XGOTREF(__pyx_t_13);
+        __Pyx_ExceptionSave(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_14);
         /*try:*/ {
-          __pyx_v_f_alphabet = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_f_alphabet = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":131
+          /* "askur/filemapping.pyx":106
  * 
  *         with io.open(ALPHABET_FILE, "rb") as f_alphabet:
  *             self.alphabet = mmap.mmap(f_alphabet.fileno(), 0, access=mmap.ACCESS_READ)             # <<<<<<<<<<<<<<
  * 
  *         # Check if reversed
 */
-          __pyx_t_19 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 131, __pyx_L159_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 131, __pyx_L159_error)
+          __pyx_t_11 = NULL;
+          __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 106, __pyx_L135_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_2 = __pyx_v_f_alphabet;
-          __Pyx_INCREF(__pyx_t_2);
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L135_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __pyx_t_10 = __pyx_v_f_alphabet;
+          __Pyx_INCREF(__pyx_t_10);
           __pyx_t_5 = 0;
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_2, NULL};
-            __pyx_t_7 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 131, __pyx_L159_error)
-            __Pyx_GOTREF(__pyx_t_7);
+            PyObject *__pyx_callargs[2] = {__pyx_t_10, NULL};
+            __pyx_t_8 = __Pyx_PyObject_FastCallMethod(__pyx_mstate_global->__pyx_n_u_fileno, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+            if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 106, __pyx_L135_error)
+            __Pyx_GOTREF(__pyx_t_8);
           }
-          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L159_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L159_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_mmap); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 106, __pyx_L135_error)
+          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_mstate_global->__pyx_n_u_ACCESS_READ); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L135_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __pyx_t_5 = 1;
           #if CYTHON_UNPACK_METHODS
-          if (unlikely(PyMethod_Check(__pyx_t_8))) {
-            __pyx_t_19 = PyMethod_GET_SELF(__pyx_t_8);
-            assert(__pyx_t_19);
-            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_8);
-            __Pyx_INCREF(__pyx_t_19);
+          if (unlikely(PyMethod_Check(__pyx_t_4))) {
+            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_4);
+            assert(__pyx_t_11);
+            PyObject* __pyx__function = PyMethod_GET_FUNCTION(__pyx_t_4);
+            __Pyx_INCREF(__pyx_t_11);
             __Pyx_INCREF(__pyx__function);
-            __Pyx_DECREF_SET(__pyx_t_8, __pyx__function);
+            __Pyx_DECREF_SET(__pyx_t_4, __pyx__function);
             __pyx_t_5 = 0;
           }
           #endif
           {
-            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_19, __pyx_t_7, __pyx_mstate_global->__pyx_int_0};
-            __pyx_t_2 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L159_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_3, __pyx_t_2, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 131, __pyx_L159_error)
-            __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_8, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_2);
-            __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
-            __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+            PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_11, __pyx_t_8, __pyx_mstate_global->__pyx_int_0};
+            __pyx_t_10 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 106, __pyx_L135_error)
+            __Pyx_GOTREF(__pyx_t_10);
+            if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_access, __pyx_t_1, __pyx_t_10, __pyx_callargs+3, 0) < 0) __PYX_ERR(0, 106, __pyx_L135_error)
+            __pyx_t_3 = __Pyx_Object_Vectorcall_CallFromBuilder(__pyx_t_4, __pyx_callargs+__pyx_t_5, (3-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_10);
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 131, __pyx_L159_error)
-            __Pyx_GOTREF(__pyx_t_4);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L135_error)
+            __Pyx_GOTREF(__pyx_t_3);
           }
-          __Pyx_GIVEREF(__pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_v_self->alphabet);
           __Pyx_DECREF(__pyx_v_self->alphabet);
-          __pyx_v_self->alphabet = __pyx_t_4;
-          __pyx_t_4 = 0;
+          __pyx_v_self->alphabet = __pyx_t_3;
+          __pyx_t_3 = 0;
 
-          /* "askur/filemapping.pyx":130
+          /* "askur/filemapping.pyx":105
  *             self._short_text = mmap.mmap(f_short_text.fileno(), 0, access=mmap.ACCESS_READ)
  * 
  *         with io.open(ALPHABET_FILE, "rb") as f_alphabet:             # <<<<<<<<<<<<<<
@@ -6865,109 +6171,109 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  * 
 */
         }
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        goto __pyx_L164_try_end;
-        __pyx_L159_error:;
+        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        goto __pyx_L140_try_end;
+        __pyx_L135_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_4, &__pyx_t_8, &__pyx_t_2) < 0) __PYX_ERR(0, 130, __pyx_L161_except_error)
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_4, &__pyx_t_10) < 0) __PYX_ERR(0, 105, __pyx_L137_except_error)
+          __Pyx_XGOTREF(__pyx_t_3);
           __Pyx_XGOTREF(__pyx_t_4);
-          __Pyx_XGOTREF(__pyx_t_8);
-          __Pyx_XGOTREF(__pyx_t_2);
-          __pyx_t_3 = PyTuple_Pack(3, __pyx_t_4, __pyx_t_8, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L161_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_3, NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 130, __pyx_L161_except_error)
+          __Pyx_XGOTREF(__pyx_t_10);
+          __pyx_t_1 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_4, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L137_except_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_1, NULL);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 105, __pyx_L137_except_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_16 = __Pyx_PyObject_IsTrue(__pyx_t_18);
+          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          if (__pyx_t_16 < 0) __PYX_ERR(0, 130, __pyx_L161_except_error)
-          __pyx_t_6 = (!__pyx_t_16);
-          if (unlikely(__pyx_t_6)) {
+          if (__pyx_t_6 < 0) __PYX_ERR(0, 105, __pyx_L137_except_error)
+          __pyx_t_7 = (!__pyx_t_6);
+          if (unlikely(__pyx_t_7)) {
+            __Pyx_GIVEREF(__pyx_t_3);
             __Pyx_GIVEREF(__pyx_t_4);
-            __Pyx_GIVEREF(__pyx_t_8);
-            __Pyx_XGIVEREF(__pyx_t_2);
-            __Pyx_ErrRestoreWithState(__pyx_t_4, __pyx_t_8, __pyx_t_2);
-            __pyx_t_4 = 0;  __pyx_t_8 = 0;  __pyx_t_2 = 0; 
-            __PYX_ERR(0, 130, __pyx_L161_except_error)
+            __Pyx_XGIVEREF(__pyx_t_10);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_4, __pyx_t_10);
+            __pyx_t_3 = 0;  __pyx_t_4 = 0;  __pyx_t_10 = 0; 
+            __PYX_ERR(0, 105, __pyx_L137_except_error)
           }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          goto __pyx_L160_exception_handled;
+          __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+          goto __pyx_L136_exception_handled;
         }
-        __pyx_L161_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
+        __pyx_L137_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
         goto __pyx_L1_error;
-        __pyx_L160_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_XGIVEREF(__pyx_t_13);
-        __Pyx_ExceptionReset(__pyx_t_11, __pyx_t_12, __pyx_t_13);
-        __pyx_L164_try_end:;
+        __pyx_L136_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+        __pyx_L140_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_10) {
-          __pyx_t_13 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_mstate_global->__pyx_tuple[0], NULL);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 130, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_13);
+        if (__pyx_t_13) {
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_mstate_global->__pyx_tuple[0], NULL);
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+          if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 105, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         }
-        goto __pyx_L158;
+        goto __pyx_L134;
       }
-      __pyx_L158:;
+      __pyx_L134:;
     }
-    goto __pyx_L168;
-    __pyx_L155_error:;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    goto __pyx_L144;
+    __pyx_L131_error:;
+    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     goto __pyx_L1_error;
-    __pyx_L168:;
+    __pyx_L144:;
   }
 
-  /* "askur/filemapping.pyx":134
+  /* "askur/filemapping.pyx":109
  * 
  *         # Check if reversed
  *         if len(self.alphabet) > 0 and self.alphabet[0] == 0x8f:             # <<<<<<<<<<<<<<
  *             self.reversed = True
  * 
 */
-  __pyx_t_2 = __pyx_v_self->alphabet;
-  __Pyx_INCREF(__pyx_t_2);
-  __pyx_t_14 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_14 == ((Py_ssize_t)-1))) __PYX_ERR(0, 134, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_16 = (__pyx_t_14 > 0);
-  if (__pyx_t_16) {
-  } else {
-    __pyx_t_6 = __pyx_t_16;
-    goto __pyx_L170_bool_binop_done;
-  }
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_self->alphabet, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_16 = (__Pyx_PyLong_BoolEqObjC(__pyx_t_2, __pyx_mstate_global->__pyx_int_143, 0x8f, 0)); if (unlikely((__pyx_t_16 < 0))) __PYX_ERR(0, 134, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = __pyx_t_16;
-  __pyx_L170_bool_binop_done:;
+  __pyx_t_10 = __pyx_v_self->alphabet;
+  __Pyx_INCREF(__pyx_t_10);
+  __pyx_t_19 = PyObject_Length(__pyx_t_10); if (unlikely(__pyx_t_19 == ((Py_ssize_t)-1))) __PYX_ERR(0, 109, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+  __pyx_t_6 = (__pyx_t_19 > 0);
   if (__pyx_t_6) {
+  } else {
+    __pyx_t_7 = __pyx_t_6;
+    goto __pyx_L146_bool_binop_done;
+  }
+  __pyx_t_10 = __Pyx_GetItemInt(__pyx_v_self->alphabet, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 0, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
+  __pyx_t_6 = (__Pyx_PyLong_BoolEqObjC(__pyx_t_10, __pyx_mstate_global->__pyx_int_143, 0x8f, 0)); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 109, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+  __pyx_t_7 = __pyx_t_6;
+  __pyx_L146_bool_binop_done:;
+  if (__pyx_t_7) {
 
-    /* "askur/filemapping.pyx":135
+    /* "askur/filemapping.pyx":110
  *         # Check if reversed
  *         if len(self.alphabet) > 0 and self.alphabet[0] == 0x8f:
  *             self.reversed = True             # <<<<<<<<<<<<<<
@@ -6976,7 +6282,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
 */
     __pyx_v_self->reversed = 1;
 
-    /* "askur/filemapping.pyx":134
+    /* "askur/filemapping.pyx":109
  * 
  *         # Check if reversed
  *         if len(self.alphabet) > 0 and self.alphabet[0] == 0x8f:             # <<<<<<<<<<<<<<
@@ -6989,8 +6295,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
  *         self._load_files()
  * 
  *     def _load_files(self):             # <<<<<<<<<<<<<<
- *         cdef dict confs = {}
- *         cdef str line, key, value
+ *         cdef str DATA_FOLDER, frozen_folder
+ * 
 */
 
   /* function exit code */
@@ -7001,20 +6307,15 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_19);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
   __Pyx_AddTraceback("askur.filemapping.Mapping._load_files", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_confs);
-  __Pyx_XDECREF(__pyx_v_line);
   __Pyx_XDECREF(__pyx_v_DATA_FOLDER);
   __Pyx_XDECREF(__pyx_v_frozen_folder);
-  __Pyx_XDECREF(__pyx_v_config_file);
-  __Pyx_XDECREF(__pyx_v_f);
-  __Pyx_XDECREF(__pyx_v_parts);
   __Pyx_XDECREF(__pyx_v_data_parent);
   __Pyx_XDECREF(__pyx_v_existing_collections);
   __Pyx_XDECREF(__pyx_v_SELECT_BITS_FILE);
@@ -7042,7 +6343,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_2_load_files(struct __py
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":137
+/* "askur/filemapping.pyx":112
  *             self.reversed = True
  * 
  *     cpdef bint is_reversed(self):             # <<<<<<<<<<<<<<
@@ -7086,7 +6387,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_reversed(struct __pyx_obj_5a
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_is_reversed); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_is_reversed); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_5is_reversed)) {
         __pyx_t_3 = NULL;
@@ -7109,10 +6410,10 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_reversed(struct __pyx_obj_5a
           __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_6;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7131,7 +6432,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_reversed(struct __pyx_obj_5a
     #endif
   }
 
-  /* "askur/filemapping.pyx":139
+  /* "askur/filemapping.pyx":114
  *     cpdef bint is_reversed(self):
  *         """Returns True if the index is reversed"""
  *         return self.reversed             # <<<<<<<<<<<<<<
@@ -7141,7 +6442,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_reversed(struct __pyx_obj_5a
   __pyx_r = __pyx_v_self->reversed;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":137
+  /* "askur/filemapping.pyx":112
  *             self.reversed = True
  * 
  *     cpdef bint is_reversed(self):             # <<<<<<<<<<<<<<
@@ -7215,8 +6516,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_4is_reversed(struct __py
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_reversed", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_is_reversed(__pyx_v_self, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_is_reversed(__pyx_v_self, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -7233,7 +6534,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_4is_reversed(struct __py
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":141
+/* "askur/filemapping.pyx":116
  *         return self.reversed
  * 
  *     cpdef bint set_check_key_exists(self, bint check_key_exists):             # <<<<<<<<<<<<<<
@@ -7278,13 +6579,13 @@ static int __pyx_f_5askur_11filemapping_7Mapping_set_check_key_exists(struct __p
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_set_check_key_exists); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_set_check_key_exists); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_7set_check_key_exists)) {
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyBool_FromLong(__pyx_v_check_key_exists); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 141, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyBool_FromLong(__pyx_v_check_key_exists); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 116, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -7304,10 +6605,10 @@ static int __pyx_f_5askur_11filemapping_7Mapping_set_check_key_exists(struct __p
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 116, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_7;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7326,7 +6627,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_set_check_key_exists(struct __p
     #endif
   }
 
-  /* "askur/filemapping.pyx":143
+  /* "askur/filemapping.pyx":118
  *     cpdef bint set_check_key_exists(self, bint check_key_exists):
  *         """Returns True if the key exists in the index"""
  *         self.check_if_key_exists = check_key_exists             # <<<<<<<<<<<<<<
@@ -7335,7 +6636,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_set_check_key_exists(struct __p
 */
   __pyx_v_self->check_if_key_exists = __pyx_v_check_key_exists;
 
-  /* "askur/filemapping.pyx":144
+  /* "askur/filemapping.pyx":119
  *         """Returns True if the key exists in the index"""
  *         self.check_if_key_exists = check_key_exists
  *         return self.check_if_key_exists             # <<<<<<<<<<<<<<
@@ -7345,7 +6646,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_set_check_key_exists(struct __p
   __pyx_r = __pyx_v_self->check_if_key_exists;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":141
+  /* "askur/filemapping.pyx":116
  *         return self.reversed
  * 
  *     cpdef bint set_check_key_exists(self, bint check_key_exists):             # <<<<<<<<<<<<<<
@@ -7407,32 +6708,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_check_key_exists,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 141, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 116, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 141, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 116, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_check_key_exists", 0) < 0) __PYX_ERR(0, 141, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "set_check_key_exists", 0) < 0) __PYX_ERR(0, 116, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_check_key_exists", 1, 1, 1, i); __PYX_ERR(0, 141, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("set_check_key_exists", 1, 1, 1, i); __PYX_ERR(0, 116, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 141, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 116, __pyx_L3_error)
     }
-    __pyx_v_check_key_exists = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_check_key_exists == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L3_error)
+    __pyx_v_check_key_exists = __Pyx_PyObject_IsTrue(values[0]); if (unlikely((__pyx_v_check_key_exists == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 116, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("set_check_key_exists", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 141, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("set_check_key_exists", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 116, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -7463,8 +6764,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_6set_check_key_exists(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_check_key_exists", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_set_check_key_exists(__pyx_v_self, __pyx_v_check_key_exists, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_set_check_key_exists(__pyx_v_self, __pyx_v_check_key_exists, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 116, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -7481,7 +6782,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_6set_check_key_exists(st
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":146
+/* "askur/filemapping.pyx":121
  *         return self.check_if_key_exists
  * 
  *     cpdef list calculate_select(self, int sum_ones_wanted):             # <<<<<<<<<<<<<<
@@ -7541,14 +6842,14 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_calculate_select); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_calculate_select); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_9calculate_select)) {
         __Pyx_XDECREF(__pyx_r);
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_sum_ones_wanted); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 146, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_sum_ones_wanted); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 121, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -7568,10 +6869,10 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 146, __pyx_L1_error)
+        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 121, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_2);
         __pyx_t_2 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7590,7 +6891,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     #endif
   }
 
-  /* "askur/filemapping.pyx":148
+  /* "askur/filemapping.pyx":123
  *     cpdef list calculate_select(self, int sum_ones_wanted):
  *         """Calculate select range - using mmap objects directly for safety"""
  *         cdef int res_end_index = -1             # <<<<<<<<<<<<<<
@@ -7599,7 +6900,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_res_end_index = -1;
 
-  /* "askur/filemapping.pyx":149
+  /* "askur/filemapping.pyx":124
  *         """Calculate select range - using mmap objects directly for safety"""
  *         cdef int res_end_index = -1
  *         cdef int res_start_index = -1             # <<<<<<<<<<<<<<
@@ -7608,7 +6909,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_res_start_index = -1;
 
-  /* "askur/filemapping.pyx":150
+  /* "askur/filemapping.pyx":125
  *         cdef int res_end_index = -1
  *         cdef int res_start_index = -1
  *         cdef int r_start = 7             # <<<<<<<<<<<<<<
@@ -7617,7 +6918,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_r_start = 7;
 
-  /* "askur/filemapping.pyx":151
+  /* "askur/filemapping.pyx":126
  *         cdef int res_start_index = -1
  *         cdef int r_start = 7
  *         cdef int superblock_start = sum_ones_wanted // self.bits_in_superblock             # <<<<<<<<<<<<<<
@@ -7626,7 +6927,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_superblock_start = (__pyx_v_sum_ones_wanted / __pyx_v_self->bits_in_superblock);
 
-  /* "askur/filemapping.pyx":152
+  /* "askur/filemapping.pyx":127
  *         cdef int r_start = 7
  *         cdef int superblock_start = sum_ones_wanted // self.bits_in_superblock
  *         cdef int start_index = 0             # <<<<<<<<<<<<<<
@@ -7635,7 +6936,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_start_index = 0;
 
-  /* "askur/filemapping.pyx":153
+  /* "askur/filemapping.pyx":128
  *         cdef int superblock_start = sum_ones_wanted // self.bits_in_superblock
  *         cdef int start_index = 0
  *         cdef int start_byte = 0             # <<<<<<<<<<<<<<
@@ -7644,7 +6945,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_start_byte = 0;
 
-  /* "askur/filemapping.pyx":154
+  /* "askur/filemapping.pyx":129
  *         cdef int start_index = 0
  *         cdef int start_byte = 0
  *         cdef int extra_bits = 0             # <<<<<<<<<<<<<<
@@ -7653,7 +6954,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_extra_bits = 0;
 
-  /* "askur/filemapping.pyx":155
+  /* "askur/filemapping.pyx":130
  *         cdef int start_byte = 0
  *         cdef int extra_bits = 0
  *         cdef int start_sum = 0             # <<<<<<<<<<<<<<
@@ -7662,7 +6963,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_start_sum = 0;
 
-  /* "askur/filemapping.pyx":160
+  /* "askur/filemapping.pyx":135
  *         cdef int i
  * 
  *         if superblock_start > 0:             # <<<<<<<<<<<<<<
@@ -7672,19 +6973,19 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
   __pyx_t_7 = (__pyx_v_superblock_start > 0);
   if (__pyx_t_7) {
 
-    /* "askur/filemapping.pyx":162
+    /* "askur/filemapping.pyx":137
  *         if superblock_start > 0:
  *             # Use original mmap access for superblock data
  *             superblock_bytes = self._s_superblocks[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]             # <<<<<<<<<<<<<<
  *             start_index = int.from_bytes(superblock_bytes, byteorder="big", signed=False) + 1
  *             start_byte = start_index // 8
 */
-    __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_s_superblocks, ((__pyx_v_superblock_start - 1) * 4), (((__pyx_v_superblock_start - 1) * 4) + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_s_superblocks, ((__pyx_v_superblock_start - 1) * 4), (((__pyx_v_superblock_start - 1) * 4) + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_superblock_bytes = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "askur/filemapping.pyx":163
+    /* "askur/filemapping.pyx":138
  *             # Use original mmap access for superblock data
  *             superblock_bytes = self._s_superblocks[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]
  *             start_index = int.from_bytes(superblock_bytes, byteorder="big", signed=False) + 1             # <<<<<<<<<<<<<<
@@ -7696,24 +6997,24 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     __pyx_t_6 = 0;
     {
       PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_2, __pyx_v_superblock_bytes};
-      __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 163, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 138, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 163, __pyx_L1_error)
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 163, __pyx_L1_error)
+      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 138, __pyx_L1_error)
+      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 138, __pyx_L1_error)
       __pyx_t_1 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_from_bytes, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_4);
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_4 = __Pyx_PyLong_AddObjC(__pyx_t_1, __pyx_mstate_global->__pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 163, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyLong_AddObjC(__pyx_t_1, __pyx_mstate_global->__pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 138, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 163, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_start_index = __pyx_t_8;
 
-    /* "askur/filemapping.pyx":164
+    /* "askur/filemapping.pyx":139
  *             superblock_bytes = self._s_superblocks[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]
  *             start_index = int.from_bytes(superblock_bytes, byteorder="big", signed=False) + 1
  *             start_byte = start_index // 8             # <<<<<<<<<<<<<<
@@ -7722,7 +7023,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
     __pyx_v_start_byte = (__pyx_v_start_index / 8);
 
-    /* "askur/filemapping.pyx":165
+    /* "askur/filemapping.pyx":140
  *             start_index = int.from_bytes(superblock_bytes, byteorder="big", signed=False) + 1
  *             start_byte = start_index // 8
  *             extra_bits = start_index % 8             # <<<<<<<<<<<<<<
@@ -7731,7 +7032,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
     __pyx_v_extra_bits = (__pyx_v_start_index % 8);
 
-    /* "askur/filemapping.pyx":166
+    /* "askur/filemapping.pyx":141
  *             start_byte = start_index // 8
  *             extra_bits = start_index % 8
  *             start_sum = self.bits_in_superblock * superblock_start             # <<<<<<<<<<<<<<
@@ -7740,7 +7041,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
     __pyx_v_start_sum = (__pyx_v_self->bits_in_superblock * __pyx_v_superblock_start);
 
-    /* "askur/filemapping.pyx":160
+    /* "askur/filemapping.pyx":135
  *         cdef int i
  * 
  *         if superblock_start > 0:             # <<<<<<<<<<<<<<
@@ -7749,7 +7050,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   }
 
-  /* "askur/filemapping.pyx":168
+  /* "askur/filemapping.pyx":143
  *             start_sum = self.bits_in_superblock * superblock_start
  * 
  *         total_sum = start_sum             # <<<<<<<<<<<<<<
@@ -7758,7 +7059,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_total_sum = __pyx_v_start_sum;
 
-  /* "askur/filemapping.pyx":169
+  /* "askur/filemapping.pyx":144
  * 
  *         total_sum = start_sum
  *         loop_index = start_index             # <<<<<<<<<<<<<<
@@ -7767,7 +7068,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   __pyx_v_loop_index = __pyx_v_start_index;
 
-  /* "askur/filemapping.pyx":171
+  /* "askur/filemapping.pyx":146
  *         loop_index = start_index
  * 
  *         if start_sum == sum_ones_wanted:             # <<<<<<<<<<<<<<
@@ -7777,7 +7078,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
   __pyx_t_7 = (__pyx_v_start_sum == __pyx_v_sum_ones_wanted);
   if (__pyx_t_7) {
 
-    /* "askur/filemapping.pyx":172
+    /* "askur/filemapping.pyx":147
  * 
  *         if start_sum == sum_ones_wanted:
  *             res_start_index = start_index - 1             # <<<<<<<<<<<<<<
@@ -7786,7 +7087,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
     __pyx_v_res_start_index = (__pyx_v_start_index - 1);
 
-    /* "askur/filemapping.pyx":171
+    /* "askur/filemapping.pyx":146
  *         loop_index = start_index
  * 
  *         if start_sum == sum_ones_wanted:             # <<<<<<<<<<<<<<
@@ -7795,7 +7096,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
   }
 
-  /* "askur/filemapping.pyx":175
+  /* "askur/filemapping.pyx":150
  * 
  *         # Main loop - exactly like original Python version
  *         while total_sum < sum_ones_wanted + 1:             # <<<<<<<<<<<<<<
@@ -7806,20 +7107,20 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     __pyx_t_7 = (__pyx_v_total_sum < (__pyx_v_sum_ones_wanted + 1));
     if (!__pyx_t_7) break;
 
-    /* "askur/filemapping.pyx":177
+    /* "askur/filemapping.pyx":152
  *         while total_sum < sum_ones_wanted + 1:
  *             # Get byte using original mmap access
  *             byte_val = self._s_bits[start_byte]             # <<<<<<<<<<<<<<
  * 
  *             if not byte_val:
 */
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_self->_s_bits, __pyx_v_start_byte, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 177, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_self->_s_bits, __pyx_v_start_byte, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 152, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 177, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 152, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_byte_val = __pyx_t_8;
 
-    /* "askur/filemapping.pyx":179
+    /* "askur/filemapping.pyx":154
  *             byte_val = self._s_bits[start_byte]
  * 
  *             if not byte_val:             # <<<<<<<<<<<<<<
@@ -7829,7 +7130,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     __pyx_t_7 = (!(__pyx_v_byte_val != 0));
     if (__pyx_t_7) {
 
-      /* "askur/filemapping.pyx":180
+      /* "askur/filemapping.pyx":155
  * 
  *             if not byte_val:
  *                 start_byte += 1             # <<<<<<<<<<<<<<
@@ -7838,7 +7139,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
       __pyx_v_start_byte = (__pyx_v_start_byte + 1);
 
-      /* "askur/filemapping.pyx":181
+      /* "askur/filemapping.pyx":156
  *             if not byte_val:
  *                 start_byte += 1
  *                 loop_index += 8             # <<<<<<<<<<<<<<
@@ -7847,7 +7148,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
       __pyx_v_loop_index = (__pyx_v_loop_index + 8);
 
-      /* "askur/filemapping.pyx":182
+      /* "askur/filemapping.pyx":157
  *                 start_byte += 1
  *                 loop_index += 8
  *                 continue             # <<<<<<<<<<<<<<
@@ -7856,7 +7157,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
       goto __pyx_L5_continue;
 
-      /* "askur/filemapping.pyx":179
+      /* "askur/filemapping.pyx":154
  *             byte_val = self._s_bits[start_byte]
  * 
  *             if not byte_val:             # <<<<<<<<<<<<<<
@@ -7865,7 +7166,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
     }
 
-    /* "askur/filemapping.pyx":184
+    /* "askur/filemapping.pyx":159
  *                 continue
  * 
  *             if extra_bits > 0:             # <<<<<<<<<<<<<<
@@ -7875,7 +7176,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     __pyx_t_7 = (__pyx_v_extra_bits > 0);
     if (__pyx_t_7) {
 
-      /* "askur/filemapping.pyx":185
+      /* "askur/filemapping.pyx":160
  * 
  *             if extra_bits > 0:
  *                 r_start = 7 - extra_bits             # <<<<<<<<<<<<<<
@@ -7884,7 +7185,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
       __pyx_v_r_start = (7 - __pyx_v_extra_bits);
 
-      /* "askur/filemapping.pyx":186
+      /* "askur/filemapping.pyx":161
  *             if extra_bits > 0:
  *                 r_start = 7 - extra_bits
  *                 extra_bits = 0             # <<<<<<<<<<<<<<
@@ -7893,7 +7194,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
       __pyx_v_extra_bits = 0;
 
-      /* "askur/filemapping.pyx":184
+      /* "askur/filemapping.pyx":159
  *                 continue
  * 
  *             if extra_bits > 0:             # <<<<<<<<<<<<<<
@@ -7902,7 +7203,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
     }
 
-    /* "askur/filemapping.pyx":188
+    /* "askur/filemapping.pyx":163
  *                 extra_bits = 0
  * 
  *             for i in range(r_start, -1, -1):             # <<<<<<<<<<<<<<
@@ -7912,7 +7213,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     for (__pyx_t_8 = __pyx_v_r_start; __pyx_t_8 > -1; __pyx_t_8-=1) {
       __pyx_v_i = __pyx_t_8;
 
-      /* "askur/filemapping.pyx":189
+      /* "askur/filemapping.pyx":164
  * 
  *             for i in range(r_start, -1, -1):
  *                 if byte_val & (1 << i):             # <<<<<<<<<<<<<<
@@ -7922,7 +7223,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
       __pyx_t_7 = ((__pyx_v_byte_val & (1 << __pyx_v_i)) != 0);
       if (__pyx_t_7) {
 
-        /* "askur/filemapping.pyx":190
+        /* "askur/filemapping.pyx":165
  *             for i in range(r_start, -1, -1):
  *                 if byte_val & (1 << i):
  *                     total_sum += 1             # <<<<<<<<<<<<<<
@@ -7931,7 +7232,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
         __pyx_v_total_sum = (__pyx_v_total_sum + 1);
 
-        /* "askur/filemapping.pyx":191
+        /* "askur/filemapping.pyx":166
  *                 if byte_val & (1 << i):
  *                     total_sum += 1
  *                     if total_sum == sum_ones_wanted and res_start_index == -1:             # <<<<<<<<<<<<<<
@@ -7949,7 +7250,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
         __pyx_L13_bool_binop_done:;
         if (__pyx_t_7) {
 
-          /* "askur/filemapping.pyx":192
+          /* "askur/filemapping.pyx":167
  *                     total_sum += 1
  *                     if total_sum == sum_ones_wanted and res_start_index == -1:
  *                         res_start_index = loop_index             # <<<<<<<<<<<<<<
@@ -7958,7 +7259,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
           __pyx_v_res_start_index = __pyx_v_loop_index;
 
-          /* "askur/filemapping.pyx":191
+          /* "askur/filemapping.pyx":166
  *                 if byte_val & (1 << i):
  *                     total_sum += 1
  *                     if total_sum == sum_ones_wanted and res_start_index == -1:             # <<<<<<<<<<<<<<
@@ -7967,7 +7268,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
         }
 
-        /* "askur/filemapping.pyx":193
+        /* "askur/filemapping.pyx":168
  *                     if total_sum == sum_ones_wanted and res_start_index == -1:
  *                         res_start_index = loop_index
  *                     if total_sum == sum_ones_wanted + 1 and res_end_index == -1:             # <<<<<<<<<<<<<<
@@ -7985,7 +7286,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
         __pyx_L16_bool_binop_done:;
         if (__pyx_t_7) {
 
-          /* "askur/filemapping.pyx":194
+          /* "askur/filemapping.pyx":169
  *                         res_start_index = loop_index
  *                     if total_sum == sum_ones_wanted + 1 and res_end_index == -1:
  *                         res_end_index = loop_index             # <<<<<<<<<<<<<<
@@ -7994,7 +7295,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
           __pyx_v_res_end_index = __pyx_v_loop_index;
 
-          /* "askur/filemapping.pyx":195
+          /* "askur/filemapping.pyx":170
  *                     if total_sum == sum_ones_wanted + 1 and res_end_index == -1:
  *                         res_end_index = loop_index
  *                         break             # <<<<<<<<<<<<<<
@@ -8003,7 +7304,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
           goto __pyx_L10_break;
 
-          /* "askur/filemapping.pyx":193
+          /* "askur/filemapping.pyx":168
  *                     if total_sum == sum_ones_wanted and res_start_index == -1:
  *                         res_start_index = loop_index
  *                     if total_sum == sum_ones_wanted + 1 and res_end_index == -1:             # <<<<<<<<<<<<<<
@@ -8012,7 +7313,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
         }
 
-        /* "askur/filemapping.pyx":189
+        /* "askur/filemapping.pyx":164
  * 
  *             for i in range(r_start, -1, -1):
  *                 if byte_val & (1 << i):             # <<<<<<<<<<<<<<
@@ -8021,7 +7322,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
       }
 
-      /* "askur/filemapping.pyx":196
+      /* "askur/filemapping.pyx":171
  *                         res_end_index = loop_index
  *                         break
  *                 loop_index += 1             # <<<<<<<<<<<<<<
@@ -8032,7 +7333,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     }
     __pyx_L10_break:;
 
-    /* "askur/filemapping.pyx":198
+    /* "askur/filemapping.pyx":173
  *                 loop_index += 1
  * 
  *             r_start = 7             # <<<<<<<<<<<<<<
@@ -8041,7 +7342,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
 */
     __pyx_v_r_start = 7;
 
-    /* "askur/filemapping.pyx":199
+    /* "askur/filemapping.pyx":174
  * 
  *             r_start = 7
  *             start_byte += 1             # <<<<<<<<<<<<<<
@@ -8052,7 +7353,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
     __pyx_L5_continue:;
   }
 
-  /* "askur/filemapping.pyx":201
+  /* "askur/filemapping.pyx":176
  *             start_byte += 1
  * 
  *         return [res_start_index, res_end_index]             # <<<<<<<<<<<<<<
@@ -8060,23 +7361,23 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_calculate_select(struct _
  *     cpdef int calculate_hc(self, int end_request_index):
 */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_res_start_index); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyLong_From_int(__pyx_v_res_start_index); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 176, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_res_end_index); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_res_end_index); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 176, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_4);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_4) != (0)) __PYX_ERR(0, 201, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_4) != (0)) __PYX_ERR(0, 176, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_1);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_2, 1, __pyx_t_1) != (0)) __PYX_ERR(0, 201, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_2, 1, __pyx_t_1) != (0)) __PYX_ERR(0, 176, __pyx_L1_error);
   __pyx_t_4 = 0;
   __pyx_t_1 = 0;
   __pyx_r = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":146
+  /* "askur/filemapping.pyx":121
  *         return self.check_if_key_exists
  * 
  *     cpdef list calculate_select(self, int sum_ones_wanted):             # <<<<<<<<<<<<<<
@@ -8140,32 +7441,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_sum_ones_wanted,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 146, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 121, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 146, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 121, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "calculate_select", 0) < 0) __PYX_ERR(0, 146, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "calculate_select", 0) < 0) __PYX_ERR(0, 121, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("calculate_select", 1, 1, 1, i); __PYX_ERR(0, 146, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("calculate_select", 1, 1, 1, i); __PYX_ERR(0, 121, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 146, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 121, __pyx_L3_error)
     }
-    __pyx_v_sum_ones_wanted = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_sum_ones_wanted == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L3_error)
+    __pyx_v_sum_ones_wanted = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_sum_ones_wanted == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 121, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calculate_select", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 146, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("calculate_select", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 121, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8195,7 +7496,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_8calculate_select(struct
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calculate_select", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_calculate_select(__pyx_v_self, __pyx_v_sum_ones_wanted, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_calculate_select(__pyx_v_self, __pyx_v_sum_ones_wanted, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8212,7 +7513,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_8calculate_select(struct
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":203
+/* "askur/filemapping.pyx":178
  *         return [res_start_index, res_end_index]
  * 
  *     cpdef int calculate_hc(self, int end_request_index):             # <<<<<<<<<<<<<<
@@ -8274,13 +7575,13 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_calculate_hc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_calculate_hc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 178, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_11calculate_hc)) {
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_end_request_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 203, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_end_request_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 178, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -8300,10 +7601,10 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 178, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 203, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_7;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -8322,7 +7623,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     #endif
   }
 
-  /* "askur/filemapping.pyx":205
+  /* "askur/filemapping.pyx":180
  *     cpdef int calculate_hc(self, int end_request_index):
  *         """Calculate head count - using safe mmap access"""
  *         cdef int bits_in_byte = 8             # <<<<<<<<<<<<<<
@@ -8331,7 +7632,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_v_bits_in_byte = 8;
 
-  /* "askur/filemapping.pyx":206
+  /* "askur/filemapping.pyx":181
  *         """Calculate head count - using safe mmap access"""
  *         cdef int bits_in_byte = 8
  *         cdef int superblock_start = end_request_index // self.bits_in_superblock             # <<<<<<<<<<<<<<
@@ -8340,7 +7641,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_v_superblock_start = (__pyx_v_end_request_index / __pyx_v_self->bits_in_superblock);
 
-  /* "askur/filemapping.pyx":207
+  /* "askur/filemapping.pyx":182
  *         cdef int bits_in_byte = 8
  *         cdef int superblock_start = end_request_index // self.bits_in_superblock
  *         cdef int bitsum = 0             # <<<<<<<<<<<<<<
@@ -8349,7 +7650,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_v_bitsum = 0;
 
-  /* "askur/filemapping.pyx":208
+  /* "askur/filemapping.pyx":183
  *         cdef int superblock_start = end_request_index // self.bits_in_superblock
  *         cdef int bitsum = 0
  *         cdef int index = 0             # <<<<<<<<<<<<<<
@@ -8358,7 +7659,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_v_index = 0;
 
-  /* "askur/filemapping.pyx":213
+  /* "askur/filemapping.pyx":188
  *         cdef int start_block, end_block
  * 
  *         if superblock_start == 0:             # <<<<<<<<<<<<<<
@@ -8368,7 +7669,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
   __pyx_t_8 = (__pyx_v_superblock_start == 0);
   if (__pyx_t_8) {
 
-    /* "askur/filemapping.pyx":214
+    /* "askur/filemapping.pyx":189
  * 
  *         if superblock_start == 0:
  *             index = 0             # <<<<<<<<<<<<<<
@@ -8377,7 +7678,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
     __pyx_v_index = 0;
 
-    /* "askur/filemapping.pyx":215
+    /* "askur/filemapping.pyx":190
  *         if superblock_start == 0:
  *             index = 0
  *             end_block = self.bits_in_superblock // bits_in_byte + 1             # <<<<<<<<<<<<<<
@@ -8386,7 +7687,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
     __pyx_v_end_block = ((__pyx_v_self->bits_in_superblock / __pyx_v_bits_in_byte) + 1);
 
-    /* "askur/filemapping.pyx":216
+    /* "askur/filemapping.pyx":191
  *             index = 0
  *             end_block = self.bits_in_superblock // bits_in_byte + 1
  *             for byte_idx in range(end_block):             # <<<<<<<<<<<<<<
@@ -8398,7 +7699,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_byte_idx = __pyx_t_10;
 
-      /* "askur/filemapping.pyx":217
+      /* "askur/filemapping.pyx":192
  *             end_block = self.bits_in_superblock // bits_in_byte + 1
  *             for byte_idx in range(end_block):
  *                 if byte_idx >= len(self._hc_bitarray):             # <<<<<<<<<<<<<<
@@ -8407,12 +7708,12 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
       __pyx_t_1 = __pyx_v_self->_hc_bitarray;
       __Pyx_INCREF(__pyx_t_1);
-      __pyx_t_11 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 217, __pyx_L1_error)
+      __pyx_t_11 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 192, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_t_8 = (__pyx_v_byte_idx >= __pyx_t_11);
       if (__pyx_t_8) {
 
-        /* "askur/filemapping.pyx":218
+        /* "askur/filemapping.pyx":193
  *             for byte_idx in range(end_block):
  *                 if byte_idx >= len(self._hc_bitarray):
  *                     break             # <<<<<<<<<<<<<<
@@ -8421,7 +7722,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
         goto __pyx_L5_break;
 
-        /* "askur/filemapping.pyx":217
+        /* "askur/filemapping.pyx":192
  *             end_block = self.bits_in_superblock // bits_in_byte + 1
  *             for byte_idx in range(end_block):
  *                 if byte_idx >= len(self._hc_bitarray):             # <<<<<<<<<<<<<<
@@ -8430,20 +7731,20 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
       }
 
-      /* "askur/filemapping.pyx":219
+      /* "askur/filemapping.pyx":194
  *                 if byte_idx >= len(self._hc_bitarray):
  *                     break
  *                 byte_val = self._hc_bitarray[byte_idx]             # <<<<<<<<<<<<<<
  *                 if not byte_val:
  *                     index += 8
 */
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_hc_bitarray, __pyx_v_byte_idx, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_hc_bitarray, __pyx_v_byte_idx, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 194, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_12 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 219, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_v_byte_val = __pyx_t_12;
 
-      /* "askur/filemapping.pyx":220
+      /* "askur/filemapping.pyx":195
  *                     break
  *                 byte_val = self._hc_bitarray[byte_idx]
  *                 if not byte_val:             # <<<<<<<<<<<<<<
@@ -8453,7 +7754,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
       __pyx_t_8 = (!(__pyx_v_byte_val != 0));
       if (__pyx_t_8) {
 
-        /* "askur/filemapping.pyx":221
+        /* "askur/filemapping.pyx":196
  *                 byte_val = self._hc_bitarray[byte_idx]
  *                 if not byte_val:
  *                     index += 8             # <<<<<<<<<<<<<<
@@ -8462,7 +7763,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
         __pyx_v_index = (__pyx_v_index + 8);
 
-        /* "askur/filemapping.pyx":222
+        /* "askur/filemapping.pyx":197
  *                 if not byte_val:
  *                     index += 8
  *                     continue             # <<<<<<<<<<<<<<
@@ -8471,7 +7772,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
         goto __pyx_L4_continue;
 
-        /* "askur/filemapping.pyx":220
+        /* "askur/filemapping.pyx":195
  *                     break
  *                 byte_val = self._hc_bitarray[byte_idx]
  *                 if not byte_val:             # <<<<<<<<<<<<<<
@@ -8480,7 +7781,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
       }
 
-      /* "askur/filemapping.pyx":223
+      /* "askur/filemapping.pyx":198
  *                     index += 8
  *                     continue
  *                 for i in range(7, -1, -1):             # <<<<<<<<<<<<<<
@@ -8490,7 +7791,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
       for (__pyx_t_12 = 7; __pyx_t_12 > -1; __pyx_t_12-=1) {
         __pyx_v_i = __pyx_t_12;
 
-        /* "askur/filemapping.pyx":224
+        /* "askur/filemapping.pyx":199
  *                     continue
  *                 for i in range(7, -1, -1):
  *                     if byte_val & (1 << i):             # <<<<<<<<<<<<<<
@@ -8500,7 +7801,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
         __pyx_t_8 = ((__pyx_v_byte_val & (1 << __pyx_v_i)) != 0);
         if (__pyx_t_8) {
 
-          /* "askur/filemapping.pyx":225
+          /* "askur/filemapping.pyx":200
  *                 for i in range(7, -1, -1):
  *                     if byte_val & (1 << i):
  *                         bitsum += 1             # <<<<<<<<<<<<<<
@@ -8509,7 +7810,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
           __pyx_v_bitsum = (__pyx_v_bitsum + 1);
 
-          /* "askur/filemapping.pyx":226
+          /* "askur/filemapping.pyx":201
  *                     if byte_val & (1 << i):
  *                         bitsum += 1
  *                         if index == end_request_index:             # <<<<<<<<<<<<<<
@@ -8519,7 +7820,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
           __pyx_t_8 = (__pyx_v_index == __pyx_v_end_request_index);
           if (__pyx_t_8) {
 
-            /* "askur/filemapping.pyx":227
+            /* "askur/filemapping.pyx":202
  *                         bitsum += 1
  *                         if index == end_request_index:
  *                             return bitsum             # <<<<<<<<<<<<<<
@@ -8529,7 +7830,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
             __pyx_r = __pyx_v_bitsum;
             goto __pyx_L0;
 
-            /* "askur/filemapping.pyx":226
+            /* "askur/filemapping.pyx":201
  *                     if byte_val & (1 << i):
  *                         bitsum += 1
  *                         if index == end_request_index:             # <<<<<<<<<<<<<<
@@ -8538,7 +7839,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
           }
 
-          /* "askur/filemapping.pyx":224
+          /* "askur/filemapping.pyx":199
  *                     continue
  *                 for i in range(7, -1, -1):
  *                     if byte_val & (1 << i):             # <<<<<<<<<<<<<<
@@ -8547,7 +7848,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
         }
 
-        /* "askur/filemapping.pyx":228
+        /* "askur/filemapping.pyx":203
  *                         if index == end_request_index:
  *                             return bitsum
  *                     index += 1             # <<<<<<<<<<<<<<
@@ -8560,7 +7861,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     }
     __pyx_L5_break:;
 
-    /* "askur/filemapping.pyx":213
+    /* "askur/filemapping.pyx":188
  *         cdef int start_block, end_block
  * 
  *         if superblock_start == 0:             # <<<<<<<<<<<<<<
@@ -8570,7 +7871,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     goto __pyx_L3;
   }
 
-  /* "askur/filemapping.pyx":231
+  /* "askur/filemapping.pyx":206
  *         else:
  *             # Get sum from superblock using safe mmap access
  *             superblock_bytes = self._hc_super_blocks[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]             # <<<<<<<<<<<<<<
@@ -8578,12 +7879,12 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
  * 
 */
   /*else*/ {
-    __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_hc_super_blocks, ((__pyx_v_superblock_start - 1) * 4), (((__pyx_v_superblock_start - 1) * 4) + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 231, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_hc_super_blocks, ((__pyx_v_superblock_start - 1) * 4), (((__pyx_v_superblock_start - 1) * 4) + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_v_superblock_bytes = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "askur/filemapping.pyx":232
+    /* "askur/filemapping.pyx":207
  *             # Get sum from superblock using safe mmap access
  *             superblock_bytes = self._hc_super_blocks[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]
  *             bitsum = int.from_bytes(superblock_bytes, byteorder="big", signed=False)             # <<<<<<<<<<<<<<
@@ -8595,23 +7896,23 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     __pyx_t_6 = 0;
     {
       PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_2, __pyx_v_superblock_bytes};
-      __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 207, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 232, __pyx_L1_error)
-      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 232, __pyx_L1_error)
+      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 207, __pyx_L1_error)
+      if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 207, __pyx_L1_error)
       __pyx_t_1 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_from_bytes, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_4);
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 207, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     }
-    __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 232, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 207, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_bitsum = __pyx_t_7;
   }
   __pyx_L3:;
 
-  /* "askur/filemapping.pyx":235
+  /* "askur/filemapping.pyx":210
  * 
  *         # Calculate remaining bits
  *         start_block = superblock_start * self.bits_in_superblock // bits_in_byte             # <<<<<<<<<<<<<<
@@ -8620,7 +7921,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_v_start_block = ((__pyx_v_superblock_start * __pyx_v_self->bits_in_superblock) / __pyx_v_bits_in_byte);
 
-  /* "askur/filemapping.pyx":236
+  /* "askur/filemapping.pyx":211
  *         # Calculate remaining bits
  *         start_block = superblock_start * self.bits_in_superblock // bits_in_byte
  *         end_block = start_block + self.bits_in_superblock // bits_in_byte + 1             # <<<<<<<<<<<<<<
@@ -8629,7 +7930,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_v_end_block = ((__pyx_v_start_block + (__pyx_v_self->bits_in_superblock / __pyx_v_bits_in_byte)) + 1);
 
-  /* "askur/filemapping.pyx":237
+  /* "askur/filemapping.pyx":212
  *         start_block = superblock_start * self.bits_in_superblock // bits_in_byte
  *         end_block = start_block + self.bits_in_superblock // bits_in_byte + 1
  *         index = superblock_start * self.bits_in_superblock             # <<<<<<<<<<<<<<
@@ -8638,7 +7939,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_v_index = (__pyx_v_superblock_start * __pyx_v_self->bits_in_superblock);
 
-  /* "askur/filemapping.pyx":239
+  /* "askur/filemapping.pyx":214
  *         index = superblock_start * self.bits_in_superblock
  * 
  *         for i in range(start_block, min(end_block, len(self._hc_bitarray))):             # <<<<<<<<<<<<<<
@@ -8647,7 +7948,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
   __pyx_t_1 = __pyx_v_self->_hc_bitarray;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_11 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_t_11 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_7 = __pyx_v_end_block;
   __pyx_t_8 = (__pyx_t_11 < __pyx_t_7);
@@ -8661,20 +7962,20 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
   for (__pyx_t_7 = __pyx_v_start_block; __pyx_t_7 < __pyx_t_13; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
 
-    /* "askur/filemapping.pyx":240
+    /* "askur/filemapping.pyx":215
  * 
  *         for i in range(start_block, min(end_block, len(self._hc_bitarray))):
  *             byte_val = self._hc_bitarray[i]             # <<<<<<<<<<<<<<
  *             if not byte_val:
  *                 index += 8
 */
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_hc_bitarray, __pyx_v_i, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_hc_bitarray, __pyx_v_i, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 240, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_byte_val = __pyx_t_9;
 
-    /* "askur/filemapping.pyx":241
+    /* "askur/filemapping.pyx":216
  *         for i in range(start_block, min(end_block, len(self._hc_bitarray))):
  *             byte_val = self._hc_bitarray[i]
  *             if not byte_val:             # <<<<<<<<<<<<<<
@@ -8684,7 +7985,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     __pyx_t_8 = (!(__pyx_v_byte_val != 0));
     if (__pyx_t_8) {
 
-      /* "askur/filemapping.pyx":242
+      /* "askur/filemapping.pyx":217
  *             byte_val = self._hc_bitarray[i]
  *             if not byte_val:
  *                 index += 8             # <<<<<<<<<<<<<<
@@ -8693,7 +7994,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
       __pyx_v_index = (__pyx_v_index + 8);
 
-      /* "askur/filemapping.pyx":243
+      /* "askur/filemapping.pyx":218
  *             if not byte_val:
  *                 index += 8
  *                 continue             # <<<<<<<<<<<<<<
@@ -8702,7 +8003,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
       goto __pyx_L12_continue;
 
-      /* "askur/filemapping.pyx":241
+      /* "askur/filemapping.pyx":216
  *         for i in range(start_block, min(end_block, len(self._hc_bitarray))):
  *             byte_val = self._hc_bitarray[i]
  *             if not byte_val:             # <<<<<<<<<<<<<<
@@ -8711,7 +8012,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
     }
 
-    /* "askur/filemapping.pyx":245
+    /* "askur/filemapping.pyx":220
  *                 continue
  * 
  *             for j in range(7, -1, -1):             # <<<<<<<<<<<<<<
@@ -8721,7 +8022,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     for (__pyx_t_9 = 7; __pyx_t_9 > -1; __pyx_t_9-=1) {
       __pyx_v_j = __pyx_t_9;
 
-      /* "askur/filemapping.pyx":246
+      /* "askur/filemapping.pyx":221
  * 
  *             for j in range(7, -1, -1):
  *                 if byte_val & (1 << j):             # <<<<<<<<<<<<<<
@@ -8731,7 +8032,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
       __pyx_t_8 = ((__pyx_v_byte_val & (1 << __pyx_v_j)) != 0);
       if (__pyx_t_8) {
 
-        /* "askur/filemapping.pyx":247
+        /* "askur/filemapping.pyx":222
  *             for j in range(7, -1, -1):
  *                 if byte_val & (1 << j):
  *                     bitsum += 1             # <<<<<<<<<<<<<<
@@ -8740,7 +8041,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
         __pyx_v_bitsum = (__pyx_v_bitsum + 1);
 
-        /* "askur/filemapping.pyx":248
+        /* "askur/filemapping.pyx":223
  *                 if byte_val & (1 << j):
  *                     bitsum += 1
  *                     if index == end_request_index:             # <<<<<<<<<<<<<<
@@ -8750,7 +8051,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
         __pyx_t_8 = (__pyx_v_index == __pyx_v_end_request_index);
         if (__pyx_t_8) {
 
-          /* "askur/filemapping.pyx":249
+          /* "askur/filemapping.pyx":224
  *                     bitsum += 1
  *                     if index == end_request_index:
  *                         return bitsum             # <<<<<<<<<<<<<<
@@ -8760,7 +8061,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
           __pyx_r = __pyx_v_bitsum;
           goto __pyx_L0;
 
-          /* "askur/filemapping.pyx":248
+          /* "askur/filemapping.pyx":223
  *                 if byte_val & (1 << j):
  *                     bitsum += 1
  *                     if index == end_request_index:             # <<<<<<<<<<<<<<
@@ -8769,7 +8070,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
         }
 
-        /* "askur/filemapping.pyx":246
+        /* "askur/filemapping.pyx":221
  * 
  *             for j in range(7, -1, -1):
  *                 if byte_val & (1 << j):             # <<<<<<<<<<<<<<
@@ -8778,7 +8079,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
 */
       }
 
-      /* "askur/filemapping.pyx":250
+      /* "askur/filemapping.pyx":225
  *                     if index == end_request_index:
  *                         return bitsum
  *                 index += 1             # <<<<<<<<<<<<<<
@@ -8790,7 +8091,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
     __pyx_L12_continue:;
   }
 
-  /* "askur/filemapping.pyx":251
+  /* "askur/filemapping.pyx":226
  *                         return bitsum
  *                 index += 1
  *         return 0             # <<<<<<<<<<<<<<
@@ -8800,7 +8101,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(struct __pyx_obj_5
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":203
+  /* "askur/filemapping.pyx":178
  *         return [res_start_index, res_end_index]
  * 
  *     cpdef int calculate_hc(self, int end_request_index):             # <<<<<<<<<<<<<<
@@ -8863,32 +8164,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_end_request_index,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 203, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 178, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 203, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 178, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "calculate_hc", 0) < 0) __PYX_ERR(0, 203, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "calculate_hc", 0) < 0) __PYX_ERR(0, 178, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("calculate_hc", 1, 1, 1, i); __PYX_ERR(0, 203, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("calculate_hc", 1, 1, 1, i); __PYX_ERR(0, 178, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 203, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 178, __pyx_L3_error)
     }
-    __pyx_v_end_request_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_end_request_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 203, __pyx_L3_error)
+    __pyx_v_end_request_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_end_request_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calculate_hc", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 203, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("calculate_hc", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 178, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8919,8 +8220,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_10calculate_hc(struct __
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calculate_hc", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(__pyx_v_self, __pyx_v_end_request_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 203, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_calculate_hc(__pyx_v_self, __pyx_v_end_request_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 178, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -8937,7 +8238,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_10calculate_hc(struct __
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":254
+/* "askur/filemapping.pyx":229
  * 
  * 
  *     cpdef bint has_child(self, int index):             # <<<<<<<<<<<<<<
@@ -8987,13 +8288,13 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_has_child); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 254, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_has_child); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 229, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_13has_child)) {
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 254, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 229, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -9013,10 +8314,10 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 229, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 254, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 229, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_7;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -9035,7 +8336,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
     #endif
   }
 
-  /* "askur/filemapping.pyx":256
+  /* "askur/filemapping.pyx":231
  *     cpdef bint has_child(self, int index):
  *         """Check if node has child using safe mmap access"""
  *         cdef int byte_idx = index // 8             # <<<<<<<<<<<<<<
@@ -9044,7 +8345,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
 */
   __pyx_v_byte_idx = (__pyx_v_index / 8);
 
-  /* "askur/filemapping.pyx":257
+  /* "askur/filemapping.pyx":232
  *         """Check if node has child using safe mmap access"""
  *         cdef int byte_idx = index // 8
  *         cdef int bit_pos = 7 - (index % 8)             # <<<<<<<<<<<<<<
@@ -9053,7 +8354,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
 */
   __pyx_v_bit_pos = (7 - (__pyx_v_index % 8));
 
-  /* "askur/filemapping.pyx":258
+  /* "askur/filemapping.pyx":233
  *         cdef int byte_idx = index // 8
  *         cdef int bit_pos = 7 - (index % 8)
  *         if byte_idx >= len(self._hc_bitarray):             # <<<<<<<<<<<<<<
@@ -9062,12 +8363,12 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
 */
   __pyx_t_1 = __pyx_v_self->_hc_bitarray;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_8 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_8 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 233, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_7 = (__pyx_v_byte_idx >= __pyx_t_8);
   if (__pyx_t_7) {
 
-    /* "askur/filemapping.pyx":259
+    /* "askur/filemapping.pyx":234
  *         cdef int bit_pos = 7 - (index % 8)
  *         if byte_idx >= len(self._hc_bitarray):
  *             return False             # <<<<<<<<<<<<<<
@@ -9077,7 +8378,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "askur/filemapping.pyx":258
+    /* "askur/filemapping.pyx":233
  *         cdef int byte_idx = index // 8
  *         cdef int bit_pos = 7 - (index % 8)
  *         if byte_idx >= len(self._hc_bitarray):             # <<<<<<<<<<<<<<
@@ -9086,20 +8387,20 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
 */
   }
 
-  /* "askur/filemapping.pyx":260
+  /* "askur/filemapping.pyx":235
  *         if byte_idx >= len(self._hc_bitarray):
  *             return False
  *         cdef int byte_val = self._hc_bitarray[byte_idx]             # <<<<<<<<<<<<<<
  *         return (byte_val & (1 << bit_pos)) > 0
  * 
 */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_hc_bitarray, __pyx_v_byte_idx, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_hc_bitarray, __pyx_v_byte_idx, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_byte_val = __pyx_t_9;
 
-  /* "askur/filemapping.pyx":261
+  /* "askur/filemapping.pyx":236
  *             return False
  *         cdef int byte_val = self._hc_bitarray[byte_idx]
  *         return (byte_val & (1 << bit_pos)) > 0             # <<<<<<<<<<<<<<
@@ -9109,7 +8410,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_has_child(struct __pyx_obj_5ask
   __pyx_r = ((__pyx_v_byte_val & (1 << __pyx_v_bit_pos)) > 0);
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":254
+  /* "askur/filemapping.pyx":229
  * 
  * 
  *     cpdef bint has_child(self, int index):             # <<<<<<<<<<<<<<
@@ -9171,32 +8472,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_index,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 254, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 229, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 254, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 229, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "has_child", 0) < 0) __PYX_ERR(0, 254, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "has_child", 0) < 0) __PYX_ERR(0, 229, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("has_child", 1, 1, 1, i); __PYX_ERR(0, 254, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("has_child", 1, 1, 1, i); __PYX_ERR(0, 229, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 254, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 229, __pyx_L3_error)
     }
-    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 254, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 229, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("has_child", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 254, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("has_child", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 229, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -9227,8 +8528,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_12has_child(struct __pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("has_child", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_has_child(__pyx_v_self, __pyx_v_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 254, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_has_child(__pyx_v_self, __pyx_v_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 229, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 229, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -9245,7 +8546,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_12has_child(struct __pyx
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":263
+/* "askur/filemapping.pyx":238
  *         return (byte_val & (1 << bit_pos)) > 0
  * 
  *     cpdef bytes get_trie_range(self, int start, int end):             # <<<<<<<<<<<<<<
@@ -9290,16 +8591,16 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_trie_range(struct __p
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_trie_range); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_trie_range); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_15get_trie_range)) {
         __Pyx_XDECREF(__pyx_r);
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_start); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 263, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_start); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 238, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 263, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 238, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __pyx_t_7 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -9320,10 +8621,10 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_trie_range(struct __p
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 263, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 238, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        if (!(likely(PyBytes_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_2))) __PYX_ERR(0, 263, __pyx_L1_error)
+        if (!(likely(PyBytes_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_2))) __PYX_ERR(0, 238, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_2);
         __pyx_t_2 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -9342,7 +8643,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_trie_range(struct __p
     #endif
   }
 
-  /* "askur/filemapping.pyx":265
+  /* "askur/filemapping.pyx":240
  *     cpdef bytes get_trie_range(self, int start, int end):
  *         """Returns the byte range from trie"""
  *         return self._trie[start:end]             # <<<<<<<<<<<<<<
@@ -9350,14 +8651,14 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_trie_range(struct __p
  *     cpdef int get_trie_index_of(self, int start, int end, unsigned char letter):
 */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_trie, __pyx_v_start, __pyx_v_end, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 265, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_trie, __pyx_v_start, __pyx_v_end, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_1))) __PYX_ERR(0, 265, __pyx_L1_error)
+  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_1))) __PYX_ERR(0, 240, __pyx_L1_error)
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":263
+  /* "askur/filemapping.pyx":238
  *         return (byte_val & (1 << bit_pos)) > 0
  * 
  *     cpdef bytes get_trie_range(self, int start, int end):             # <<<<<<<<<<<<<<
@@ -9422,39 +8723,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_start,&__pyx_mstate_global->__pyx_n_u_end,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 263, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 238, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 263, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 238, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 263, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 238, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_trie_range", 0) < 0) __PYX_ERR(0, 263, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_trie_range", 0) < 0) __PYX_ERR(0, 238, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_trie_range", 1, 2, 2, i); __PYX_ERR(0, 263, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_trie_range", 1, 2, 2, i); __PYX_ERR(0, 238, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 263, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 238, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 263, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 238, __pyx_L3_error)
     }
-    __pyx_v_start = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_start == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 263, __pyx_L3_error)
-    __pyx_v_end = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_end == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 263, __pyx_L3_error)
+    __pyx_v_start = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_start == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 238, __pyx_L3_error)
+    __pyx_v_end = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_end == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 238, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_trie_range", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 263, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_trie_range", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 238, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -9484,7 +8785,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_14get_trie_range(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_trie_range", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_trie_range(__pyx_v_self, __pyx_v_start, __pyx_v_end, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_trie_range(__pyx_v_self, __pyx_v_start, __pyx_v_end, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9501,7 +8802,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_14get_trie_range(struct 
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":267
+/* "askur/filemapping.pyx":242
  *         return self._trie[start:end]
  * 
  *     cpdef int get_trie_index_of(self, int start, int end, unsigned char letter):             # <<<<<<<<<<<<<<
@@ -9549,17 +8850,17 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_trie_index_of(struct __pyx_
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_trie_index_of); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_trie_index_of); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 242, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_17get_trie_index_of)) {
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_start); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 267, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_start); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 242, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 267, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 242, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
-        __pyx_t_7 = __Pyx_PyLong_From_unsigned_char(__pyx_v_letter); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 267, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyLong_From_unsigned_char(__pyx_v_letter); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 242, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __pyx_t_8 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -9581,10 +8882,10 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_trie_index_of(struct __pyx_
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 242, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_9;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -9603,37 +8904,37 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_trie_index_of(struct __pyx_
     #endif
   }
 
-  /* "askur/filemapping.pyx":269
+  /* "askur/filemapping.pyx":244
  *     cpdef int get_trie_index_of(self, int start, int end, unsigned char letter):
  *         """Search for letter in trie range using safe mmap access"""
  *         cdef bytes trie_slice = self._trie[start:end]             # <<<<<<<<<<<<<<
  *         return trie_slice.find(letter)
  * 
 */
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_trie, __pyx_v_start, __pyx_v_end, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_trie, __pyx_v_start, __pyx_v_end, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 244, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_1))) __PYX_ERR(0, 269, __pyx_L1_error)
+  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_1))) __PYX_ERR(0, 244, __pyx_L1_error)
   __pyx_v_trie_slice = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":270
+  /* "askur/filemapping.pyx":245
  *         """Search for letter in trie range using safe mmap access"""
  *         cdef bytes trie_slice = self._trie[start:end]
  *         return trie_slice.find(letter)             # <<<<<<<<<<<<<<
  * 
  *     cpdef list get_index(self, int index_value):
 */
-  __pyx_t_1 = __Pyx_PyLong_From_unsigned_char(__pyx_v_letter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_From_unsigned_char(__pyx_v_letter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 245, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_mstate_global->__pyx_umethod_PyBytes_Type__find, __pyx_v_trie_slice, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_mstate_global->__pyx_umethod_PyBytes_Type__find, __pyx_v_trie_slice, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 245, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 245, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_9;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":267
+  /* "askur/filemapping.pyx":242
  *         return self._trie[start:end]
  * 
  *     cpdef int get_trie_index_of(self, int start, int end, unsigned char letter):             # <<<<<<<<<<<<<<
@@ -9700,46 +9001,46 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_start,&__pyx_mstate_global->__pyx_n_u_end,&__pyx_mstate_global->__pyx_n_u_letter,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 267, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 242, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 267, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 242, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 267, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 242, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 267, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 242, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_trie_index_of", 0) < 0) __PYX_ERR(0, 267, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_trie_index_of", 0) < 0) __PYX_ERR(0, 242, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 3; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_trie_index_of", 1, 3, 3, i); __PYX_ERR(0, 267, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_trie_index_of", 1, 3, 3, i); __PYX_ERR(0, 242, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 3)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 267, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 242, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 267, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 242, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 267, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 242, __pyx_L3_error)
     }
-    __pyx_v_start = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_start == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L3_error)
-    __pyx_v_end = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_end == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L3_error)
-    __pyx_v_letter = __Pyx_PyLong_As_unsigned_char(values[2]); if (unlikely((__pyx_v_letter == (unsigned char)-1) && PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L3_error)
+    __pyx_v_start = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_start == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L3_error)
+    __pyx_v_end = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_end == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L3_error)
+    __pyx_v_letter = __Pyx_PyLong_As_unsigned_char(values[2]); if (unlikely((__pyx_v_letter == (unsigned char)-1) && PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_trie_index_of", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 267, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_trie_index_of", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 242, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -9770,8 +9071,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_16get_trie_index_of(stru
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_trie_index_of", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_trie_index_of(__pyx_v_self, __pyx_v_start, __pyx_v_end, __pyx_v_letter, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_trie_index_of(__pyx_v_self, __pyx_v_start, __pyx_v_end, __pyx_v_letter, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -9788,7 +9089,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_16get_trie_index_of(stru
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":272
+/* "askur/filemapping.pyx":247
  *         return trie_slice.find(letter)
  * 
  *     cpdef list get_index(self, int index_value):             # <<<<<<<<<<<<<<
@@ -9842,14 +9143,14 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_index); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_index); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 247, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_19get_index)) {
         __Pyx_XDECREF(__pyx_r);
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index_value); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 272, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index_value); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 247, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -9869,10 +9170,10 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 272, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 247, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 272, __pyx_L1_error)
+        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 247, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_2);
         __pyx_t_2 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -9891,7 +9192,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
     #endif
   }
 
-  /* "askur/filemapping.pyx":277
+  /* "askur/filemapping.pyx":252
  *         cdef int index_val, len_value
  * 
  *         if index_value == 0:             # <<<<<<<<<<<<<<
@@ -9901,7 +9202,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
   __pyx_t_7 = (__pyx_v_index_value == 0);
   if (__pyx_t_7) {
 
-    /* "askur/filemapping.pyx":278
+    /* "askur/filemapping.pyx":253
  * 
  *         if index_value == 0:
  *             start_idx = 0             # <<<<<<<<<<<<<<
@@ -9910,7 +9211,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
 */
     __pyx_v_start_idx = 0;
 
-    /* "askur/filemapping.pyx":277
+    /* "askur/filemapping.pyx":252
  *         cdef int index_val, len_value
  * 
  *         if index_value == 0:             # <<<<<<<<<<<<<<
@@ -9920,7 +9221,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
     goto __pyx_L3;
   }
 
-  /* "askur/filemapping.pyx":280
+  /* "askur/filemapping.pyx":255
  *             start_idx = 0
  *         else:
  *             start_idx = index_value * (self.nr_bytes_in_index_block + self.nr_bytes_in_value_block)             # <<<<<<<<<<<<<<
@@ -9932,7 +9233,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
   }
   __pyx_L3:;
 
-  /* "askur/filemapping.pyx":282
+  /* "askur/filemapping.pyx":257
  *             start_idx = index_value * (self.nr_bytes_in_index_block + self.nr_bytes_in_value_block)
  * 
  *         end_idx = start_idx + self.nr_bytes_in_index_block             # <<<<<<<<<<<<<<
@@ -9941,7 +9242,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
 */
   __pyx_v_end_idx = (__pyx_v_start_idx + __pyx_v_self->nr_bytes_in_index_block);
 
-  /* "askur/filemapping.pyx":283
+  /* "askur/filemapping.pyx":258
  * 
  *         end_idx = start_idx + self.nr_bytes_in_index_block
  *         start_len = end_idx             # <<<<<<<<<<<<<<
@@ -9950,7 +9251,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
 */
   __pyx_v_start_len = __pyx_v_end_idx;
 
-  /* "askur/filemapping.pyx":284
+  /* "askur/filemapping.pyx":259
  *         end_idx = start_idx + self.nr_bytes_in_index_block
  *         start_len = end_idx
  *         end_len = start_len + self.nr_bytes_in_value_block             # <<<<<<<<<<<<<<
@@ -9959,31 +9260,31 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
 */
   __pyx_v_end_len = (__pyx_v_start_len + __pyx_v_self->nr_bytes_in_value_block);
 
-  /* "askur/filemapping.pyx":287
+  /* "askur/filemapping.pyx":262
  * 
  *         # Use safe mmap access
  *         index_bytes = self._index_bits[start_idx:end_idx]             # <<<<<<<<<<<<<<
  *         len_bytes = self._index_bits[start_len:end_len]
  * 
 */
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_index_bits, __pyx_v_start_idx, __pyx_v_end_idx, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_index_bits, __pyx_v_start_idx, __pyx_v_end_idx, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_index_bytes = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":288
+  /* "askur/filemapping.pyx":263
  *         # Use safe mmap access
  *         index_bytes = self._index_bits[start_idx:end_idx]
  *         len_bytes = self._index_bits[start_len:end_len]             # <<<<<<<<<<<<<<
  * 
  *         index_val = int.from_bytes(index_bytes, byteorder="big", signed=False)
 */
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_index_bits, __pyx_v_start_len, __pyx_v_end_len, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 288, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_index_bits, __pyx_v_start_len, __pyx_v_end_len, NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_len_bytes = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":290
+  /* "askur/filemapping.pyx":265
  *         len_bytes = self._index_bits[start_len:end_len]
  * 
  *         index_val = int.from_bytes(index_bytes, byteorder="big", signed=False)             # <<<<<<<<<<<<<<
@@ -9995,21 +9296,21 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
   __pyx_t_6 = 0;
   {
     PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_2, __pyx_v_index_bytes};
-    __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 265, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 265, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 265, __pyx_L1_error)
     __pyx_t_1 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_from_bytes, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 265, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 290, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 265, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_index_val = __pyx_t_8;
 
-  /* "askur/filemapping.pyx":291
+  /* "askur/filemapping.pyx":266
  * 
  *         index_val = int.from_bytes(index_bytes, byteorder="big", signed=False)
  *         len_value = int.from_bytes(len_bytes, byteorder="big", signed=False)             # <<<<<<<<<<<<<<
@@ -10021,21 +9322,21 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
   __pyx_t_6 = 0;
   {
     PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_4, __pyx_v_len_bytes};
-    __pyx_t_2 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 266, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_2, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 291, __pyx_L1_error)
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_2, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 291, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_2, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 266, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_2, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 266, __pyx_L1_error)
     __pyx_t_1 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_from_bytes, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 291, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 266, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 266, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_len_value = __pyx_t_8;
 
-  /* "askur/filemapping.pyx":293
+  /* "askur/filemapping.pyx":268
  *         len_value = int.from_bytes(len_bytes, byteorder="big", signed=False)
  * 
  *         return [index_val, len_value]             # <<<<<<<<<<<<<<
@@ -10043,23 +9344,23 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_index(struct __pyx_ob
  *     cpdef int is_end_of_word(self, int index):
 */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_index_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 293, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_index_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_v_len_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 293, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_v_len_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 293, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_1);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1) != (0)) __PYX_ERR(0, 293, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1) != (0)) __PYX_ERR(0, 268, __pyx_L1_error);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 293, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_4, 1, __pyx_t_2) != (0)) __PYX_ERR(0, 268, __pyx_L1_error);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_r = ((PyObject*)__pyx_t_4);
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":272
+  /* "askur/filemapping.pyx":247
  *         return trie_slice.find(letter)
  * 
  *     cpdef list get_index(self, int index_value):             # <<<<<<<<<<<<<<
@@ -10124,32 +9425,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_index_value,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 272, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 247, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 272, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 247, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_index", 0) < 0) __PYX_ERR(0, 272, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_index", 0) < 0) __PYX_ERR(0, 247, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_index", 1, 1, 1, i); __PYX_ERR(0, 272, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_index", 1, 1, 1, i); __PYX_ERR(0, 247, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 272, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 247, __pyx_L3_error)
     }
-    __pyx_v_index_value = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index_value == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 272, __pyx_L3_error)
+    __pyx_v_index_value = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index_value == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 247, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_index", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 272, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_index", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 247, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -10179,7 +9480,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_18get_index(struct __pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_index", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_index(__pyx_v_self, __pyx_v_index_value, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_index(__pyx_v_self, __pyx_v_index_value, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 247, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10196,7 +9497,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_18get_index(struct __pyx
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":295
+/* "askur/filemapping.pyx":270
  *         return [index_val, len_value]
  * 
  *     cpdef int is_end_of_word(self, int index):             # <<<<<<<<<<<<<<
@@ -10247,13 +9548,13 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_is_end_of_word); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 295, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_is_end_of_word); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 270, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_21is_end_of_word)) {
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 295, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 270, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -10273,10 +9574,10 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 270, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 270, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_7;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -10295,7 +9596,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
     #endif
   }
 
-  /* "askur/filemapping.pyx":297
+  /* "askur/filemapping.pyx":272
  *     cpdef int is_end_of_word(self, int index):
  *         """Check end of word using safe mmap access"""
  *         cdef int start_byte = index // 8             # <<<<<<<<<<<<<<
@@ -10304,7 +9605,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
 */
   __pyx_v_start_byte = (__pyx_v_index / 8);
 
-  /* "askur/filemapping.pyx":298
+  /* "askur/filemapping.pyx":273
  *         """Check end of word using safe mmap access"""
  *         cdef int start_byte = index // 8
  *         cdef int extra_bits = index % 8             # <<<<<<<<<<<<<<
@@ -10313,7 +9614,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
 */
   __pyx_v_extra_bits = (__pyx_v_index % 8);
 
-  /* "askur/filemapping.pyx":300
+  /* "askur/filemapping.pyx":275
  *         cdef int extra_bits = index % 8
  * 
  *         if start_byte >= len(self._eow_bits):             # <<<<<<<<<<<<<<
@@ -10322,12 +9623,12 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
 */
   __pyx_t_1 = __pyx_v_self->_eow_bits;
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_8 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_8 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_9 = (__pyx_v_start_byte >= __pyx_t_8);
   if (__pyx_t_9) {
 
-    /* "askur/filemapping.pyx":301
+    /* "askur/filemapping.pyx":276
  * 
  *         if start_byte >= len(self._eow_bits):
  *             return 0             # <<<<<<<<<<<<<<
@@ -10337,7 +9638,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "askur/filemapping.pyx":300
+    /* "askur/filemapping.pyx":275
  *         cdef int extra_bits = index % 8
  * 
  *         if start_byte >= len(self._eow_bits):             # <<<<<<<<<<<<<<
@@ -10346,20 +9647,20 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
 */
   }
 
-  /* "askur/filemapping.pyx":303
+  /* "askur/filemapping.pyx":278
  *             return 0
  * 
  *         cdef int byte_val = self._eow_bits[start_byte]             # <<<<<<<<<<<<<<
  *         cdef str bits = bin(byte_val)[2:].rjust(8, "0")
  *         return int(bits[extra_bits:extra_bits + 1])
 */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_eow_bits, __pyx_v_start_byte, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_self->_eow_bits, __pyx_v_start_byte, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 278, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_byte_val = __pyx_t_7;
 
-  /* "askur/filemapping.pyx":304
+  /* "askur/filemapping.pyx":279
  * 
  *         cdef int byte_val = self._eow_bits[start_byte]
  *         cdef str bits = bin(byte_val)[2:].rjust(8, "0")             # <<<<<<<<<<<<<<
@@ -10369,7 +9670,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
   __pyx_t_2 = NULL;
   __Pyx_INCREF(__pyx_builtin_bin);
   __pyx_t_4 = __pyx_builtin_bin; 
-  __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_byte_val); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_byte_val); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = 1;
   {
@@ -10378,23 +9679,23 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 279, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_4 = __Pyx_PyObject_GetSlice(__pyx_t_1, 2, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[1], 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetSlice(__pyx_t_1, 2, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[1], 1, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_rjust); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_rjust); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_mstate_global->__pyx_tuple[1], NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_mstate_global->__pyx_tuple[1], NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_4))) __PYX_ERR(0, 304, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_4))) __PYX_ERR(0, 279, __pyx_L1_error)
   __pyx_v_bits = ((PyObject*)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "askur/filemapping.pyx":305
+  /* "askur/filemapping.pyx":280
  *         cdef int byte_val = self._eow_bits[start_byte]
  *         cdef str bits = bin(byte_val)[2:].rjust(8, "0")
  *         return int(bits[extra_bits:extra_bits + 1])             # <<<<<<<<<<<<<<
@@ -10403,19 +9704,19 @@ static int __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(struct __pyx_obj
 */
   if (unlikely(__pyx_v_bits == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 305, __pyx_L1_error)
+    __PYX_ERR(0, 280, __pyx_L1_error)
   }
-  __pyx_t_4 = __Pyx_PyUnicode_Substring(__pyx_v_bits, __pyx_v_extra_bits, (__pyx_v_extra_bits + 1)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyUnicode_Substring(__pyx_v_bits, __pyx_v_extra_bits, (__pyx_v_extra_bits + 1)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_PyNumber_Int(__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyNumber_Int(__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_7;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":295
+  /* "askur/filemapping.pyx":270
  *         return [index_val, len_value]
  * 
  *     cpdef int is_end_of_word(self, int index):             # <<<<<<<<<<<<<<
@@ -10478,32 +9779,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_index,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 295, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 270, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 295, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 270, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "is_end_of_word", 0) < 0) __PYX_ERR(0, 295, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "is_end_of_word", 0) < 0) __PYX_ERR(0, 270, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("is_end_of_word", 1, 1, 1, i); __PYX_ERR(0, 295, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("is_end_of_word", 1, 1, 1, i); __PYX_ERR(0, 270, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 295, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 270, __pyx_L3_error)
     }
-    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 270, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("is_end_of_word", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 295, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("is_end_of_word", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 270, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -10534,8 +9835,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_20is_end_of_word(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_end_of_word", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(__pyx_v_self, __pyx_v_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_is_end_of_word(__pyx_v_self, __pyx_v_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -10552,7 +9853,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_20is_end_of_word(struct 
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":307
+/* "askur/filemapping.pyx":282
  *         return int(bits[extra_bits:extra_bits + 1])
  * 
  *     cpdef int get_value_bits_sum(self, int index):             # <<<<<<<<<<<<<<
@@ -10613,13 +9914,13 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_value_bits_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_value_bits_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_23get_value_bits_sum)) {
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 307, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 282, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -10639,10 +9940,10 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 307, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 282, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 307, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 282, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_7;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -10661,7 +9962,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
     #endif
   }
 
-  /* "askur/filemapping.pyx":309
+  /* "askur/filemapping.pyx":284
  *     cpdef int get_value_bits_sum(self, int index):
  *         """Get value bits sum using safe mmap access"""
  *         cdef int s_start = (index // 32 - 1) * 4             # <<<<<<<<<<<<<<
@@ -10670,7 +9971,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
   __pyx_v_s_start = (((__pyx_v_index / 32) - 1) * 4);
 
-  /* "askur/filemapping.pyx":310
+  /* "askur/filemapping.pyx":285
  *         """Get value bits sum using safe mmap access"""
  *         cdef int s_start = (index // 32 - 1) * 4
  *         cdef int s_end = s_start + 4             # <<<<<<<<<<<<<<
@@ -10679,31 +9980,31 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
   __pyx_v_s_end = (__pyx_v_s_start + 4);
 
-  /* "askur/filemapping.pyx":313
+  /* "askur/filemapping.pyx":288
  * 
  *         # Use safe mmap access for summary data
  *         start_bytes = self._eow_sb[s_start:s_start + 4]             # <<<<<<<<<<<<<<
  *         end_bytes = self._eow_sb[s_end:s_end + 4]
  * 
 */
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_eow_sb, __pyx_v_s_start, (__pyx_v_s_start + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 313, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_eow_sb, __pyx_v_s_start, (__pyx_v_s_start + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_start_bytes = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":314
+  /* "askur/filemapping.pyx":289
  *         # Use safe mmap access for summary data
  *         start_bytes = self._eow_sb[s_start:s_start + 4]
  *         end_bytes = self._eow_sb[s_end:s_end + 4]             # <<<<<<<<<<<<<<
  * 
  *         cdef int start_index = int.from_bytes(start_bytes, byteorder="big", signed=False)
 */
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_eow_sb, __pyx_v_s_end, (__pyx_v_s_end + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_eow_sb, __pyx_v_s_end, (__pyx_v_s_end + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_end_bytes = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":316
+  /* "askur/filemapping.pyx":291
  *         end_bytes = self._eow_sb[s_end:s_end + 4]
  * 
  *         cdef int start_index = int.from_bytes(start_bytes, byteorder="big", signed=False)             # <<<<<<<<<<<<<<
@@ -10715,21 +10016,21 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
   __pyx_t_6 = 0;
   {
     PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_2, __pyx_v_start_bytes};
-    __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 316, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 291, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 316, __pyx_L1_error)
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 316, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_4, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 291, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_4, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 291, __pyx_L1_error)
     __pyx_t_1 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_from_bytes, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_4);
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 316, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 291, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 316, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 291, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_start_index = __pyx_t_7;
 
-  /* "askur/filemapping.pyx":317
+  /* "askur/filemapping.pyx":292
  * 
  *         cdef int start_index = int.from_bytes(start_bytes, byteorder="big", signed=False)
  *         cdef int end_index = int.from_bytes(end_bytes, byteorder="big", signed=False)             # <<<<<<<<<<<<<<
@@ -10741,21 +10042,21 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
   __pyx_t_6 = 0;
   {
     PyObject *__pyx_callargs[2 + ((CYTHON_VECTORCALL) ? 2 : 0)] = {__pyx_t_4, __pyx_v_end_bytes};
-    __pyx_t_2 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 317, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_MakeVectorcallBuilderKwds(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 292, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_2, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 317, __pyx_L1_error)
-    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_2, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 317, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_byteorder, __pyx_mstate_global->__pyx_n_u_big, __pyx_t_2, __pyx_callargs+2, 0) < 0) __PYX_ERR(0, 292, __pyx_L1_error)
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_signed, Py_False, __pyx_t_2, __pyx_callargs+2, 1) < 0) __PYX_ERR(0, 292, __pyx_L1_error)
     __pyx_t_1 = __Pyx_Object_VectorcallMethod_CallFromBuilder(__pyx_mstate_global->__pyx_n_u_from_bytes, __pyx_callargs+__pyx_t_6, (2-__pyx_t_6) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_2);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 317, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 292, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 317, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_end_index = __pyx_t_7;
 
-  /* "askur/filemapping.pyx":319
+  /* "askur/filemapping.pyx":294
  *         cdef int end_index = int.from_bytes(end_bytes, byteorder="big", signed=False)
  * 
  *         if end_index == start_index:             # <<<<<<<<<<<<<<
@@ -10765,7 +10066,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
   __pyx_t_8 = (__pyx_v_end_index == __pyx_v_start_index);
   if (__pyx_t_8) {
 
-    /* "askur/filemapping.pyx":320
+    /* "askur/filemapping.pyx":295
  * 
  *         if end_index == start_index:
  *             return start_index             # <<<<<<<<<<<<<<
@@ -10775,7 +10076,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
     __pyx_r = __pyx_v_start_index;
     goto __pyx_L0;
 
-    /* "askur/filemapping.pyx":319
+    /* "askur/filemapping.pyx":294
  *         cdef int end_index = int.from_bytes(end_bytes, byteorder="big", signed=False)
  * 
  *         if end_index == start_index:             # <<<<<<<<<<<<<<
@@ -10784,7 +10085,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
   }
 
-  /* "askur/filemapping.pyx":322
+  /* "askur/filemapping.pyx":297
  *             return start_index
  * 
  *         cdef int extra_bits = index - s_end * 8 + 1             # <<<<<<<<<<<<<<
@@ -10793,44 +10094,44 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
   __pyx_v_extra_bits = ((__pyx_v_index - (__pyx_v_s_end * 8)) + 1);
 
-  /* "askur/filemapping.pyx":327
+  /* "askur/filemapping.pyx":302
  * 
  *         # Process value bits safely
  *         value_bits = self._eow_bits[s_end:s_end + 4]             # <<<<<<<<<<<<<<
  *         for i in range(len(value_bits)):
  *             byte_val = value_bits[i]
 */
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_eow_bits, __pyx_v_s_end, (__pyx_v_s_end + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_eow_bits, __pyx_v_s_end, (__pyx_v_s_end + 4), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 302, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_value_bits = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":328
+  /* "askur/filemapping.pyx":303
  *         # Process value bits safely
  *         value_bits = self._eow_bits[s_end:s_end + 4]
  *         for i in range(len(value_bits)):             # <<<<<<<<<<<<<<
  *             byte_val = value_bits[i]
  *             if not byte_val and extra_bits > 8:
 */
-  __pyx_t_9 = PyObject_Length(__pyx_v_value_bits); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 328, __pyx_L1_error)
+  __pyx_t_9 = PyObject_Length(__pyx_v_value_bits); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 303, __pyx_L1_error)
   __pyx_t_10 = __pyx_t_9;
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_10; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
 
-    /* "askur/filemapping.pyx":329
+    /* "askur/filemapping.pyx":304
  *         value_bits = self._eow_bits[s_end:s_end + 4]
  *         for i in range(len(value_bits)):
  *             byte_val = value_bits[i]             # <<<<<<<<<<<<<<
  *             if not byte_val and extra_bits > 8:
  *                 extra_bits -= 8
 */
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_value_bits, __pyx_v_i, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_value_bits, __pyx_v_i, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_11 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 329, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_11 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 304, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_byte_val = __pyx_t_11;
 
-    /* "askur/filemapping.pyx":330
+    /* "askur/filemapping.pyx":305
  *         for i in range(len(value_bits)):
  *             byte_val = value_bits[i]
  *             if not byte_val and extra_bits > 8:             # <<<<<<<<<<<<<<
@@ -10848,7 +10149,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
     __pyx_L7_bool_binop_done:;
     if (__pyx_t_8) {
 
-      /* "askur/filemapping.pyx":331
+      /* "askur/filemapping.pyx":306
  *             byte_val = value_bits[i]
  *             if not byte_val and extra_bits > 8:
  *                 extra_bits -= 8             # <<<<<<<<<<<<<<
@@ -10857,7 +10158,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
       __pyx_v_extra_bits = (__pyx_v_extra_bits - 8);
 
-      /* "askur/filemapping.pyx":332
+      /* "askur/filemapping.pyx":307
  *             if not byte_val and extra_bits > 8:
  *                 extra_bits -= 8
  *                 continue             # <<<<<<<<<<<<<<
@@ -10866,7 +10167,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
       goto __pyx_L4_continue;
 
-      /* "askur/filemapping.pyx":330
+      /* "askur/filemapping.pyx":305
  *         for i in range(len(value_bits)):
  *             byte_val = value_bits[i]
  *             if not byte_val and extra_bits > 8:             # <<<<<<<<<<<<<<
@@ -10875,7 +10176,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
     }
 
-    /* "askur/filemapping.pyx":334
+    /* "askur/filemapping.pyx":309
  *                 continue
  * 
  *             for j in range(7, -1, -1):             # <<<<<<<<<<<<<<
@@ -10885,7 +10186,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
     for (__pyx_t_11 = 7; __pyx_t_11 > -1; __pyx_t_11-=1) {
       __pyx_v_j = __pyx_t_11;
 
-      /* "askur/filemapping.pyx":335
+      /* "askur/filemapping.pyx":310
  * 
  *             for j in range(7, -1, -1):
  *                 if extra_bits > 0:             # <<<<<<<<<<<<<<
@@ -10895,7 +10196,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
       __pyx_t_8 = (__pyx_v_extra_bits > 0);
       if (__pyx_t_8) {
 
-        /* "askur/filemapping.pyx":336
+        /* "askur/filemapping.pyx":311
  *             for j in range(7, -1, -1):
  *                 if extra_bits > 0:
  *                     extra_bits -= 1             # <<<<<<<<<<<<<<
@@ -10904,7 +10205,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
         __pyx_v_extra_bits = (__pyx_v_extra_bits - 1);
 
-        /* "askur/filemapping.pyx":337
+        /* "askur/filemapping.pyx":312
  *                 if extra_bits > 0:
  *                     extra_bits -= 1
  *                     if byte_val & (1 << j):             # <<<<<<<<<<<<<<
@@ -10914,7 +10215,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
         __pyx_t_8 = ((__pyx_v_byte_val & (1 << __pyx_v_j)) != 0);
         if (__pyx_t_8) {
 
-          /* "askur/filemapping.pyx":338
+          /* "askur/filemapping.pyx":313
  *                     extra_bits -= 1
  *                     if byte_val & (1 << j):
  *                         start_index += 1             # <<<<<<<<<<<<<<
@@ -10923,7 +10224,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
           __pyx_v_start_index = (__pyx_v_start_index + 1);
 
-          /* "askur/filemapping.pyx":337
+          /* "askur/filemapping.pyx":312
  *                 if extra_bits > 0:
  *                     extra_bits -= 1
  *                     if byte_val & (1 << j):             # <<<<<<<<<<<<<<
@@ -10932,7 +10233,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
 */
         }
 
-        /* "askur/filemapping.pyx":335
+        /* "askur/filemapping.pyx":310
  * 
  *             for j in range(7, -1, -1):
  *                 if extra_bits > 0:             # <<<<<<<<<<<<<<
@@ -10942,7 +10243,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
         goto __pyx_L11;
       }
 
-      /* "askur/filemapping.pyx":340
+      /* "askur/filemapping.pyx":315
  *                         start_index += 1
  *                 else:
  *                     return start_index - 1             # <<<<<<<<<<<<<<
@@ -10958,7 +10259,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
     __pyx_L4_continue:;
   }
 
-  /* "askur/filemapping.pyx":342
+  /* "askur/filemapping.pyx":317
  *                     return start_index - 1
  * 
  *         return start_index - 1             # <<<<<<<<<<<<<<
@@ -10968,7 +10269,7 @@ static int __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(struct __pyx
   __pyx_r = (__pyx_v_start_index - 1);
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":307
+  /* "askur/filemapping.pyx":282
  *         return int(bits[extra_bits:extra_bits + 1])
  * 
  *     cpdef int get_value_bits_sum(self, int index):             # <<<<<<<<<<<<<<
@@ -11033,32 +10334,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_index,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 307, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 282, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 307, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 282, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_value_bits_sum", 0) < 0) __PYX_ERR(0, 307, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_value_bits_sum", 0) < 0) __PYX_ERR(0, 282, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_value_bits_sum", 1, 1, 1, i); __PYX_ERR(0, 307, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_value_bits_sum", 1, 1, 1, i); __PYX_ERR(0, 282, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 307, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 282, __pyx_L3_error)
     }
-    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 307, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 282, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_value_bits_sum", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 307, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_value_bits_sum", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 282, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -11089,8 +10390,8 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_22get_value_bits_sum(str
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_value_bits_sum", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(__pyx_v_self, __pyx_v_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 307, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_value_bits_sum(__pyx_v_self, __pyx_v_index, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 282, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 282, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -11107,7 +10408,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_22get_value_bits_sum(str
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":344
+/* "askur/filemapping.pyx":319
  *         return start_index - 1
  * 
  *     cpdef list get_result(self, int value_index, bint reversed=False):             # <<<<<<<<<<<<<<
@@ -11163,16 +10464,16 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_result); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 344, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_result); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_25get_result)) {
         __Pyx_XDECREF(__pyx_r);
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_value_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 344, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_value_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 319, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = __Pyx_PyBool_FromLong(__pyx_v_reversed); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 344, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyBool_FromLong(__pyx_v_reversed); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 319, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __pyx_t_7 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -11193,10 +10494,10 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 344, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 319, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 344, __pyx_L1_error)
+        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 319, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_2);
         __pyx_t_2 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -11215,7 +10516,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
     #endif
   }
 
-  /* "askur/filemapping.pyx":346
+  /* "askur/filemapping.pyx":321
  *     cpdef list get_result(self, int value_index, bint reversed=False):
  *         """Returns result of the query"""
  *         if self.check_if_key_exists:             # <<<<<<<<<<<<<<
@@ -11224,7 +10525,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
 */
   if (__pyx_v_self->check_if_key_exists) {
 
-    /* "askur/filemapping.pyx":347
+    /* "askur/filemapping.pyx":322
  *         """Returns result of the query"""
  *         if self.check_if_key_exists:
  *             return ["1"]             # <<<<<<<<<<<<<<
@@ -11232,16 +10533,16 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
  *         cdef int value_sum = self.get_value_bits_sum(value_index)
 */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 347, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_u_1);
     __Pyx_GIVEREF(__pyx_mstate_global->__pyx_kp_u_1);
-    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 0, __pyx_mstate_global->__pyx_kp_u_1) != (0)) __PYX_ERR(0, 347, __pyx_L1_error);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_1, 0, __pyx_mstate_global->__pyx_kp_u_1) != (0)) __PYX_ERR(0, 322, __pyx_L1_error);
     __pyx_r = ((PyObject*)__pyx_t_1);
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "askur/filemapping.pyx":346
+    /* "askur/filemapping.pyx":321
  *     cpdef list get_result(self, int value_index, bint reversed=False):
  *         """Returns result of the query"""
  *         if self.check_if_key_exists:             # <<<<<<<<<<<<<<
@@ -11250,29 +10551,29 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
 */
   }
 
-  /* "askur/filemapping.pyx":349
+  /* "askur/filemapping.pyx":324
  *             return ["1"]
  * 
  *         cdef int value_sum = self.get_value_bits_sum(value_index)             # <<<<<<<<<<<<<<
  *         cdef list index_data = self.get_index(value_sum)
  *         cdef int index_value = index_data[0]
 */
-  __pyx_t_8 = ((struct __pyx_vtabstruct_5askur_11filemapping_Mapping *)__pyx_v_self->__pyx_vtab)->get_value_bits_sum(__pyx_v_self, __pyx_v_value_index, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 349, __pyx_L1_error)
+  __pyx_t_8 = ((struct __pyx_vtabstruct_5askur_11filemapping_Mapping *)__pyx_v_self->__pyx_vtab)->get_value_bits_sum(__pyx_v_self, __pyx_v_value_index, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 324, __pyx_L1_error)
   __pyx_v_value_sum = __pyx_t_8;
 
-  /* "askur/filemapping.pyx":350
+  /* "askur/filemapping.pyx":325
  * 
  *         cdef int value_sum = self.get_value_bits_sum(value_index)
  *         cdef list index_data = self.get_index(value_sum)             # <<<<<<<<<<<<<<
  *         cdef int index_value = index_data[0]
  *         cdef int text_len = index_data[1]
 */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_5askur_11filemapping_Mapping *)__pyx_v_self->__pyx_vtab)->get_index(__pyx_v_self, __pyx_v_value_sum, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 350, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_5askur_11filemapping_Mapping *)__pyx_v_self->__pyx_vtab)->get_index(__pyx_v_self, __pyx_v_value_sum, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_index_data = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":351
+  /* "askur/filemapping.pyx":326
  *         cdef int value_sum = self.get_value_bits_sum(value_index)
  *         cdef list index_data = self.get_index(value_sum)
  *         cdef int index_value = index_data[0]             # <<<<<<<<<<<<<<
@@ -11281,12 +10582,12 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
 */
   if (unlikely(__pyx_v_index_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 351, __pyx_L1_error)
+    __PYX_ERR(0, 326, __pyx_L1_error)
   }
-  __pyx_t_8 = __Pyx_PyLong_As_int(__Pyx_PyList_GET_ITEM(__pyx_v_index_data, 0)); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 351, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyLong_As_int(__Pyx_PyList_GET_ITEM(__pyx_v_index_data, 0)); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 326, __pyx_L1_error)
   __pyx_v_index_value = __pyx_t_8;
 
-  /* "askur/filemapping.pyx":352
+  /* "askur/filemapping.pyx":327
  *         cdef list index_data = self.get_index(value_sum)
  *         cdef int index_value = index_data[0]
  *         cdef int text_len = index_data[1]             # <<<<<<<<<<<<<<
@@ -11295,12 +10596,12 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
 */
   if (unlikely(__pyx_v_index_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 352, __pyx_L1_error)
+    __PYX_ERR(0, 327, __pyx_L1_error)
   }
-  __pyx_t_8 = __Pyx_PyLong_As_int(__Pyx_PyList_GET_ITEM(__pyx_v_index_data, 1)); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 352, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyLong_As_int(__Pyx_PyList_GET_ITEM(__pyx_v_index_data, 1)); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 327, __pyx_L1_error)
   __pyx_v_text_len = __pyx_t_8;
 
-  /* "askur/filemapping.pyx":353
+  /* "askur/filemapping.pyx":328
  *         cdef int index_value = index_data[0]
  *         cdef int text_len = index_data[1]
  *         return self.get_short_text(index_value, text_len)             # <<<<<<<<<<<<<<
@@ -11308,13 +10609,13 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_result(struct __pyx_o
  *     cpdef list get_short_text(self, int index, int text_len):
 */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((struct __pyx_vtabstruct_5askur_11filemapping_Mapping *)__pyx_v_self->__pyx_vtab)->get_short_text(__pyx_v_self, __pyx_v_index_value, __pyx_v_text_len, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 353, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_5askur_11filemapping_Mapping *)__pyx_v_self->__pyx_vtab)->get_short_text(__pyx_v_self, __pyx_v_index_value, __pyx_v_text_len, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 328, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":344
+  /* "askur/filemapping.pyx":319
  *         return start_index - 1
  * 
  *     cpdef list get_result(self, int value_index, bint reversed=False):             # <<<<<<<<<<<<<<
@@ -11380,48 +10681,48 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_value_index,&__pyx_mstate_global->__pyx_n_u_reversed,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 344, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 319, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 344, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 319, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 344, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 319, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_result", 0) < 0) __PYX_ERR(0, 344, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_result", 0) < 0) __PYX_ERR(0, 319, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_result", 0, 1, 2, i); __PYX_ERR(0, 344, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_result", 0, 1, 2, i); __PYX_ERR(0, 319, __pyx_L3_error) }
       }
     } else {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 344, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 319, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 344, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 319, __pyx_L3_error)
         break;
         default: goto __pyx_L5_argtuple_error;
       }
     }
-    __pyx_v_value_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_value_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 344, __pyx_L3_error)
+    __pyx_v_value_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_value_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 319, __pyx_L3_error)
     if (values[1]) {
-      __pyx_v_reversed = __Pyx_PyObject_IsTrue(values[1]); if (unlikely((__pyx_v_reversed == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 344, __pyx_L3_error)
+      __pyx_v_reversed = __Pyx_PyObject_IsTrue(values[1]); if (unlikely((__pyx_v_reversed == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 319, __pyx_L3_error)
     } else {
       __pyx_v_reversed = ((int)0);
     }
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_result", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 344, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_result", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 319, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -11454,7 +10755,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_24get_result(struct __py
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2.__pyx_n = 1;
   __pyx_t_2.reversed = __pyx_v_reversed;
-  __pyx_t_1 = __pyx_vtabptr_5askur_11filemapping_Mapping->get_result(__pyx_v_self, __pyx_v_value_index, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 344, __pyx_L1_error)
+  __pyx_t_1 = __pyx_vtabptr_5askur_11filemapping_Mapping->get_result(__pyx_v_self, __pyx_v_value_index, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -11471,7 +10772,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_24get_result(struct __py
   return __pyx_r;
 }
 
-/* "askur/filemapping.pyx":355
+/* "askur/filemapping.pyx":330
  *         return self.get_short_text(index_value, text_len)
  * 
  *     cpdef list get_short_text(self, int index, int text_len):             # <<<<<<<<<<<<<<
@@ -11534,16 +10835,16 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_short_text); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 355, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_short_text); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 330, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_5askur_11filemapping_7Mapping_27get_short_text)) {
         __Pyx_XDECREF(__pyx_r);
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 355, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_index); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 330, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_text_len); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 355, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyLong_From_int(__pyx_v_text_len); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 330, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __pyx_t_7 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -11564,10 +10865,10 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 355, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 330, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 355, __pyx_L1_error)
+        if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_2))) __PYX_ERR(0, 330, __pyx_L1_error)
         __pyx_r = ((PyObject*)__pyx_t_2);
         __pyx_t_2 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -11586,31 +10887,31 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
     #endif
   }
 
-  /* "askur/filemapping.pyx":357
+  /* "askur/filemapping.pyx":332
  *     cpdef list get_short_text(self, int index, int text_len):
  *         """Get short text using safe mmap access"""
  *         cdef list text_arr = []             # <<<<<<<<<<<<<<
  *         cdef list short_texts = []
  *         cdef int i = 0
 */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 332, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_text_arr = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":358
+  /* "askur/filemapping.pyx":333
  *         """Get short text using safe mmap access"""
  *         cdef list text_arr = []
  *         cdef list short_texts = []             # <<<<<<<<<<<<<<
  *         cdef int i = 0
  *         cdef int current_byte
 */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 358, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 333, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_short_texts = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":359
+  /* "askur/filemapping.pyx":334
  *         cdef list text_arr = []
  *         cdef list short_texts = []
  *         cdef int i = 0             # <<<<<<<<<<<<<<
@@ -11619,19 +10920,19 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
   __pyx_v_i = 0;
 
-  /* "askur/filemapping.pyx":365
+  /* "askur/filemapping.pyx":340
  * 
  *         # Get the result slice safely
  *         res = self._short_text[index:index + text_len]             # <<<<<<<<<<<<<<
  * 
  *         while i < len(res):
 */
-  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_short_text, __pyx_v_index, (__pyx_v_index + __pyx_v_text_len), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 365, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_self->_short_text, __pyx_v_index, (__pyx_v_index + __pyx_v_text_len), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_res = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "askur/filemapping.pyx":367
+  /* "askur/filemapping.pyx":342
  *         res = self._short_text[index:index + text_len]
  * 
  *         while i < len(res):             # <<<<<<<<<<<<<<
@@ -11639,24 +10940,24 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
  * 
 */
   while (1) {
-    __pyx_t_8 = PyObject_Length(__pyx_v_res); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 367, __pyx_L1_error)
+    __pyx_t_8 = PyObject_Length(__pyx_v_res); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 342, __pyx_L1_error)
     __pyx_t_9 = (__pyx_v_i < __pyx_t_8);
     if (!__pyx_t_9) break;
 
-    /* "askur/filemapping.pyx":368
+    /* "askur/filemapping.pyx":343
  * 
  *         while i < len(res):
  *             current_byte = res[i]             # <<<<<<<<<<<<<<
  * 
  *             if current_byte == 141:  # new line of result
 */
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_res, __pyx_v_i, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 368, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_res, __pyx_v_i, int, 1, __Pyx_PyLong_From_int, 0, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 368, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 343, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_current_byte = __pyx_t_10;
 
-    /* "askur/filemapping.pyx":370
+    /* "askur/filemapping.pyx":345
  *             current_byte = res[i]
  * 
  *             if current_byte == 141:  # new line of result             # <<<<<<<<<<<<<<
@@ -11666,7 +10967,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
     __pyx_t_9 = (__pyx_v_current_byte == 0x8D);
     if (__pyx_t_9) {
 
-      /* "askur/filemapping.pyx":371
+      /* "askur/filemapping.pyx":346
  * 
  *             if current_byte == 141:  # new line of result
  *                 if text_arr:             # <<<<<<<<<<<<<<
@@ -11675,37 +10976,37 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
       {
         Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_v_text_arr);
-        if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 371, __pyx_L1_error)
+        if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 346, __pyx_L1_error)
         __pyx_t_9 = (__pyx_temp != 0);
       }
 
       if (__pyx_t_9) {
 
-        /* "askur/filemapping.pyx":372
+        /* "askur/filemapping.pyx":347
  *             if current_byte == 141:  # new line of result
  *                 if text_arr:
  *                     short_texts.append("".join(text_arr))             # <<<<<<<<<<<<<<
  *                     text_arr = []
  *                 i += 1
 */
-        __pyx_t_1 = PyUnicode_Join(__pyx_mstate_global->__pyx_kp_u__4, __pyx_v_text_arr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 372, __pyx_L1_error)
+        __pyx_t_1 = PyUnicode_Join(__pyx_mstate_global->__pyx_kp_u_, __pyx_v_text_arr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 347, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_short_texts, __pyx_t_1); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 372, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_short_texts, __pyx_t_1); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 347, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "askur/filemapping.pyx":373
+        /* "askur/filemapping.pyx":348
  *                 if text_arr:
  *                     short_texts.append("".join(text_arr))
  *                     text_arr = []             # <<<<<<<<<<<<<<
  *                 i += 1
  *                 continue
 */
-        __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
+        __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 348, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF_SET(__pyx_v_text_arr, ((PyObject*)__pyx_t_1));
         __pyx_t_1 = 0;
 
-        /* "askur/filemapping.pyx":371
+        /* "askur/filemapping.pyx":346
  * 
  *             if current_byte == 141:  # new line of result
  *                 if text_arr:             # <<<<<<<<<<<<<<
@@ -11714,7 +11015,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
       }
 
-      /* "askur/filemapping.pyx":374
+      /* "askur/filemapping.pyx":349
  *                     short_texts.append("".join(text_arr))
  *                     text_arr = []
  *                 i += 1             # <<<<<<<<<<<<<<
@@ -11723,7 +11024,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
       __pyx_v_i = (__pyx_v_i + 1);
 
-      /* "askur/filemapping.pyx":375
+      /* "askur/filemapping.pyx":350
  *                     text_arr = []
  *                 i += 1
  *                 continue             # <<<<<<<<<<<<<<
@@ -11732,7 +11033,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
       goto __pyx_L3_continue;
 
-      /* "askur/filemapping.pyx":370
+      /* "askur/filemapping.pyx":345
  *             current_byte = res[i]
  * 
  *             if current_byte == 141:  # new line of result             # <<<<<<<<<<<<<<
@@ -11741,7 +11042,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
     }
 
-    /* "askur/filemapping.pyx":377
+    /* "askur/filemapping.pyx":352
  *                 continue
  * 
  *             if current_byte == 129:  # special character indicating a 4-byte character             # <<<<<<<<<<<<<<
@@ -11751,30 +11052,30 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
     __pyx_t_9 = (__pyx_v_current_byte == 0x81);
     if (__pyx_t_9) {
 
-      /* "askur/filemapping.pyx":378
+      /* "askur/filemapping.pyx":353
  * 
  *             if current_byte == 129:  # special character indicating a 4-byte character
  *                 if i + 4 < len(res):             # <<<<<<<<<<<<<<
  *                     # Get 4 bytes safely
  *                     unicode_bytes = res[i + 1:i + 5]
 */
-      __pyx_t_8 = PyObject_Length(__pyx_v_res); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 378, __pyx_L1_error)
+      __pyx_t_8 = PyObject_Length(__pyx_v_res); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 353, __pyx_L1_error)
       __pyx_t_9 = ((__pyx_v_i + 4) < __pyx_t_8);
       if (__pyx_t_9) {
 
-        /* "askur/filemapping.pyx":380
+        /* "askur/filemapping.pyx":355
  *                 if i + 4 < len(res):
  *                     # Get 4 bytes safely
  *                     unicode_bytes = res[i + 1:i + 5]             # <<<<<<<<<<<<<<
  *                     bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
  *                     try:
 */
-        __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_res, (__pyx_v_i + 1), (__pyx_v_i + 5), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_GetSlice(__pyx_v_res, (__pyx_v_i + 1), (__pyx_v_i + 5), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 355, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_XDECREF_SET(__pyx_v_unicode_bytes, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "askur/filemapping.pyx":381
+        /* "askur/filemapping.pyx":356
  *                     # Get 4 bytes safely
  *                     unicode_bytes = res[i + 1:i + 5]
  *                     bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]             # <<<<<<<<<<<<<<
@@ -11782,16 +11083,16 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
  *                         unicode_val = int("".join(bits), 2)
 */
         { /* enter inner scope */
-          __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 381, __pyx_L11_error)
+          __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 356, __pyx_L11_error)
           __Pyx_GOTREF(__pyx_t_1);
           if (likely(PyList_CheckExact(__pyx_v_unicode_bytes)) || PyTuple_CheckExact(__pyx_v_unicode_bytes)) {
             __pyx_t_2 = __pyx_v_unicode_bytes; __Pyx_INCREF(__pyx_t_2);
             __pyx_t_8 = 0;
             __pyx_t_12 = NULL;
           } else {
-            __pyx_t_8 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_unicode_bytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 381, __pyx_L11_error)
+            __pyx_t_8 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_unicode_bytes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 356, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_12 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 381, __pyx_L11_error)
+            __pyx_t_12 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 356, __pyx_L11_error)
           }
           for (;;) {
             if (likely(!__pyx_t_12)) {
@@ -11799,7 +11100,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
                 {
                   Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_2);
                   #if !CYTHON_ASSUME_SAFE_SIZE
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 381, __pyx_L11_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 356, __pyx_L11_error)
                   #endif
                   if (__pyx_t_8 >= __pyx_temp) break;
                 }
@@ -11809,7 +11110,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
                 {
                   Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_2);
                   #if !CYTHON_ASSUME_SAFE_SIZE
-                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 381, __pyx_L11_error)
+                  if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 356, __pyx_L11_error)
                   #endif
                   if (__pyx_t_8 >= __pyx_temp) break;
                 }
@@ -11820,13 +11121,13 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
                 #endif
                 ++__pyx_t_8;
               }
-              if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 381, __pyx_L11_error)
+              if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L11_error)
             } else {
               __pyx_t_4 = __pyx_t_12(__pyx_t_2);
               if (unlikely(!__pyx_t_4)) {
                 PyObject* exc_type = PyErr_Occurred();
                 if (exc_type) {
-                  if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 381, __pyx_L11_error)
+                  if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 356, __pyx_L11_error)
                   PyErr_Clear();
                 }
                 break;
@@ -11844,19 +11145,19 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
               __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+__pyx_t_7, (2-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
               __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
               __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 381, __pyx_L11_error)
+              if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L11_error)
               __Pyx_GOTREF(__pyx_t_4);
             }
-            __pyx_t_5 = __Pyx_PyObject_GetSlice(__pyx_t_4, 2, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[1], 1, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 381, __pyx_L11_error)
+            __pyx_t_5 = __Pyx_PyObject_GetSlice(__pyx_t_4, 2, 0, NULL, NULL, &__pyx_mstate_global->__pyx_slice[1], 1, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 356, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_5);
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_mstate_global->__pyx_n_u_rjust); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 381, __pyx_L11_error)
+            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_mstate_global->__pyx_n_u_rjust); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_4);
             __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_mstate_global->__pyx_tuple[1], NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 381, __pyx_L11_error)
+            __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_mstate_global->__pyx_tuple[1], NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 356, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_5);
             __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 381, __pyx_L11_error)
+            if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 356, __pyx_L11_error)
             __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           }
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -11870,7 +11171,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
         __Pyx_XDECREF_SET(__pyx_v_bits, ((PyObject*)__pyx_t_1));
         __pyx_t_1 = 0;
 
-        /* "askur/filemapping.pyx":382
+        /* "askur/filemapping.pyx":357
  *                     unicode_bytes = res[i + 1:i + 5]
  *                     bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
  *                     try:             # <<<<<<<<<<<<<<
@@ -11886,7 +11187,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
           __Pyx_XGOTREF(__pyx_t_15);
           /*try:*/ {
 
-            /* "askur/filemapping.pyx":383
+            /* "askur/filemapping.pyx":358
  *                     bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
  *                     try:
  *                         unicode_val = int("".join(bits), 2)             # <<<<<<<<<<<<<<
@@ -11896,7 +11197,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
             __pyx_t_2 = NULL;
             __Pyx_INCREF((PyObject *)(&PyLong_Type));
             __pyx_t_5 = ((PyObject *)(&PyLong_Type)); 
-            __pyx_t_4 = PyUnicode_Join(__pyx_mstate_global->__pyx_kp_u__4, __pyx_v_bits); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 383, __pyx_L16_error)
+            __pyx_t_4 = PyUnicode_Join(__pyx_mstate_global->__pyx_kp_u_, __pyx_v_bits); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 358, __pyx_L16_error)
             __Pyx_GOTREF(__pyx_t_4);
             __pyx_t_7 = 1;
             {
@@ -11905,35 +11206,35 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
               __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
               __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
               __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 383, __pyx_L16_error)
+              if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 358, __pyx_L16_error)
               __Pyx_GOTREF(__pyx_t_1);
             }
-            __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 383, __pyx_L16_error)
+            __pyx_t_10 = __Pyx_PyLong_As_int(__pyx_t_1); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 358, __pyx_L16_error)
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
             __pyx_v_unicode_val = __pyx_t_10;
 
-            /* "askur/filemapping.pyx":384
+            /* "askur/filemapping.pyx":359
  *                     try:
  *                         unicode_val = int("".join(bits), 2)
  *                         char_str = chr(unicode_val)             # <<<<<<<<<<<<<<
  *                         text_arr.append(char_str)
  *                     except (ValueError, OverflowError):
 */
-            __pyx_t_1 = PyUnicode_FromOrdinal(__pyx_v_unicode_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 384, __pyx_L16_error)
+            __pyx_t_1 = PyUnicode_FromOrdinal(__pyx_v_unicode_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 359, __pyx_L16_error)
             __Pyx_GOTREF(__pyx_t_1);
             __Pyx_XDECREF_SET(__pyx_v_char_str, ((PyObject*)__pyx_t_1));
             __pyx_t_1 = 0;
 
-            /* "askur/filemapping.pyx":385
+            /* "askur/filemapping.pyx":360
  *                         unicode_val = int("".join(bits), 2)
  *                         char_str = chr(unicode_val)
  *                         text_arr.append(char_str)             # <<<<<<<<<<<<<<
  *                     except (ValueError, OverflowError):
  *                         text_arr.append('?')  # fallback for invalid unicode
 */
-            __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_text_arr, __pyx_v_char_str); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 385, __pyx_L16_error)
+            __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_text_arr, __pyx_v_char_str); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 360, __pyx_L16_error)
 
-            /* "askur/filemapping.pyx":382
+            /* "askur/filemapping.pyx":357
  *                     unicode_bytes = res[i + 1:i + 5]
  *                     bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
  *                     try:             # <<<<<<<<<<<<<<
@@ -11953,7 +11254,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
           __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-          /* "askur/filemapping.pyx":386
+          /* "askur/filemapping.pyx":361
  *                         char_str = chr(unicode_val)
  *                         text_arr.append(char_str)
  *                     except (ValueError, OverflowError):             # <<<<<<<<<<<<<<
@@ -11963,19 +11264,19 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
           __pyx_t_10 = __Pyx_PyErr_ExceptionMatches2(__pyx_builtin_ValueError, __pyx_builtin_OverflowError);
           if (__pyx_t_10) {
             __Pyx_AddTraceback("askur.filemapping.Mapping.get_short_text", __pyx_clineno, __pyx_lineno, __pyx_filename);
-            if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_5, &__pyx_t_4) < 0) __PYX_ERR(0, 386, __pyx_L18_except_error)
+            if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_5, &__pyx_t_4) < 0) __PYX_ERR(0, 361, __pyx_L18_except_error)
             __Pyx_XGOTREF(__pyx_t_1);
             __Pyx_XGOTREF(__pyx_t_5);
             __Pyx_XGOTREF(__pyx_t_4);
 
-            /* "askur/filemapping.pyx":387
+            /* "askur/filemapping.pyx":362
  *                         text_arr.append(char_str)
  *                     except (ValueError, OverflowError):
  *                         text_arr.append('?')  # fallback for invalid unicode             # <<<<<<<<<<<<<<
  *                     i += 5
  *                 else:
 */
-            __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_text_arr, __pyx_mstate_global->__pyx_kp_u__5); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 387, __pyx_L18_except_error)
+            __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_text_arr, __pyx_mstate_global->__pyx_kp_u__2); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 362, __pyx_L18_except_error)
             __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
             __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
             __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -11983,7 +11284,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
           }
           goto __pyx_L18_except_error;
 
-          /* "askur/filemapping.pyx":382
+          /* "askur/filemapping.pyx":357
  *                     unicode_bytes = res[i + 1:i + 5]
  *                     bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
  *                     try:             # <<<<<<<<<<<<<<
@@ -12004,7 +11305,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
           __pyx_L23_try_end:;
         }
 
-        /* "askur/filemapping.pyx":388
+        /* "askur/filemapping.pyx":363
  *                     except (ValueError, OverflowError):
  *                         text_arr.append('?')  # fallback for invalid unicode
  *                     i += 5             # <<<<<<<<<<<<<<
@@ -12013,7 +11314,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
         __pyx_v_i = (__pyx_v_i + 5);
 
-        /* "askur/filemapping.pyx":378
+        /* "askur/filemapping.pyx":353
  * 
  *             if current_byte == 129:  # special character indicating a 4-byte character
  *                 if i + 4 < len(res):             # <<<<<<<<<<<<<<
@@ -12023,7 +11324,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
         goto __pyx_L8;
       }
 
-      /* "askur/filemapping.pyx":390
+      /* "askur/filemapping.pyx":365
  *                     i += 5
  *                 else:
  *                     i += 1             # <<<<<<<<<<<<<<
@@ -12035,7 +11336,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
       }
       __pyx_L8:;
 
-      /* "askur/filemapping.pyx":391
+      /* "askur/filemapping.pyx":366
  *                 else:
  *                     i += 1
  *                 continue             # <<<<<<<<<<<<<<
@@ -12044,7 +11345,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
       goto __pyx_L3_continue;
 
-      /* "askur/filemapping.pyx":377
+      /* "askur/filemapping.pyx":352
  *                 continue
  * 
  *             if current_byte == 129:  # special character indicating a 4-byte character             # <<<<<<<<<<<<<<
@@ -12053,19 +11354,19 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
     }
 
-    /* "askur/filemapping.pyx":393
+    /* "askur/filemapping.pyx":368
  *                 continue
  * 
  *             text_arr.append(chr(current_byte))             # <<<<<<<<<<<<<<
  *             i += 1
  * 
 */
-    __pyx_t_4 = PyUnicode_FromOrdinal(__pyx_v_current_byte); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 393, __pyx_L1_error)
+    __pyx_t_4 = PyUnicode_FromOrdinal(__pyx_v_current_byte); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 368, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_text_arr, __pyx_t_4); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 393, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_text_arr, __pyx_t_4); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 368, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "askur/filemapping.pyx":394
+    /* "askur/filemapping.pyx":369
  * 
  *             text_arr.append(chr(current_byte))
  *             i += 1             # <<<<<<<<<<<<<<
@@ -12076,7 +11377,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
     __pyx_L3_continue:;
   }
 
-  /* "askur/filemapping.pyx":396
+  /* "askur/filemapping.pyx":371
  *             i += 1
  * 
  *         if text_arr:             # <<<<<<<<<<<<<<
@@ -12085,25 +11386,25 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
   {
     Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_v_text_arr);
-    if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 396, __pyx_L1_error)
+    if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 371, __pyx_L1_error)
     __pyx_t_9 = (__pyx_temp != 0);
   }
 
   if (__pyx_t_9) {
 
-    /* "askur/filemapping.pyx":397
+    /* "askur/filemapping.pyx":372
  * 
  *         if text_arr:
  *             short_texts.append("".join(text_arr))             # <<<<<<<<<<<<<<
  * 
  *         short_texts.sort()
 */
-    __pyx_t_4 = PyUnicode_Join(__pyx_mstate_global->__pyx_kp_u__4, __pyx_v_text_arr); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 397, __pyx_L1_error)
+    __pyx_t_4 = PyUnicode_Join(__pyx_mstate_global->__pyx_kp_u_, __pyx_v_text_arr); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 372, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_short_texts, __pyx_t_4); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 397, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_short_texts, __pyx_t_4); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 372, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "askur/filemapping.pyx":396
+    /* "askur/filemapping.pyx":371
  *             i += 1
  * 
  *         if text_arr:             # <<<<<<<<<<<<<<
@@ -12112,15 +11413,15 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
 */
   }
 
-  /* "askur/filemapping.pyx":399
+  /* "askur/filemapping.pyx":374
  *             short_texts.append("".join(text_arr))
  * 
  *         short_texts.sort()             # <<<<<<<<<<<<<<
  *         return short_texts
 */
-  __pyx_t_11 = PyList_Sort(__pyx_v_short_texts); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 399, __pyx_L1_error)
+  __pyx_t_11 = PyList_Sort(__pyx_v_short_texts); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 374, __pyx_L1_error)
 
-  /* "askur/filemapping.pyx":400
+  /* "askur/filemapping.pyx":375
  * 
  *         short_texts.sort()
  *         return short_texts             # <<<<<<<<<<<<<<
@@ -12130,7 +11431,7 @@ static PyObject *__pyx_f_5askur_11filemapping_7Mapping_get_short_text(struct __p
   __pyx_r = __pyx_v_short_texts;
   goto __pyx_L0;
 
-  /* "askur/filemapping.pyx":355
+  /* "askur/filemapping.pyx":330
  *         return self.get_short_text(index_value, text_len)
  * 
  *     cpdef list get_short_text(self, int index, int text_len):             # <<<<<<<<<<<<<<
@@ -12202,39 +11503,39 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_index,&__pyx_mstate_global->__pyx_n_u_text_len,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 355, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 330, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 355, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 330, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 355, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 330, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_short_text", 0) < 0) __PYX_ERR(0, 355, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "get_short_text", 0) < 0) __PYX_ERR(0, 330, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 2; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_short_text", 1, 2, 2, i); __PYX_ERR(0, 355, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("get_short_text", 1, 2, 2, i); __PYX_ERR(0, 330, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 355, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 330, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 355, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 330, __pyx_L3_error)
     }
-    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 355, __pyx_L3_error)
-    __pyx_v_text_len = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_text_len == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 355, __pyx_L3_error)
+    __pyx_v_index = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_index == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 330, __pyx_L3_error)
+    __pyx_v_text_len = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_text_len == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 330, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_short_text", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 355, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_short_text", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 330, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -12264,7 +11565,7 @@ static PyObject *__pyx_pf_5askur_11filemapping_7Mapping_26get_short_text(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_short_text", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_short_text(__pyx_v_self, __pyx_v_index, __pyx_v_text_len, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5askur_11filemapping_7Mapping_get_short_text(__pyx_v_self, __pyx_v_index, __pyx_v_text_len, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 330, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -16179,157 +15480,157 @@ __Pyx_RefNannySetupContext("PyInit_filemapping", 0);
  *         self._load_files()
  * 
  *     def _load_files(self):             # <<<<<<<<<<<<<<
- *         cdef dict confs = {}
- *         cdef str line, key, value
+ *         cdef str DATA_FOLDER, frozen_folder
+ * 
 */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_3_load_files, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping__load_files, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_load_files, __pyx_t_2) < 0) __PYX_ERR(0, 45, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":137
+  /* "askur/filemapping.pyx":112
  *             self.reversed = True
  * 
  *     cpdef bint is_reversed(self):             # <<<<<<<<<<<<<<
  *         """Returns True if the index is reversed"""
  *         return self.reversed
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_5is_reversed, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_is_reversed, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_5is_reversed, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_is_reversed, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_is_reversed, __pyx_t_2) < 0) __PYX_ERR(0, 137, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_is_reversed, __pyx_t_2) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":141
+  /* "askur/filemapping.pyx":116
  *         return self.reversed
  * 
  *     cpdef bint set_check_key_exists(self, bint check_key_exists):             # <<<<<<<<<<<<<<
  *         """Returns True if the key exists in the index"""
  *         self.check_if_key_exists = check_key_exists
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_7set_check_key_exists, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_set_check_key_exists, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_7set_check_key_exists, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_set_check_key_exists, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_set_check_key_exists, __pyx_t_2) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_set_check_key_exists, __pyx_t_2) < 0) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":146
+  /* "askur/filemapping.pyx":121
  *         return self.check_if_key_exists
  * 
  *     cpdef list calculate_select(self, int sum_ones_wanted):             # <<<<<<<<<<<<<<
  *         """Calculate select range - using mmap objects directly for safety"""
  *         cdef int res_end_index = -1
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_9calculate_select, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_calculate_select, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_9calculate_select, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_calculate_select, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[3])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_calculate_select, __pyx_t_2) < 0) __PYX_ERR(0, 146, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_calculate_select, __pyx_t_2) < 0) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":203
+  /* "askur/filemapping.pyx":178
  *         return [res_start_index, res_end_index]
  * 
  *     cpdef int calculate_hc(self, int end_request_index):             # <<<<<<<<<<<<<<
  *         """Calculate head count - using safe mmap access"""
  *         cdef int bits_in_byte = 8
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_11calculate_hc, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_calculate_hc, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_11calculate_hc, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_calculate_hc, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 178, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_calculate_hc, __pyx_t_2) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_calculate_hc, __pyx_t_2) < 0) __PYX_ERR(0, 178, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":254
+  /* "askur/filemapping.pyx":229
  * 
  * 
  *     cpdef bint has_child(self, int index):             # <<<<<<<<<<<<<<
  *         """Check if node has child using safe mmap access"""
  *         cdef int byte_idx = index // 8
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_13has_child, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_has_child, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_13has_child, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_has_child, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[5])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 229, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_has_child, __pyx_t_2) < 0) __PYX_ERR(0, 254, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_has_child, __pyx_t_2) < 0) __PYX_ERR(0, 229, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":263
+  /* "askur/filemapping.pyx":238
  *         return (byte_val & (1 << bit_pos)) > 0
  * 
  *     cpdef bytes get_trie_range(self, int start, int end):             # <<<<<<<<<<<<<<
  *         """Returns the byte range from trie"""
  *         return self._trie[start:end]
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_15get_trie_range, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_trie_range, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 263, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_15get_trie_range, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_trie_range, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_trie_range, __pyx_t_2) < 0) __PYX_ERR(0, 263, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_trie_range, __pyx_t_2) < 0) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":267
+  /* "askur/filemapping.pyx":242
  *         return self._trie[start:end]
  * 
  *     cpdef int get_trie_index_of(self, int start, int end, unsigned char letter):             # <<<<<<<<<<<<<<
  *         """Search for letter in trie range using safe mmap access"""
  *         cdef bytes trie_slice = self._trie[start:end]
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_17get_trie_index_of, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_trie_index_of, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[7])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_17get_trie_index_of, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_trie_index_of, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[7])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_trie_index_of, __pyx_t_2) < 0) __PYX_ERR(0, 267, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_trie_index_of, __pyx_t_2) < 0) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":272
+  /* "askur/filemapping.pyx":247
  *         return trie_slice.find(letter)
  * 
  *     cpdef list get_index(self, int index_value):             # <<<<<<<<<<<<<<
  *         """Get index using safe mmap access"""
  *         cdef int start_idx, end_idx, start_len, end_len
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_19get_index, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_index, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[8])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 272, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_19get_index, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_index, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[8])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 247, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_index, __pyx_t_2) < 0) __PYX_ERR(0, 272, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_index, __pyx_t_2) < 0) __PYX_ERR(0, 247, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":295
+  /* "askur/filemapping.pyx":270
  *         return [index_val, len_value]
  * 
  *     cpdef int is_end_of_word(self, int index):             # <<<<<<<<<<<<<<
  *         """Check end of word using safe mmap access"""
  *         cdef int start_byte = index // 8
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_21is_end_of_word, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_is_end_of_word, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[9])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_21is_end_of_word, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_is_end_of_word, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[9])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_is_end_of_word, __pyx_t_2) < 0) __PYX_ERR(0, 295, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_is_end_of_word, __pyx_t_2) < 0) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":307
+  /* "askur/filemapping.pyx":282
  *         return int(bits[extra_bits:extra_bits + 1])
  * 
  *     cpdef int get_value_bits_sum(self, int index):             # <<<<<<<<<<<<<<
  *         """Get value bits sum using safe mmap access"""
  *         cdef int s_start = (index // 32 - 1) * 4
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_23get_value_bits_sum, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_value_bits_sum, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[10])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_23get_value_bits_sum, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_value_bits_sum, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[10])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 282, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_value_bits_sum, __pyx_t_2) < 0) __PYX_ERR(0, 307, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_value_bits_sum, __pyx_t_2) < 0) __PYX_ERR(0, 282, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":344
+  /* "askur/filemapping.pyx":319
  *         return start_index - 1
  * 
  *     cpdef list get_result(self, int value_index, bint reversed=False):             # <<<<<<<<<<<<<<
  *         """Returns result of the query"""
  *         if self.check_if_key_exists:
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_25get_result, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_result, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[11])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 344, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_25get_result, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_result, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[11])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 319, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_2, __pyx_mstate_global->__pyx_tuple[3]);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_result, __pyx_t_2) < 0) __PYX_ERR(0, 344, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_result, __pyx_t_2) < 0) __PYX_ERR(0, 319, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "askur/filemapping.pyx":355
+  /* "askur/filemapping.pyx":330
  *         return self.get_short_text(index_value, text_len)
  * 
  *     cpdef list get_short_text(self, int index, int text_len):             # <<<<<<<<<<<<<<
  *         """Get short text using safe mmap access"""
  *         cdef list text_arr = []
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_27get_short_text, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_short_text, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5askur_11filemapping_7Mapping_27get_short_text, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_Mapping_get_short_text, NULL, __pyx_mstate_global->__pyx_n_u_askur_filemapping, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[12])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 330, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_short_text, __pyx_t_2) < 0) __PYX_ERR(0, 355, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_5askur_11filemapping_Mapping, __pyx_mstate_global->__pyx_n_u_get_short_text, __pyx_t_2) < 0) __PYX_ERR(0, 330, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "(tree fragment)":1
@@ -16441,8 +15742,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_Data_folder, sizeof(__pyx_k_Data_folder), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_Data_folder */
   {__pyx_k_EOW_BITS_FILE, sizeof(__pyx_k_EOW_BITS_FILE), 0, 1, 1}, /* PyObject cname: __pyx_n_u_EOW_BITS_FILE */
   {__pyx_k_EOW_BITS_SUMMARY_FILE, sizeof(__pyx_k_EOW_BITS_SUMMARY_FILE), 0, 1, 1}, /* PyObject cname: __pyx_n_u_EOW_BITS_SUMMARY_FILE */
-  {__pyx_k_Error_No_DATA_FOLDER_found_in_co, sizeof(__pyx_k_Error_No_DATA_FOLDER_found_in_co), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_Error_No_DATA_FOLDER_found_in_co */
-  {__pyx_k_Error_in_line, sizeof(__pyx_k_Error_in_line), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_Error_in_line */
   {__pyx_k_FileNotFoundError, sizeof(__pyx_k_FileNotFoundError), 0, 1, 1}, /* PyObject cname: __pyx_n_u_FileNotFoundError */
   {__pyx_k_HC_BITS_FILE, sizeof(__pyx_k_HC_BITS_FILE), 0, 1, 1}, /* PyObject cname: __pyx_n_u_HC_BITS_FILE */
   {__pyx_k_HC_SB_BIN, sizeof(__pyx_k_HC_SB_BIN), 0, 1, 1}, /* PyObject cname: __pyx_n_u_HC_SB_BIN */
@@ -16465,7 +15764,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_Mapping_is_reversed, sizeof(__pyx_k_Mapping_is_reversed), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Mapping_is_reversed */
   {__pyx_k_Mapping_set_check_key_exists, sizeof(__pyx_k_Mapping_set_check_key_exists), 0, 1, 1}, /* PyObject cname: __pyx_n_u_Mapping_set_check_key_exists */
   {__pyx_k_No_data_directory_found, sizeof(__pyx_k_No_data_directory_found), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_No_data_directory_found */
-  {__pyx_k_No_found_Please_add_missing_and, sizeof(__pyx_k_No_found_Please_add_missing_and), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_No_found_Please_add_missing_and */
   {__pyx_k_None, sizeof(__pyx_k_None), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_None */
   {__pyx_k_Note_that_Cython_is_deliberately, sizeof(__pyx_k_Note_that_Cython_is_deliberately), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_Note_that_Cython_is_deliberately */
   {__pyx_k_OverflowError, sizeof(__pyx_k_OverflowError), 0, 1, 1}, /* PyObject cname: __pyx_n_u_OverflowError */
@@ -16477,12 +15775,8 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 1, 1}, /* PyObject cname: __pyx_n_u_ValueError */
   {__pyx_k__2, sizeof(__pyx_k__2), 0, 1, 0}, /* PyObject cname: __pyx_kp_u__2 */
   {__pyx_k__3, sizeof(__pyx_k__3), 0, 1, 0}, /* PyObject cname: __pyx_kp_u__3 */
-  {__pyx_k__4, sizeof(__pyx_k__4), 0, 1, 0}, /* PyObject cname: __pyx_kp_u__4 */
-  {__pyx_k__5, sizeof(__pyx_k__5), 0, 1, 0}, /* PyObject cname: __pyx_kp_u__5 */
-  {__pyx_k__6, sizeof(__pyx_k__6), 0, 1, 0}, /* PyObject cname: __pyx_kp_u__6 */
   {__pyx_k_access, sizeof(__pyx_k_access), 0, 1, 1}, /* PyObject cname: __pyx_n_u_access */
   {__pyx_k_add_note, sizeof(__pyx_k_add_note), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_add_note */
-  {__pyx_k_askur_conf, sizeof(__pyx_k_askur_conf), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_askur_conf */
   {__pyx_k_askur_filemapping, sizeof(__pyx_k_askur_filemapping), 0, 1, 1}, /* PyObject cname: __pyx_n_u_askur_filemapping */
   {__pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 1, 1}, /* PyObject cname: __pyx_n_u_asyncio_coroutines */
   {__pyx_k_big, sizeof(__pyx_k_big), 0, 1, 1}, /* PyObject cname: __pyx_n_u_big */
@@ -16494,8 +15788,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 1, 1}, /* PyObject cname: __pyx_n_u_cline_in_traceback */
   {__pyx_k_collection, sizeof(__pyx_k_collection), 0, 1, 1}, /* PyObject cname: __pyx_n_u_collection */
   {__pyx_k_collection_does_not_exist_Exist, sizeof(__pyx_k_collection_does_not_exist_Exist), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_collection_does_not_exist_Exist */
-  {__pyx_k_config_file, sizeof(__pyx_k_config_file), 0, 1, 1}, /* PyObject cname: __pyx_n_u_config_file */
-  {__pyx_k_confs, sizeof(__pyx_k_confs), 0, 1, 1}, /* PyObject cname: __pyx_n_u_confs */
   {__pyx_k_data_parent, sizeof(__pyx_k_data_parent), 0, 1, 1}, /* PyObject cname: __pyx_n_u_data_parent */
   {__pyx_k_dict, sizeof(__pyx_k_dict), 0, 1, 1}, /* PyObject cname: __pyx_n_u_dict */
   {__pyx_k_dict_2, sizeof(__pyx_k_dict_2), 0, 1, 1}, /* PyObject cname: __pyx_n_u_dict_2 */
@@ -16511,7 +15803,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_existing_collections, sizeof(__pyx_k_existing_collections), 0, 1, 1}, /* PyObject cname: __pyx_n_u_existing_collections */
   {__pyx_k_exists, sizeof(__pyx_k_exists), 0, 1, 1}, /* PyObject cname: __pyx_n_u_exists */
   {__pyx_k_exit, sizeof(__pyx_k_exit), 0, 1, 1}, /* PyObject cname: __pyx_n_u_exit */
-  {__pyx_k_f, sizeof(__pyx_k_f), 0, 1, 1}, /* PyObject cname: __pyx_n_u_f */
   {__pyx_k_f_alphabet, sizeof(__pyx_k_f_alphabet), 0, 1, 1}, /* PyObject cname: __pyx_n_u_f_alphabet */
   {__pyx_k_f_eow_bits_summary, sizeof(__pyx_k_f_eow_bits_summary), 0, 1, 1}, /* PyObject cname: __pyx_n_u_f_eow_bits_summary */
   {__pyx_k_f_hc_bitarray, sizeof(__pyx_k_f_hc_bitarray), 0, 1, 1}, /* PyObject cname: __pyx_n_u_f_hc_bitarray */
@@ -16551,9 +15842,7 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_isabs, sizeof(__pyx_k_isabs), 0, 1, 1}, /* PyObject cname: __pyx_n_u_isabs */
   {__pyx_k_isenabled, sizeof(__pyx_k_isenabled), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_isenabled */
   {__pyx_k_join, sizeof(__pyx_k_join), 0, 1, 1}, /* PyObject cname: __pyx_n_u_join */
-  {__pyx_k_key, sizeof(__pyx_k_key), 0, 1, 1}, /* PyObject cname: __pyx_n_u_key */
   {__pyx_k_letter, sizeof(__pyx_k_letter), 0, 1, 1}, /* PyObject cname: __pyx_n_u_letter */
-  {__pyx_k_line, sizeof(__pyx_k_line), 0, 1, 1}, /* PyObject cname: __pyx_n_u_line */
   {__pyx_k_listdir, sizeof(__pyx_k_listdir), 0, 1, 1}, /* PyObject cname: __pyx_n_u_listdir */
   {__pyx_k_load_files, sizeof(__pyx_k_load_files), 0, 1, 1}, /* PyObject cname: __pyx_n_u_load_files */
   {__pyx_k_main, sizeof(__pyx_k_main), 0, 1, 1}, /* PyObject cname: __pyx_n_u_main */
@@ -16563,11 +15852,9 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_new, sizeof(__pyx_k_new), 0, 1, 1}, /* PyObject cname: __pyx_n_u_new */
   {__pyx_k_open, sizeof(__pyx_k_open), 0, 1, 1}, /* PyObject cname: __pyx_n_u_open */
   {__pyx_k_os, sizeof(__pyx_k_os), 0, 1, 1}, /* PyObject cname: __pyx_n_u_os */
-  {__pyx_k_parts, sizeof(__pyx_k_parts), 0, 1, 1}, /* PyObject cname: __pyx_n_u_parts */
   {__pyx_k_path, sizeof(__pyx_k_path), 0, 1, 1}, /* PyObject cname: __pyx_n_u_path */
   {__pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pickle */
   {__pyx_k_pop, sizeof(__pyx_k_pop), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pop */
-  {__pyx_k_print, sizeof(__pyx_k_print), 0, 1, 1}, /* PyObject cname: __pyx_n_u_print */
   {__pyx_k_pyx_PickleError, sizeof(__pyx_k_pyx_PickleError), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pyx_PickleError */
   {__pyx_k_pyx_checksum, sizeof(__pyx_k_pyx_checksum), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pyx_checksum */
   {__pyx_k_pyx_result, sizeof(__pyx_k_pyx_result), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pyx_result */
@@ -16576,7 +15863,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_pyx_unpickle_Mapping, sizeof(__pyx_k_pyx_unpickle_Mapping), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pyx_unpickle_Mapping */
   {__pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 1, 1}, /* PyObject cname: __pyx_n_u_pyx_vtable */
   {__pyx_k_qualname, sizeof(__pyx_k_qualname), 0, 1, 1}, /* PyObject cname: __pyx_n_u_qualname */
-  {__pyx_k_r, sizeof(__pyx_k_r), 0, 1, 1}, /* PyObject cname: __pyx_n_u_r */
   {__pyx_k_range, sizeof(__pyx_k_range), 0, 1, 1}, /* PyObject cname: __pyx_n_u_range */
   {__pyx_k_rb, sizeof(__pyx_k_rb), 0, 1, 1}, /* PyObject cname: __pyx_n_u_rb */
   {__pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 1, 1}, /* PyObject cname: __pyx_n_u_reduce */
@@ -16598,7 +15884,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_start, sizeof(__pyx_k_start), 0, 1, 1}, /* PyObject cname: __pyx_n_u_start */
   {__pyx_k_state, sizeof(__pyx_k_state), 0, 1, 1}, /* PyObject cname: __pyx_n_u_state */
   {__pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_stringsource */
-  {__pyx_k_strip, sizeof(__pyx_k_strip), 0, 1, 1}, /* PyObject cname: __pyx_n_u_strip */
   {__pyx_k_sum_ones_wanted, sizeof(__pyx_k_sum_ones_wanted), 0, 1, 1}, /* PyObject cname: __pyx_n_u_sum_ones_wanted */
   {__pyx_k_test, sizeof(__pyx_k_test), 0, 1, 1}, /* PyObject cname: __pyx_n_u_test */
   {__pyx_k_text_len, sizeof(__pyx_k_text_len), 0, 1, 1}, /* PyObject cname: __pyx_n_u_text_len */
@@ -16606,7 +15891,6 @@ static const __Pyx_StringTabEntry __pyx_string_tab[] = {
   {__pyx_k_trie_alphabet, sizeof(__pyx_k_trie_alphabet), 0, 1, 0}, /* PyObject cname: __pyx_kp_u_trie_alphabet */
   {__pyx_k_update, sizeof(__pyx_k_update), 0, 1, 1}, /* PyObject cname: __pyx_n_u_update */
   {__pyx_k_use_setstate, sizeof(__pyx_k_use_setstate), 0, 1, 1}, /* PyObject cname: __pyx_n_u_use_setstate */
-  {__pyx_k_value, sizeof(__pyx_k_value), 0, 1, 1}, /* PyObject cname: __pyx_n_u_value */
   {__pyx_k_value_index, sizeof(__pyx_k_value_index), 0, 1, 1}, /* PyObject cname: __pyx_n_u_value_index */
   {0, 0, 0, 0, 0}
 };
@@ -16617,13 +15901,11 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry const *t, PyObject **target, c
 
 static int __Pyx_InitCachedBuiltins(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
-  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_open); if (!__pyx_builtin_open) __PYX_ERR(0, 56, __pyx_L1_error)
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_print); if (!__pyx_builtin_print) __PYX_ERR(0, 61, __pyx_L1_error)
-  __pyx_builtin_FileNotFoundError = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_FileNotFoundError); if (!__pyx_builtin_FileNotFoundError) __PYX_ERR(0, 83, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_range); if (!__pyx_builtin_range) __PYX_ERR(0, 188, __pyx_L1_error)
-  __pyx_builtin_bin = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_bin); if (!__pyx_builtin_bin) __PYX_ERR(0, 304, __pyx_L1_error)
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 386, __pyx_L1_error)
-  __pyx_builtin_OverflowError = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_OverflowError); if (!__pyx_builtin_OverflowError) __PYX_ERR(0, 386, __pyx_L1_error)
+  __pyx_builtin_FileNotFoundError = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_FileNotFoundError); if (!__pyx_builtin_FileNotFoundError) __PYX_ERR(0, 58, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_range); if (!__pyx_builtin_range) __PYX_ERR(0, 163, __pyx_L1_error)
+  __pyx_builtin_bin = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_bin); if (!__pyx_builtin_bin) __PYX_ERR(0, 279, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 361, __pyx_L1_error)
+  __pyx_builtin_OverflowError = __Pyx_GetBuiltinName(__pyx_mstate->__pyx_n_u_OverflowError); if (!__pyx_builtin_OverflowError) __PYX_ERR(0, 361, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -16635,47 +15917,47 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "askur/filemapping.pyx":56
- *             confs = {}
- *             config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
- *             with open(config_file, "r") as f:             # <<<<<<<<<<<<<<
- *                 for line in f:
- *                     if line.startswith("#") or line.startswith("\n"):
-*/
-  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(0, 56, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[0]);
-  __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[0]);
-
-  /* "askur/filemapping.pyx":101
+  /* "askur/filemapping.pyx":76
  *             self._s_superblocks = mmap.mmap(f_s_superblocks.fileno(), 0, access=mmap.ACCESS_READ)
  *             self.bits_in_superblock = self._s_superblocks[0]
  *             self._s_superblocks = self._s_superblocks[1:]             # <<<<<<<<<<<<<<
  * 
  *         with io.open(TRIE_FILE, "rb") as f_trie:
 */
-  __pyx_mstate_global->__pyx_slice[0] = PySlice_New(__pyx_mstate_global->__pyx_int_1, Py_None, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_slice[0])) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_slice[0] = PySlice_New(__pyx_mstate_global->__pyx_int_1, Py_None, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_slice[0])) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_slice[0]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_slice[0]);
 
-  /* "askur/filemapping.pyx":125
+  /* "askur/filemapping.pyx":73
+ * 
+ *         # Load files without pointer caching
+ *         with io.open(S_SB_BIN, "rb") as f_s_superblocks:             # <<<<<<<<<<<<<<
+ *             self._s_superblocks = mmap.mmap(f_s_superblocks.fileno(), 0, access=mmap.ACCESS_READ)
+ *             self.bits_in_superblock = self._s_superblocks[0]
+*/
+  __pyx_mstate_global->__pyx_tuple[0] = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_tuple[0])) __PYX_ERR(0, 73, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[0]);
+  __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[0]);
+
+  /* "askur/filemapping.pyx":100
  *             self.nr_bytes_in_index_block = self._index_bits[0]
  *             self.nr_bytes_in_value_block = self._index_bits[1]
  *             self._index_bits = self._index_bits[2:]             # <<<<<<<<<<<<<<
  * 
  *         with io.open(SHORT_TEXT_BITS_FILE, "rb") as f_short_text:
 */
-  __pyx_mstate_global->__pyx_slice[1] = PySlice_New(__pyx_mstate_global->__pyx_int_2, Py_None, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_slice[1])) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_slice[1] = PySlice_New(__pyx_mstate_global->__pyx_int_2, Py_None, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_slice[1])) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_slice[1]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_slice[1]);
 
-  /* "askur/filemapping.pyx":304
+  /* "askur/filemapping.pyx":279
  * 
  *         cdef int byte_val = self._eow_bits[start_byte]
  *         cdef str bits = bin(byte_val)[2:].rjust(8, "0")             # <<<<<<<<<<<<<<
  *         return int(bits[extra_bits:extra_bits + 1])
  * 
 */
-  __pyx_mstate_global->__pyx_tuple[1] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_int_8, __pyx_mstate_global->__pyx_kp_u_0); if (unlikely(!__pyx_mstate_global->__pyx_tuple[1])) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[1] = PyTuple_Pack(2, __pyx_mstate_global->__pyx_int_8, __pyx_mstate_global->__pyx_kp_u_0); if (unlikely(!__pyx_mstate_global->__pyx_tuple[1])) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[1]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[1]);
 
@@ -16690,14 +15972,14 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[2]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[2]);
 
-  /* "askur/filemapping.pyx":344
+  /* "askur/filemapping.pyx":319
  *         return start_index - 1
  * 
  *     cpdef list get_result(self, int value_index, bint reversed=False):             # <<<<<<<<<<<<<<
  *         """Returns result of the query"""
  *         if self.check_if_key_exists:
 */
-  __pyx_mstate_global->__pyx_tuple[3] = PyTuple_Pack(1, Py_False); if (unlikely(!__pyx_mstate_global->__pyx_tuple[3])) __PYX_ERR(0, 344, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[3] = PyTuple_Pack(1, Py_False); if (unlikely(!__pyx_mstate_global->__pyx_tuple[3])) __PYX_ERR(0, 319, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[3]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[3]);
   __Pyx_RefNannyFinishContext();
@@ -16710,8 +15992,6 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
-  __pyx_mstate->__pyx_umethod_PyDict_Type_get.type = (PyObject*)&PyDict_Type;
-  __pyx_mstate->__pyx_umethod_PyDict_Type_get.method_name = &__pyx_mstate->__pyx_n_u_get;
   __pyx_mstate->__pyx_umethod_PyDict_Type_pop.type = (PyObject*)&PyDict_Type;
   __pyx_mstate->__pyx_umethod_PyDict_Type_pop.method_name = &__pyx_mstate->__pyx_n_u_pop;
   __pyx_mstate->__pyx_umethod_PyBytes_Type__find.type = (PyObject*)(&PyBytes_Type);
@@ -16725,7 +16005,6 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   __pyx_mstate->__pyx_int_107703374 = PyLong_FromLong(107703374L); if (unlikely(!__pyx_mstate->__pyx_int_107703374)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_mstate->__pyx_int_129555151 = PyLong_FromLong(129555151L); if (unlikely(!__pyx_mstate->__pyx_int_129555151)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_mstate->__pyx_int_140568728 = PyLong_FromLong(140568728L); if (unlikely(!__pyx_mstate->__pyx_int_140568728)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_mstate->__pyx_int_neg_1 = PyLong_FromLong(-1); if (unlikely(!__pyx_mstate->__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -16736,7 +16015,7 @@ static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
             unsigned int argcount : 3;
             unsigned int num_posonly_args : 1;
             unsigned int num_kwonly_args : 1;
-            unsigned int nlocals : 6;
+            unsigned int nlocals : 5;
             unsigned int flags : 10;
             unsigned int first_line : 9;
             unsigned int line_table_length : 15;
@@ -16756,67 +16035,67 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   PyObject* tuple_dedup_map = PyDict_New();
   if (unlikely(!tuple_dedup_map)) return -1;
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 32, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 45, 1035};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_confs, __pyx_mstate->__pyx_n_u_line, __pyx_mstate->__pyx_n_u_key, __pyx_mstate->__pyx_n_u_value, __pyx_mstate->__pyx_n_u_DATA_FOLDER, __pyx_mstate->__pyx_n_u_frozen_folder, __pyx_mstate->__pyx_n_u_config_file, __pyx_mstate->__pyx_n_u_f, __pyx_mstate->__pyx_n_u_parts, __pyx_mstate->__pyx_n_u_data_parent, __pyx_mstate->__pyx_n_u_existing_collections, __pyx_mstate->__pyx_n_u_SELECT_BITS_FILE, __pyx_mstate->__pyx_n_u_HC_BITS_FILE, __pyx_mstate->__pyx_n_u_HC_SB_BIN, __pyx_mstate->__pyx_n_u_S_SB_BIN, __pyx_mstate->__pyx_n_u_TRIE_FILE, __pyx_mstate->__pyx_n_u_EOW_BITS_FILE, __pyx_mstate->__pyx_n_u_EOW_BITS_SUMMARY_FILE, __pyx_mstate->__pyx_n_u_INDEX_BITS_FILE, __pyx_mstate->__pyx_n_u_SHORT_TEXT_BITS_FILE, __pyx_mstate->__pyx_n_u_ALPHABET_FILE, __pyx_mstate->__pyx_n_u_f_s_superblocks, __pyx_mstate->__pyx_n_u_f_trie, __pyx_mstate->__pyx_n_u_f_hc_bitarray, __pyx_mstate->__pyx_n_u_f_hc_super_blocks, __pyx_mstate->__pyx_n_u_f_select_bits, __pyx_mstate->__pyx_n_u_f_value_bits, __pyx_mstate->__pyx_n_u_f_eow_bits_summary, __pyx_mstate->__pyx_n_u_f_index_bits, __pyx_mstate->__pyx_n_u_f_short_text, __pyx_mstate->__pyx_n_u_f_alphabet};
-    __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_load_files, __pyx_k_A_b_AQ_s_A_E_ar_ha_Qm81_HA_t_auC, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 25, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 45, 811};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_DATA_FOLDER, __pyx_mstate->__pyx_n_u_frozen_folder, __pyx_mstate->__pyx_n_u_data_parent, __pyx_mstate->__pyx_n_u_existing_collections, __pyx_mstate->__pyx_n_u_SELECT_BITS_FILE, __pyx_mstate->__pyx_n_u_HC_BITS_FILE, __pyx_mstate->__pyx_n_u_HC_SB_BIN, __pyx_mstate->__pyx_n_u_S_SB_BIN, __pyx_mstate->__pyx_n_u_TRIE_FILE, __pyx_mstate->__pyx_n_u_EOW_BITS_FILE, __pyx_mstate->__pyx_n_u_EOW_BITS_SUMMARY_FILE, __pyx_mstate->__pyx_n_u_INDEX_BITS_FILE, __pyx_mstate->__pyx_n_u_SHORT_TEXT_BITS_FILE, __pyx_mstate->__pyx_n_u_ALPHABET_FILE, __pyx_mstate->__pyx_n_u_f_s_superblocks, __pyx_mstate->__pyx_n_u_f_trie, __pyx_mstate->__pyx_n_u_f_hc_bitarray, __pyx_mstate->__pyx_n_u_f_hc_super_blocks, __pyx_mstate->__pyx_n_u_f_select_bits, __pyx_mstate->__pyx_n_u_f_value_bits, __pyx_mstate->__pyx_n_u_f_eow_bits_summary, __pyx_mstate->__pyx_n_u_f_index_bits, __pyx_mstate->__pyx_n_u_f_short_text, __pyx_mstate->__pyx_n_u_f_alphabet};
+    __pyx_mstate_global->__pyx_codeobj_tab[0] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_load_files, __pyx_k_A_b_AQ_uA_a_4r_gQa_5_a7I_5PUUVVX, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[0])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 137, 9};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 112, 9};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
     __pyx_mstate_global->__pyx_codeobj_tab[1] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_is_reversed, __pyx_k_A_t1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[1])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 141, 17};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 116, 17};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_check_key_exists};
     __pyx_mstate_global->__pyx_codeobj_tab[2] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_set_check_key_exists, __pyx_k_A_1_t1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[2])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 146, 369};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 121, 369};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_sum_ones_wanted};
     __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_calculate_select, __pyx_k_A_A_1_4Ct1_q_a_a_Q_Ba_t_4ERs_CO, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 203, 389};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 178, 389};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_end_request_index};
     __pyx_mstate_global->__pyx_codeobj_tab[4] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_calculate_hc, __pyx_k_A_6c_Q_Cq_A_0_E_9Cs_4q_4_AQ_4q_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[4])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 254, 72};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 229, 72};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_index};
     __pyx_mstate_global->__pyx_codeobj_tab[5] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_has_child, __pyx_k_A_F_Q_2S_b_9Cs_4q_1_D_Qa_Bc_2Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[5])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 263, 15};
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 238, 15};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_start, __pyx_mstate->__pyx_n_u_end};
     __pyx_mstate_global->__pyx_codeobj_tab[6] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_get_trie_range, __pyx_k_A_t6, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[6])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 267, 26};
+    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 242, 26};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_start, __pyx_mstate->__pyx_n_u_end, __pyx_mstate->__pyx_n_u_letter};
     __pyx_mstate_global->__pyx_codeobj_tab[7] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_get_trie_index_of, __pyx_k_A_F_6_z_aq, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[7])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 272, 138};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 247, 138};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_index_value};
     __pyx_mstate_global->__pyx_codeobj_tab[8] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_get_index, __pyx_k_A_s_Ct_DBd_Bd_A_Bd_d_az_D_AZq_C, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[8])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 295, 91};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 270, 91};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_index};
     __pyx_mstate_global->__pyx_codeobj_tab[9] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_is_end_of_word, __pyx_k_A_fCq_fBa_c_AT_1_D_1_1IQc_q_1_s, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[9])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 307, 265};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 282, 265};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_index};
     __pyx_mstate_global->__pyx_codeobj_tab[10] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_get_value_bits_sum, __pyx_k_A_F_S_Rq_1_d_882Q_D_vRq_s_Qm_WGS, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[10])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 344, 73};
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 319, 73};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_value_index, __pyx_mstate->__pyx_n_u_reversed};
     __pyx_mstate_global->__pyx_codeobj_tab[11] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_get_result, __pyx_k_q_4q_1A_T_4AQ_t_Qa_z_Jaq_t, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[11])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 355, 289};
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 330, 289};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_index, __pyx_mstate->__pyx_n_u_text_len};
     __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_src_askur_filemapping_pyx, __pyx_mstate->__pyx_n_u_get_short_text, __pyx_k_A_Q_Q_d_avV2Q_b_Qa_3aq_Cq_1_war, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
   }
@@ -18237,58 +17516,6 @@ __Pyx_RaiseUnexpectedTypeError(const char *expected, PyObject *obj)
     return 0;
 }
 
-/* PyObjectLookupSpecial */
-#if CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PyObject* __Pyx__PyObject_LookupSpecial(PyObject* obj, PyObject* attr_name, int with_error) {
-    PyObject *res;
-    PyTypeObject *tp = Py_TYPE(obj);
-    res = _PyType_Lookup(tp, attr_name);
-    if (likely(res)) {
-        descrgetfunc f = Py_TYPE(res)->tp_descr_get;
-        if (!f) {
-            Py_INCREF(res);
-        } else {
-            res = f(res, obj, (PyObject *)tp);
-        }
-    } else if (with_error) {
-        PyErr_SetObject(PyExc_AttributeError, attr_name);
-    }
-    return res;
-}
-#endif
-
-/* unicode_tailmatch */
-static int __Pyx_PyUnicode_TailmatchTuple(PyObject* s, PyObject* substrings,
-                                          Py_ssize_t start, Py_ssize_t end, int direction) {
-    Py_ssize_t i, count = __Pyx_PyTuple_GET_SIZE(substrings);
-    #if !CYTHON_ASSUME_SAFE_SIZE
-    if (unlikely(count < 0)) return -1;
-    #endif
-    for (i = 0; i < count; i++) {
-        Py_ssize_t result;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        result = PyUnicode_Tailmatch(s, PyTuple_GET_ITEM(substrings, i),
-                                     start, end, direction);
-#else
-        PyObject* sub = __Pyx_PySequence_ITEM(substrings, i);
-        if (unlikely(!sub)) return -1;
-        result = PyUnicode_Tailmatch(s, sub, start, end, direction);
-        Py_DECREF(sub);
-#endif
-        if (result) {
-            return (int) result;
-        }
-    }
-    return 0;
-}
-static int __Pyx_PyUnicode_Tailmatch(PyObject* s, PyObject* substr,
-                                     Py_ssize_t start, Py_ssize_t end, int direction) {
-    if (unlikely(PyTuple_Check(substr))) {
-        return __Pyx_PyUnicode_TailmatchTuple(s, substr, start, end, direction);
-    }
-    return (int) PyUnicode_Tailmatch(s, substr, start, end, direction);
-}
-
 /* PyUnicode_Unicode */
 static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Unicode(PyObject *obj) {
     if (unlikely(obj == Py_None))
@@ -18372,280 +17599,6 @@ bad:
     Py_DECREF(value_tuple);
     return result;
 #endif
-}
-
-/* GetTopmostException */
-#if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
-static _PyErr_StackItem *
-__Pyx_PyErr_GetTopmostException(PyThreadState *tstate)
-{
-    _PyErr_StackItem *exc_info = tstate->exc_info;
-    while ((exc_info->exc_value == NULL || exc_info->exc_value == Py_None) &&
-           exc_info->previous_item != NULL)
-    {
-        exc_info = exc_info->previous_item;
-    }
-    return exc_info;
-}
-#endif
-
-/* SaveResetException */
-#if CYTHON_FAST_THREAD_STATE
-static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-  #if CYTHON_USE_EXC_INFO_STACK && PY_VERSION_HEX >= 0x030B00a4
-    _PyErr_StackItem *exc_info = __Pyx_PyErr_GetTopmostException(tstate);
-    PyObject *exc_value = exc_info->exc_value;
-    if (exc_value == NULL || exc_value == Py_None) {
-        *value = NULL;
-        *type = NULL;
-        *tb = NULL;
-    } else {
-        *value = exc_value;
-        Py_INCREF(*value);
-        *type = (PyObject*) Py_TYPE(exc_value);
-        Py_INCREF(*type);
-        *tb = PyException_GetTraceback(exc_value);
-    }
-  #elif CYTHON_USE_EXC_INFO_STACK
-    _PyErr_StackItem *exc_info = __Pyx_PyErr_GetTopmostException(tstate);
-    *type = exc_info->exc_type;
-    *value = exc_info->exc_value;
-    *tb = exc_info->exc_traceback;
-    Py_XINCREF(*type);
-    Py_XINCREF(*value);
-    Py_XINCREF(*tb);
-  #else
-    *type = tstate->exc_type;
-    *value = tstate->exc_value;
-    *tb = tstate->exc_traceback;
-    Py_XINCREF(*type);
-    Py_XINCREF(*value);
-    Py_XINCREF(*tb);
-  #endif
-}
-static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
-  #if CYTHON_USE_EXC_INFO_STACK && PY_VERSION_HEX >= 0x030B00a4
-    _PyErr_StackItem *exc_info = tstate->exc_info;
-    PyObject *tmp_value = exc_info->exc_value;
-    exc_info->exc_value = value;
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(type);
-    Py_XDECREF(tb);
-  #else
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    #if CYTHON_USE_EXC_INFO_STACK
-    _PyErr_StackItem *exc_info = tstate->exc_info;
-    tmp_type = exc_info->exc_type;
-    tmp_value = exc_info->exc_value;
-    tmp_tb = exc_info->exc_traceback;
-    exc_info->exc_type = type;
-    exc_info->exc_value = value;
-    exc_info->exc_traceback = tb;
-    #else
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = type;
-    tstate->exc_value = value;
-    tstate->exc_traceback = tb;
-    #endif
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-  #endif
-}
-#endif
-
-/* GetException */
-#if CYTHON_FAST_THREAD_STATE
-static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb)
-#else
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb)
-#endif
-{
-    PyObject *local_type = NULL, *local_value, *local_tb = NULL;
-#if CYTHON_FAST_THREAD_STATE
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-  #if PY_VERSION_HEX >= 0x030C0000
-    local_value = tstate->current_exception;
-    tstate->current_exception = 0;
-  #else
-    local_type = tstate->curexc_type;
-    local_value = tstate->curexc_value;
-    local_tb = tstate->curexc_traceback;
-    tstate->curexc_type = 0;
-    tstate->curexc_value = 0;
-    tstate->curexc_traceback = 0;
-  #endif
-#elif __PYX_LIMITED_VERSION_HEX > 0x030C0000
-    local_value = PyErr_GetRaisedException();
-#else
-    PyErr_Fetch(&local_type, &local_value, &local_tb);
-#endif
-#if __PYX_LIMITED_VERSION_HEX > 0x030C0000
-    if (likely(local_value)) {
-        local_type = (PyObject*) Py_TYPE(local_value);
-        Py_INCREF(local_type);
-        local_tb = PyException_GetTraceback(local_value);
-    }
-#else
-    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
-#if CYTHON_FAST_THREAD_STATE
-    if (unlikely(tstate->curexc_type))
-#else
-    if (unlikely(PyErr_Occurred()))
-#endif
-        goto bad;
-    if (local_tb) {
-        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
-            goto bad;
-    }
-#endif // __PYX_LIMITED_VERSION_HEX > 0x030C0000
-    Py_XINCREF(local_tb);
-    Py_XINCREF(local_type);
-    Py_XINCREF(local_value);
-    *type = local_type;
-    *value = local_value;
-    *tb = local_tb;
-#if CYTHON_FAST_THREAD_STATE
-    #if CYTHON_USE_EXC_INFO_STACK
-    {
-        _PyErr_StackItem *exc_info = tstate->exc_info;
-      #if PY_VERSION_HEX >= 0x030B00a4
-        tmp_value = exc_info->exc_value;
-        exc_info->exc_value = local_value;
-        tmp_type = NULL;
-        tmp_tb = NULL;
-        Py_XDECREF(local_type);
-        Py_XDECREF(local_tb);
-      #else
-        tmp_type = exc_info->exc_type;
-        tmp_value = exc_info->exc_value;
-        tmp_tb = exc_info->exc_traceback;
-        exc_info->exc_type = local_type;
-        exc_info->exc_value = local_value;
-        exc_info->exc_traceback = local_tb;
-      #endif
-    }
-    #else
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = local_type;
-    tstate->exc_value = local_value;
-    tstate->exc_traceback = local_tb;
-    #endif
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-#elif __PYX_LIMITED_VERSION_HEX >= 0x030b0000
-    PyErr_SetHandledException(local_value);
-    Py_XDECREF(local_value);
-    Py_XDECREF(local_type);
-    Py_XDECREF(local_tb);
-#else
-    PyErr_SetExcInfo(local_type, local_value, local_tb);
-#endif
-    return 0;
-#if __PYX_LIMITED_VERSION_HEX <= 0x030C0000
-bad:
-    *type = 0;
-    *value = 0;
-    *tb = 0;
-    Py_XDECREF(local_type);
-    Py_XDECREF(local_value);
-    Py_XDECREF(local_tb);
-    return -1;
-#endif
-}
-
-/* PyObjectCall2Args */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
-    PyObject *args[3] = {NULL, arg1, arg2};
-    return __Pyx_PyObject_FastCall(function, args+1, 2 | __Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET);
-}
-
-/* CallUnboundCMethod1 */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg) {
-    int was_initialized =  __Pyx_CachedCFunction_GetAndSetInitializing(cfunc);
-    if (likely(was_initialized == 2 && cfunc->func)) {
-        int flag = cfunc->flag;
-        if (flag == METH_O) {
-            return __Pyx_CallCFunction(cfunc, self, arg);
-        } else if (flag == METH_FASTCALL) {
-            return __Pyx_CallCFunctionFast(cfunc, self, &arg, 1);
-        } else if (flag == (METH_FASTCALL | METH_KEYWORDS)) {
-            return __Pyx_CallCFunctionFastWithKeywords(cfunc, self, &arg, 1, NULL);
-        }
-    }
-#if CYTHON_COMPILING_IN_CPYTHON_FREETHREADING
-    else if (unlikely(was_initialized == 1)) {
-        __Pyx_CachedCFunction tmp_cfunc = {
-#ifndef __cplusplus
-            0
-#endif
-        };
-        tmp_cfunc.type = cfunc->type;
-        tmp_cfunc.method_name = cfunc->method_name;
-        return __Pyx__CallUnboundCMethod1(&tmp_cfunc, self, arg);
-    }
-#endif
-    PyObject* result = __Pyx__CallUnboundCMethod1(cfunc, self, arg);
-    __Pyx_CachedCFunction_SetFinishedInitializing(cfunc);
-    return result;
-}
-#endif
-static PyObject* __Pyx__CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg){
-    PyObject *result = NULL;
-    if (unlikely(!cfunc->func && !cfunc->method) && unlikely(__Pyx_TryUnpackUnboundCMethod(cfunc) < 0)) return NULL;
-#if CYTHON_COMPILING_IN_CPYTHON
-    if (cfunc->func && (cfunc->flag & METH_VARARGS)) {
-        PyObject *args = PyTuple_New(1);
-        if (unlikely(!args)) return NULL;
-        Py_INCREF(arg);
-        PyTuple_SET_ITEM(args, 0, arg);
-        if (cfunc->flag & METH_KEYWORDS)
-            result = __Pyx_CallCFunctionWithKeywords(cfunc, self, args, NULL);
-        else
-            result = __Pyx_CallCFunction(cfunc, self, args);
-        Py_DECREF(args);
-    } else
-#endif
-    {
-        result = __Pyx_PyObject_Call2Args(cfunc->method, self, arg);
-    }
-    return result;
-}
-
-/* dict_getitem_default */
-static PyObject* __Pyx_PyDict_GetItemDefault(PyObject* d, PyObject* key, PyObject* default_value) {
-    PyObject* value;
-#if !CYTHON_COMPILING_IN_PYPY || PYPY_VERSION_NUM >= 0x07020000
-    value = PyDict_GetItemWithError(d, key);
-    if (unlikely(!value)) {
-        if (unlikely(PyErr_Occurred()))
-            return NULL;
-        value = default_value;
-    }
-    Py_INCREF(value);
-    if ((1));
-#else
-    if (PyBytes_CheckExact(key) || PyUnicode_CheckExact(key) || PyLong_CheckExact(key)) {
-        value = PyDict_GetItem(d, key);
-        if (unlikely(!value)) {
-            value = default_value;
-        }
-        Py_INCREF(value);
-    }
-#endif
-    else {
-        if (default_value == Py_None)
-            value = __Pyx_CallUnboundCMethod1(&__pyx_mstate_global->__pyx_umethod_PyDict_Type_get, d, key);
-        else
-            value = __Pyx_CallUnboundCMethod2(&__pyx_mstate_global->__pyx_umethod_PyDict_Type_get, d, key, default_value);
-    }
-    return value;
 }
 
 /* RaiseException */
@@ -18755,6 +17708,26 @@ bad:
     Py_XDECREF(owned_instance);
     return;
 }
+
+/* PyObjectLookupSpecial */
+#if CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PyObject* __Pyx__PyObject_LookupSpecial(PyObject* obj, PyObject* attr_name, int with_error) {
+    PyObject *res;
+    PyTypeObject *tp = Py_TYPE(obj);
+    res = _PyType_Lookup(tp, attr_name);
+    if (likely(res)) {
+        descrgetfunc f = Py_TYPE(res)->tp_descr_get;
+        if (!f) {
+            Py_INCREF(res);
+        } else {
+            res = f(res, obj, (PyObject *)tp);
+        }
+    } else if (with_error) {
+        PyErr_SetObject(PyExc_AttributeError, attr_name);
+    }
+    return res;
+}
+#endif
 
 /* PyObjectVectorCallKwBuilder */
 #if CYTHON_VECTORCALL
@@ -18941,6 +17914,191 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(PyObject* obj,
     __Pyx_DECREF_TypeName(obj_type_name);
 bad:
     return NULL;
+}
+
+/* GetTopmostException */
+#if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
+static _PyErr_StackItem *
+__Pyx_PyErr_GetTopmostException(PyThreadState *tstate)
+{
+    _PyErr_StackItem *exc_info = tstate->exc_info;
+    while ((exc_info->exc_value == NULL || exc_info->exc_value == Py_None) &&
+           exc_info->previous_item != NULL)
+    {
+        exc_info = exc_info->previous_item;
+    }
+    return exc_info;
+}
+#endif
+
+/* SaveResetException */
+#if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+  #if CYTHON_USE_EXC_INFO_STACK && PY_VERSION_HEX >= 0x030B00a4
+    _PyErr_StackItem *exc_info = __Pyx_PyErr_GetTopmostException(tstate);
+    PyObject *exc_value = exc_info->exc_value;
+    if (exc_value == NULL || exc_value == Py_None) {
+        *value = NULL;
+        *type = NULL;
+        *tb = NULL;
+    } else {
+        *value = exc_value;
+        Py_INCREF(*value);
+        *type = (PyObject*) Py_TYPE(exc_value);
+        Py_INCREF(*type);
+        *tb = PyException_GetTraceback(exc_value);
+    }
+  #elif CYTHON_USE_EXC_INFO_STACK
+    _PyErr_StackItem *exc_info = __Pyx_PyErr_GetTopmostException(tstate);
+    *type = exc_info->exc_type;
+    *value = exc_info->exc_value;
+    *tb = exc_info->exc_traceback;
+    Py_XINCREF(*type);
+    Py_XINCREF(*value);
+    Py_XINCREF(*tb);
+  #else
+    *type = tstate->exc_type;
+    *value = tstate->exc_value;
+    *tb = tstate->exc_traceback;
+    Py_XINCREF(*type);
+    Py_XINCREF(*value);
+    Py_XINCREF(*tb);
+  #endif
+}
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
+  #if CYTHON_USE_EXC_INFO_STACK && PY_VERSION_HEX >= 0x030B00a4
+    _PyErr_StackItem *exc_info = tstate->exc_info;
+    PyObject *tmp_value = exc_info->exc_value;
+    exc_info->exc_value = value;
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(type);
+    Py_XDECREF(tb);
+  #else
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    #if CYTHON_USE_EXC_INFO_STACK
+    _PyErr_StackItem *exc_info = tstate->exc_info;
+    tmp_type = exc_info->exc_type;
+    tmp_value = exc_info->exc_value;
+    tmp_tb = exc_info->exc_traceback;
+    exc_info->exc_type = type;
+    exc_info->exc_value = value;
+    exc_info->exc_traceback = tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = type;
+    tstate->exc_value = value;
+    tstate->exc_traceback = tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+  #endif
+}
+#endif
+
+/* GetException */
+#if CYTHON_FAST_THREAD_STATE
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb)
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb)
+#endif
+{
+    PyObject *local_type = NULL, *local_value, *local_tb = NULL;
+#if CYTHON_FAST_THREAD_STATE
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+  #if PY_VERSION_HEX >= 0x030C0000
+    local_value = tstate->current_exception;
+    tstate->current_exception = 0;
+  #else
+    local_type = tstate->curexc_type;
+    local_value = tstate->curexc_value;
+    local_tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+  #endif
+#elif __PYX_LIMITED_VERSION_HEX > 0x030C0000
+    local_value = PyErr_GetRaisedException();
+#else
+    PyErr_Fetch(&local_type, &local_value, &local_tb);
+#endif
+#if __PYX_LIMITED_VERSION_HEX > 0x030C0000
+    if (likely(local_value)) {
+        local_type = (PyObject*) Py_TYPE(local_value);
+        Py_INCREF(local_type);
+        local_tb = PyException_GetTraceback(local_value);
+    }
+#else
+    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
+#if CYTHON_FAST_THREAD_STATE
+    if (unlikely(tstate->curexc_type))
+#else
+    if (unlikely(PyErr_Occurred()))
+#endif
+        goto bad;
+    if (local_tb) {
+        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
+            goto bad;
+    }
+#endif // __PYX_LIMITED_VERSION_HEX > 0x030C0000
+    Py_XINCREF(local_tb);
+    Py_XINCREF(local_type);
+    Py_XINCREF(local_value);
+    *type = local_type;
+    *value = local_value;
+    *tb = local_tb;
+#if CYTHON_FAST_THREAD_STATE
+    #if CYTHON_USE_EXC_INFO_STACK
+    {
+        _PyErr_StackItem *exc_info = tstate->exc_info;
+      #if PY_VERSION_HEX >= 0x030B00a4
+        tmp_value = exc_info->exc_value;
+        exc_info->exc_value = local_value;
+        tmp_type = NULL;
+        tmp_tb = NULL;
+        Py_XDECREF(local_type);
+        Py_XDECREF(local_tb);
+      #else
+        tmp_type = exc_info->exc_type;
+        tmp_value = exc_info->exc_value;
+        tmp_tb = exc_info->exc_traceback;
+        exc_info->exc_type = local_type;
+        exc_info->exc_value = local_value;
+        exc_info->exc_traceback = local_tb;
+      #endif
+    }
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = local_type;
+    tstate->exc_value = local_value;
+    tstate->exc_traceback = local_tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#elif __PYX_LIMITED_VERSION_HEX >= 0x030b0000
+    PyErr_SetHandledException(local_value);
+    Py_XDECREF(local_value);
+    Py_XDECREF(local_type);
+    Py_XDECREF(local_tb);
+#else
+    PyErr_SetExcInfo(local_type, local_value, local_tb);
+#endif
+    return 0;
+#if __PYX_LIMITED_VERSION_HEX <= 0x030C0000
+bad:
+    *type = 0;
+    *value = 0;
+    *tb = 0;
+    Py_XDECREF(local_type);
+    Py_XDECREF(local_value);
+    Py_XDECREF(local_tb);
+    return -1;
+#endif
 }
 
 /* PyLongCompare */
@@ -19146,6 +18304,65 @@ static PyObject *__Pyx_Object_VectorcallMethod_CallFromBuilder(PyObject *name, P
 }
 #endif
 
+/* PyObjectCall2Args */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
+    PyObject *args[3] = {NULL, arg1, arg2};
+    return __Pyx_PyObject_FastCall(function, args+1, 2 | __Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET);
+}
+
+/* CallUnboundCMethod1 */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg) {
+    int was_initialized =  __Pyx_CachedCFunction_GetAndSetInitializing(cfunc);
+    if (likely(was_initialized == 2 && cfunc->func)) {
+        int flag = cfunc->flag;
+        if (flag == METH_O) {
+            return __Pyx_CallCFunction(cfunc, self, arg);
+        } else if (flag == METH_FASTCALL) {
+            return __Pyx_CallCFunctionFast(cfunc, self, &arg, 1);
+        } else if (flag == (METH_FASTCALL | METH_KEYWORDS)) {
+            return __Pyx_CallCFunctionFastWithKeywords(cfunc, self, &arg, 1, NULL);
+        }
+    }
+#if CYTHON_COMPILING_IN_CPYTHON_FREETHREADING
+    else if (unlikely(was_initialized == 1)) {
+        __Pyx_CachedCFunction tmp_cfunc = {
+#ifndef __cplusplus
+            0
+#endif
+        };
+        tmp_cfunc.type = cfunc->type;
+        tmp_cfunc.method_name = cfunc->method_name;
+        return __Pyx__CallUnboundCMethod1(&tmp_cfunc, self, arg);
+    }
+#endif
+    PyObject* result = __Pyx__CallUnboundCMethod1(cfunc, self, arg);
+    __Pyx_CachedCFunction_SetFinishedInitializing(cfunc);
+    return result;
+}
+#endif
+static PyObject* __Pyx__CallUnboundCMethod1(__Pyx_CachedCFunction* cfunc, PyObject* self, PyObject* arg){
+    PyObject *result = NULL;
+    if (unlikely(!cfunc->func && !cfunc->method) && unlikely(__Pyx_TryUnpackUnboundCMethod(cfunc) < 0)) return NULL;
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (cfunc->func && (cfunc->flag & METH_VARARGS)) {
+        PyObject *args = PyTuple_New(1);
+        if (unlikely(!args)) return NULL;
+        Py_INCREF(arg);
+        PyTuple_SET_ITEM(args, 0, arg);
+        if (cfunc->flag & METH_KEYWORDS)
+            result = __Pyx_CallCFunctionWithKeywords(cfunc, self, args, NULL);
+        else
+            result = __Pyx_CallCFunction(cfunc, self, args);
+        Py_DECREF(args);
+    } else
+#endif
+    {
+        result = __Pyx_PyObject_Call2Args(cfunc->method, self, arg);
+    }
+    return result;
+}
+
 /* PyUnicode_Substring */
 static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Substring(
             PyObject* text, Py_ssize_t start, Py_ssize_t stop) {
@@ -19341,7 +18558,7 @@ static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
         if (unlikely(!module_name_str)) { goto modbad; }
         module_name = PyUnicode_FromString(module_name_str);
         if (unlikely(!module_name)) { goto modbad; }
-        module_dot = PyUnicode_Concat(module_name, __pyx_mstate_global->__pyx_kp_u__6);
+        module_dot = PyUnicode_Concat(module_name, __pyx_mstate_global->__pyx_kp_u__3);
         if (unlikely(!module_dot)) { goto modbad; }
         full_name = PyUnicode_Concat(module_dot, name);
         if (unlikely(!full_name)) { goto modbad; }
@@ -22866,7 +22083,7 @@ __Pyx_PyType_GetFullyQualifiedName(PyTypeObject* tp)
         result = name;
         name = NULL;
     } else {
-        result = __Pyx_NewRef(__pyx_mstate_global->__pyx_kp_u__5);
+        result = __Pyx_NewRef(__pyx_mstate_global->__pyx_kp_u__2);
     }
     goto done;
 }
