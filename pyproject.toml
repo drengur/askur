@@ -1,21 +1,53 @@
 [project]
 name = "askur"
 version = "0.1.0"
-description = "Add your description here"
+description = "Memory mapped binary tree for fast key-value lookup"
 readme = "README.md"
 authors = [
     { name = "drengur", email = "samuel.thorisson@gmail.com" }
 ]
+
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "cython>=0.29.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Text Processing :: Indexing",
+]
+
+license = "MIT"
+license-files = ["LICENSE"]
+
+[project.urls]
+Homepage = "https://github.com/drengur/askur"
+Issues = "https://github.com/drengur/askur/issues"
+Repository = "https://github.com/drengur/askur"
+
+[project.scripts]
+askur-search = "askur.search:main"
+askur-build = "askur.make_lookup:main"
+
 
 [build-system]
-requires = ["setuptools", "cython"]
-build-backend = "setuptool.build_meta"
-
-[project.optional-dependencies]
-build = [
-    "cython>=3.1.2",
-    "setuptools>=80.9.0",
-    "numpy>=2.2.6"
+requires = [
+    "setuptools>=45",
+    "wheel",
+    "cython>=0.29.0",
 ]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+
