@@ -3,8 +3,6 @@ import os
 
 # import configparser
 import mmap
-import cython
-
 
 class Mapping:
     def __init__(self, collection: str) -> None:
@@ -29,32 +27,21 @@ class Mapping:
         self._load_files()
 
     def _load_files(self):
-        confs = {}
-        config_file = os.path.join(os.path.dirname(__file__), "askur.conf")
-        with open(config_file, "r") as f:
-            for line in f:
-                if line.startswith("#") or line.startswith("\n"):
-                    continue
-                if "=" not in line:
-                    print(
-                        f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting."
-                    )
-                    return -1
-                confs[line.split("=")[0].strip()] = line.split("=")[1].strip()
-        DATA_FOLDER = confs.get("DATA_FOLDER")
-        if DATA_FOLDER is None:
-            print(
-                f"Error: in line {line}.\n  No DATA_FOLDER found.\n  Please add missing DATA_FOLDER and try again. \n Exiting."
-            )
-            return -1
-
-        frozen_folder = os.path.join(
-            os.path.dirname(__file__), DATA_FOLDER, self.collection
+        # Check for environment variable first, then fall back to config file
+        data_folder = os.environ.get("ASKUR_DATA_FOLDER")
+        assert data_folder is not None, (
+            "DATA_FOLDER environment variable is not set. Please update config.py."
         )
+
+        frozen_folder = os.path.join(data_folder, self.collection)
         if not os.path.exists(frozen_folder):
-            existing_collections = os.listdir(os.path.join(DATA_FOLDER))
-            raise FileNotFoundError(
-                f"{self.collection} collection does not exist!\n Existing collections are: {existing_collections}"
+            available_collections = [
+                name
+                for name in os.listdir(data_folder)
+                if os.path.isdir(os.path.join(data_folder, name))
+            ]
+            assert False, (
+                f"{self.collection} collection does not exist!\n Existing collections are: {available_collections}"
             )
 
         # SELECT FILE (bits)
@@ -150,17 +137,17 @@ class Mapping:
         self.check_if_key_exists = check_key_exists
         return self.check_if_key_exists
 
-    def calculate_select(self, sum_ones_wanted: cython.int) -> list[int, int]:
+    def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
 
-        res_end_index: cython.int = None
-        res_start_index = cython.int = None
-        r_start = cython.int = 7
-        superblock_start = cython.int = sum_ones_wanted // self.bits_in_superblock
-        start_index: cython.int = 0
-        start_byte: cython.int = 0
-        extra_bits: cython.int = 0
-        start_sum: cython.int = 0
+        res_end_index: int = None
+        res_start_index: int = None
+        r_start: int = 7
+        superblock_start = sum_ones_wanted // self.bits_in_superblock
+        start_index: int = 0
+        start_byte: int = 0
+        extra_bits: int = 0
+        start_sum: int = 0
 
         if superblock_start > 0:
             start_index = (
@@ -176,14 +163,14 @@ class Mapping:
             extra_bits = start_index % 8
             start_sum = self.bits_in_superblock * superblock_start
 
-        total_sum: cython.int = start_sum
-        loop_index: cython.int = start_index
+        total_sum: int = start_sum
+        loop_index: int = start_index
 
         if start_sum == sum_ones_wanted:
             res_start_index = start_index - 1
 
-        byte: cython.int = 0
-        i: cython.int = 0
+        byte: int = 0
+        i: int = 0
 
         while total_sum < sum_ones_wanted + 1:
             for byte in self._s_bits[start_byte : start_byte + 1]:
