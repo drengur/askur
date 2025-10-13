@@ -1,0 +1,24 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include setup.py
+include setup.py.bak
+
+# Include source files
+recursive-include src/askur *.py
+recursive-include src/askur *.pyx
+recursive-include src/askur *.conf
+
+# Include data files if they exist
+recursive-include data *
+
+# Include tests
+recursive-include tests *.py
+
+# Exclude compiled files and cache
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.so
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.egg-info
