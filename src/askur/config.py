@@ -8,9 +8,13 @@ import os
 import platform
 from pathlib import Path
 
+# Default alphabet (sort order) if not set in environment variable.
+_alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
+if not os.getenv("ASKUR_ALPHABET"):
+    os.environ["ASKUR_ALPHABET"] = _alphabet
+
 # Use this variable to set arbitrary data folder path.
-# User absolute path only.
-_askur_data_folder = ""
+_askur_data_folder = os.getenv("ASKUR_DATA_FOLDER", "")
 
 if _askur_data_folder:
     if not os.path.exists(_askur_data_folder):
@@ -18,13 +22,13 @@ if _askur_data_folder:
     os.environ["ASKUR_DATA_FOLDER"] = _askur_data_folder
 elif platform.system() == "Windows":
     base_dir = os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local")
-    if not os.path.exists(os.path.join(base_dir, "askur", "data")):
-        os.makedirs(os.path.join(base_dir, "askur", "data"))
-    os.environ["ASKUR_DATA_FOLDER"] = os.path.join(base_dir, "askur", "data")
+    data_dir = os.path.join(base_dir, "askur", "data")
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir, exist_ok=True)
+    os.environ["ASKUR_DATA_FOLDER"] = data_dir
 else:
     home_dir = str(Path.home())
-    if not os.path.exists(os.path.join(home_dir, ".local", "share", "askur", "data")):
-        os.makedirs(os.path.join(home_dir, ".local", "share", "askur", "data"))
-    os.environ["ASKUR_DATA_FOLDER"] = os.path.join(
-        Path.home(), ".local", "share", "askur", "data"
-    )
+    data_dir = os.path.join(home_dir, ".local", "share", "askur", "data")
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir, exist_ok=True)
+    os.environ["ASKUR_DATA_FOLDER"] = data_dir
