@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-import sys
 
-import time
 import argparse
-
-from .filemapping_py import Mapping
-# try:
-#     from filemapping import Mapping
-# except ImportError:
-#     from filemapping_py import Mapping
+# from filemapping_py import Mapping
+try:
+    from .filemapping import Mapping
+except ImportError:
+    from .filemapping_py import Mapping
 
 
 arg_parser = argparse.ArgumentParser(
@@ -69,7 +66,6 @@ class Search:
                     res.append(f"{key}: {value}")
             else:
                 res.append(str(items))
-        # res.sort() if res else []
         return res
 
     def clear_results(self):
@@ -106,7 +102,12 @@ class Search:
             ord(c)
             for c in self.mmap.alphabet
             if ord(c)
-            not in (42, 95, self.reversed_char, self.multibyte_char)  # 143 is reversed start, 129 is 4(5) byte char
+            not in (
+                42,
+                95,
+                self.reversed_char,
+                self.multibyte_char,
+            )  # 143 is reversed start, 129 is 4(5) byte char
         ]
 
         new_query = [None, None, None]
@@ -315,7 +316,7 @@ class Search:
         if query is None:
             return ""
 
-        if self.multibyte_char   not in query:
+        if self.multibyte_char not in query:
             return "".join([chr(c if c >= 0 else -1 * c) for c in query])
         # 129 is the ASCII code for start of 4(5) byte char
         # so we need to convert the 4(5) byte char back to a character
@@ -350,9 +351,6 @@ class Search:
 
     def search(self, query) -> str:
         modified_query = self.prepare_query(query)
-        if modified_query is None:
-            print("Query is empty or invalid.")
-            sys.exit(1)
         self.clear_results()
         self.reversed = modified_query[0] is not None and modified_query[0][0] == 143
 
@@ -453,33 +451,23 @@ class Search:
         return [res, None, None]
 
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for the askur-search CLI command."""
     args = arg_parser.parse_args()
     COLLECTION = args.c
     QUERY = args.w
     LIMIT = args.l if args.l > 0 else 0
     LEVENSHTEIN_QUERY = args.r
-    if COLLECTION is None or QUERY is None:
-        print("Usage: python3 search.py -c <collection> -w <word1,word2,word3>")
-        sys.exit(1)
+    assert COLLECTION is not None, "Collection 'c' is required."
+    assert QUERY is not None, "Query 'w' is required."
 
     SEARCH_RESULTS = []
     S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
 
-    START_TIME = time.time()
-
     for query in QUERY.split(" "):
         SEARCH_RESULTS.append(S.search(query))
-        # SEARCH_RESULTS.append(S.exists(query))
-
-    END_TIME = time.time()
     print("\n".join("\n".join(res) for res in SEARCH_RESULTS))
-    print(f"Rows: {len(SEARCH_RESULTS[0])}")
-    print(f"Tími: {1000 * (END_TIME - START_TIME):f} ms")
-    if len(SEARCH_RESULTS[0]) > 1:
-        print(
-            f"Time: {1000 * (END_TIME - START_TIME) / len(SEARCH_RESULTS[0]):f} ms/query"
-        )
-    else:
-        print(f"Time: {1000 * (END_TIME - START_TIME):f} ms")
-    print(f"fjöldi niðurstaða: {len(SEARCH_RESULTS[0])}")
+
+
+if __name__ == "__main__":
+    main()
