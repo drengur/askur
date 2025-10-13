@@ -62,19 +62,27 @@ class Node:
 
 
 class Alphabet:
+    # None printable characters:
+    # 129 (0x81)
+    # 141 (0x8D)
+    # 143 (0x8F)
+    # 144 (0x90)
+    # 157 (0x9D)
     multibyte_char = 129
     reversed_char = 143  # This is a character that is not in the alphabet
+    reversed_index = False
 
-    def __init__(self, alphabet=None):
-        if alphabet is None:
-            alphabet = "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
-        self._alphabet = {ord(c): n for n, c in enumerate(alphabet)}
+    def __init__(self, reversed=False):
+        assert os.getenv("ASKUR_ALPHABET") is not None, (
+            "ALPHABET environment variable is not set."
+        )
+
+        self._alphabet = {ord(c): n for n, c in enumerate(os.getenv("ASKUR_ALPHABET"))}
         self._alphabet.setdefault(self.multibyte_char, len(self._alphabet))
         self._alphabet.setdefault(self.reversed_char, len(self._alphabet))
 
         self._used_alphabet = []  # used alphabet is empty at the start and gets filled as words are added
-        self._used_alphabet.append(self.multibyte_char)
-        self._used_alphabet.append(self.reversed_char)
+        self.reversed_index = reversed
 
     @property
     def alphabet(self):
@@ -128,7 +136,7 @@ class Alphabet:
     def get_used(self) -> bytearray:
         """Return the used letters in the alphabet as a bytearray."""
         alphabet_bytes = bytearray()
-        if self.reversed_char in self._used_alphabet:
+        if self.reversed_index:
             alphabet_bytes.append(self.reversed_char)
         for k in self._alphabet.keys():
             if k in self._used_alphabet and k not in alphabet_bytes:
@@ -139,7 +147,7 @@ class Alphabet:
 class Trie:
     """A trie."""
 
-    def __init__(self, collection_name=None, reversed=False, alphabet=None):
+    def __init__(self, collection_name=None, reversed=False):
         """Create a new trie and associated files.
         usage:
             trie = Trie()
@@ -153,10 +161,10 @@ class Trie:
         self._index = []  # the counter array (the number of words that have been added to the trie)
         self._short_text = []  # the short text array (the words in the trie)
         self.collection_name = collection_name
-        self.reversed = reversed
+        self.reversed = reversed  # make reversed index if True
 
         # The alphabet order used in the trie.
-        self.alphabet = Alphabet(alphabet)
+        self.alphabet = Alphabet(reversed)
 
         # Check for environment variable first, then fall back to config file
         data_folder = os.environ.get("ASKUR_DATA_FOLDER")
@@ -185,7 +193,7 @@ class Trie:
 
         # hc superblock
         self.hc_sb_file = os.path.join(frozen_folder, "hc_sb.bin")
-        
+
         # select superblock
         self.s_sb_file = os.path.join(frozen_folder, "s_sb.bin")
 
@@ -201,7 +209,6 @@ class Trie:
         index = 0
         line_nr = 0
 
-        # for line in self.read_from_file(filename):
         for word_key, word_value in self.read_from_file(filename):
             line_nr += 1
             if line_nr % 1000 == 0:
@@ -293,8 +300,9 @@ class Trie:
         self.level_order_tree(child_nodes, inv_alphabet)
 
     def generate_data(self, big_string):
-        """Generate data from a big string in chunks to minimize memory usage."""
-        # This function is a placeholder for generating data.
+        """Generate data from a big string in chunks to minimize memory usage.
+        This function is a placeholder for generating data.
+        """
         i = 0
         chunk_size = 1024
         while i < len(big_string):
