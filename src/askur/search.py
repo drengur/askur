@@ -349,8 +349,9 @@ class Search:
         """
         self.levenshtein = True
         self.limit = limit
+        self.search(query)
         self.levenshtein = False
-        return self.search(query)
+        return self.results()
 
     def exists(self, query, limit=1):
         """
