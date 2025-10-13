@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
-# from filemapping_py import Mapping
+from . import config
+
 try:
     from .filemapping import Mapping
 except ImportError:
@@ -9,7 +10,7 @@ except ImportError:
 
 
 arg_parser = argparse.ArgumentParser(
-    description="Search for word in a collection of words."
+    description="Search for a word in a collection of words."
 )
 arg_parser.add_argument("-c", type=str, help="The collection to search in.")
 arg_parser.add_argument(
@@ -20,9 +21,9 @@ arg_parser.add_argument(
 )
 arg_parser.add_argument("-l", type=int, help="Limit number of results.", default=0)
 arg_parser.add_argument(
-    "-r",
+    "-z",
     action="store_true",
-    help="Use Levenshtein distance to find similar words.",
+    help="Use fuzzy-search (levenshtein distance 1) to find similar words.",
 )
 
 
@@ -31,13 +32,13 @@ class Search:
 
     def __init__(self, collection, limit=0, use_levenshtein=False) -> None:
         self.mmap = Mapping(collection)
-        self.use_levenstein = use_levenshtein
+        self.levenshtein = use_levenshtein
         self.limit = limit  # 0 means no limit
         self._results = []
         self.multibyte_char = 129  # ASCII code for start of 4(5) byte char
         self.reversed_char = 143  # ASCII code for start of reversed word
 
-    def add_result(self, result):
+    def _add_result(self, result):
         """Add a result to the search results."""
 
         if self.limit > 0 and len(self._results) >= self.limit:
@@ -78,15 +79,20 @@ class Search:
             return True
         return False
 
-    def set_levenshtein(self, use_levenshtein: bool):
+    @property
+    def levenshtein(self) -> bool:
+        return self.use_levenshtein
+
+    @levenshtein.setter
+    def levenshtein(self, use_levenshtein: bool):
         """Set whether to use Levenshtein distance for the search."""
-        self.use_levenstein = use_levenshtein
+        self.use_levenshtein = use_levenshtein
 
     def set_reversed(self, reversed: bool):
         """Set whether to search in reversed order."""
         self.reversed = reversed and self.mmap.is_reversed()
 
-    def levhenshtein_find(self, query):
+    def _levhenshtein_find(self, query):
         """Method to find similar words
         Levenshtein distance of 1 is used to find similar words
         """
@@ -170,8 +176,8 @@ class Search:
             # Check if we can match any of the patterns in word_parts sequentially
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
-                word = self.query_to_string(next_start_part)
-                self.add_result({word: result})
+                word = self._query_to_string(next_start_part)
+                self._add_result({word: result})
             # If we have a match, continue searching
             # if self.mmap.has_child(s_start + idx):
             bitsum = self.mmap.calculate_hc(s_start + idx)
@@ -292,26 +298,26 @@ class Search:
                     end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
                     if end_of_word == 1:
                         result = self.mmap.get_result(s_start + chr_index)
-                        word = self.query_to_string(query[0])
+                        word = self._query_to_string(query[0])
                         if (
                             len(query) > 3
                         ):  # If there is a prefix in the query from underscore search
-                            word = self.query_to_string(query[3]) + word
-                        self.add_result({word: result})
+                            word = self._query_to_string(query[3]) + word
+                        self._add_result({word: result})
 
                 s_index = nr_hc + 1
         end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
 
         if end_of_word == 1:
             result = self.mmap.get_result(s_start + chr_index)
-            word = self.query_to_string(query[0])
+            word = self._query_to_string(query[0])
             if (
                 len(query) > 3
             ):  # If there is a prefix in the query from underscore search
-                word = self.query_to_string(query[3]) + word
-            self.add_result({word: result})
+                word = self._query_to_string(query[3]) + word
+            self._add_result({word: result})
 
-    def query_to_string(self, query) -> str:
+    def _query_to_string(self, query) -> str:
         """Convert a query list of ASCII values back to a string."""
         if query is None:
             return ""
@@ -337,7 +343,16 @@ class Search:
                 i += 1
         return "".join(res)
 
-    def exists(self, query):
+    def fuzzy_search(self, query, limit=0):
+        """Fuzzy search for a word in the trie.
+        This method uses Levenshtein distance to find similar words.
+        """
+        self.levenshtein = True
+        self.limit = limit
+        self.levenshtein = False
+        return self.search(query)
+
+    def exists(self, query, limit=1):
         """
         For faster search results.
         Check if a word exists in the collection.
@@ -345,21 +360,22 @@ class Search:
         it only checks if the word exists.
         """
         self.mmap.set_check_key_exists(True)
+        self.limit = limit
         self.search(query)
         self.mmap.set_check_key_exists(False)
-        return self.result_as_list() if self.results() else ["0"]
+        return 1 if self.results() else 0
 
     def search(self, query) -> str:
-        modified_query = self.prepare_query(query)
+        modified_query = self._prepare_query(query)
         self.clear_results()
         self.reversed = modified_query[0] is not None and modified_query[0][0] == 143
 
-        if self.use_levenstein:
+        if self.levenshtein:
             """Using Levenshtein distance to find similar words."""
             if modified_query is None or modified_query[0] is None:
                 print("Invalid query for Levenshtein search.")
                 return []
-            self.levhenshtein_find(modified_query)
+            self._levhenshtein_find(modified_query)
         elif modified_query[0] is None:
             """Using wildcards in start of query:"""
             self._wildcard_search(1, [], modified_query[1], modified_query[2])
@@ -368,7 +384,7 @@ class Search:
             self._search(modified_query, 1)
         return self.result_as_list()
 
-    def prepare_query(self, query):
+    def _prepare_query(self, query):
         """Modify the query to be used in the search.
         This method handles wildcards, underscores, and character encoding.
         It returns a list with three parts and converts characters to their ASCII values:
@@ -457,16 +473,14 @@ def main():
     COLLECTION = args.c
     QUERY = args.w
     LIMIT = args.l if args.l > 0 else 0
-    LEVENSHTEIN_QUERY = args.r
+    LEVENSHTEIN_QUERY = args.z
     assert COLLECTION is not None, "Collection 'c' is required."
-    assert QUERY is not None, "Query 'w' is required."
+    assert QUERY is not None, "query/word 'w' is required."
 
-    SEARCH_RESULTS = []
     S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
 
-    for query in QUERY.split(" "):
-        SEARCH_RESULTS.append(S.search(query))
-    print("\n".join("\n".join(res) for res in SEARCH_RESULTS))
+    for query in QUERY.split(","):
+        print(S.search(query))
 
 
 if __name__ == "__main__":
