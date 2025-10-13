@@ -9,7 +9,7 @@ import io
 import os
 import argparse
 import math as m
-import config
+from . import config
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
@@ -18,7 +18,6 @@ ARG_PARSER.add_argument(
     "--collection", "-C", type=str, help="The name of the collection to create."
 )
 ARG_PARSER.add_argument("--file", "-f", type=str, help="File to read from.")
-ARG_PARSER.add_argument("-i", type=str, help="Case insensitive")
 ARG_PARSER.add_argument(
     "--reversed", "-R", action="store_true", help="Make reversed index"
 )
@@ -635,21 +634,19 @@ class Trie:
         return str(self.root)
 
 
-def make_trie(filename, collection, reversed=False):
+def main():
     """Load a tree from a file.
     The file should contain one word per line along with the word id.
     Saving the trie and associated data to files in frozen folder.
     """
-    trie = Trie(collection, reversed=reversed)
-    trie.make_frozen_data(filename=filename)
+
+    args = ARG_PARSER.parse_args()
+    if args.file is not None and args.collection is not None:
+        trie = Trie(args.collection, reversed=args.reversed or False)
+        trie.make_frozen_data(filename=args.file)
+    else:
+        ARG_PARSER.print_help()
 
 
 if __name__ == "__main__":
-    args = ARG_PARSER.parse_args()
-
-    if args.file is not None and args.collection is not None:
-        make_trie(
-            filename=args.file, collection=args.collection, reversed=args.reversed
-        )
-    else:
-        ARG_PARSER.print_help()
+    main()
