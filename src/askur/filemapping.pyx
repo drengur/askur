@@ -43,29 +43,19 @@ cdef class Mapping:
         self._load_files()
 
     def _load_files(self):
-        cdef dict confs = {}
-        cdef str line, key, value
         cdef str DATA_FOLDER, frozen_folder
         
-        with open("askur.conf", "r") as f:
-            for line in f:
-                if line.startswith("#") or line.startswith("\n"):
-                    continue
-                if "=" not in line:
-                    print(f"Error: in line {line}.\n  No '=' found.\n  Please add missing '=' and try again. \n Exiting.")
-                    return -1
-                parts = line.split("=", 1)
-                confs[parts[0].strip()] = parts[1].strip()
-        
-        DATA_FOLDER = confs.get("DATA_FOLDER")
-        if DATA_FOLDER is None:
-            print(f"Error: No DATA_FOLDER found.\n  Please add missing DATA_FOLDER and try again. \n Exiting.")
-            return -1
-
+        # Check for environment variable first, then fall back to config file
+        DATA_FOLDER = os.environ.get('ASKUR_DATA_FOLDER')
         frozen_folder = os.path.join(DATA_FOLDER, self.collection)
+            
         if not os.path.exists(frozen_folder):
-            existing_collections = os.listdir(DATA_FOLDER)
-            raise FileNotFoundError(f"{self.collection} collection does not exist!\n Existing collections are: {existing_collections}")
+            data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
+            if os.path.exists(data_parent):
+                existing_collections = os.listdir(data_parent)
+            else:
+                existing_collections = ["No data directory found"]
+            raise FileNotFoundError(f"{self.collection} collection does not exist!\n Existing collections are: {existing_collections}\n Data folder: {data_parent}")
 
         # File paths
         cdef str SELECT_BITS_FILE = os.path.join(frozen_folder, "s_bits.bin")
@@ -233,8 +223,8 @@ cdef class Mapping:
                     if index == end_request_index:
                         return bitsum
                 index += 1
+        return 0
 
-        return bitsum
 
     cpdef bint has_child(self, int index):
         """Check if node has child using safe mmap access"""
