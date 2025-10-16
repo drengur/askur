@@ -488,10 +488,8 @@ def main():
     assert QUERY is not None, "query/word 'w' is required."
 
     S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
-
-    for query in QUERY.split(","):
-        for _, res in enumerate(S.search(query, result_format=RESULT_FORMAT)):
-            print(res)
+    for res in enumerate(S.search(QUERY, result_format=RESULT_FORMAT)):
+        print(res)
 
 
 
