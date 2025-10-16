@@ -10,6 +10,7 @@ import os
 import argparse
 import math as m
 from . import config
+# import config
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
@@ -162,7 +163,7 @@ class Trie:
         self.collection_name = collection_name
         self.reversed = reversed  # make reversed index if True
 
-        # The alphabet order used in the trie.
+        # The alphabet used in the trie.
         self.alphabet = Alphabet(reversed)
 
         # Check for environment variable first, then fall back to config file
@@ -241,11 +242,11 @@ class Trie:
 
         print(" 4/7 - Writing to disk...", end="\r")
         self.write_hc_to_file(self.hc_bits_filename)
-        self.hc_to_lookup()
+        self.hc_to_superblock()
 
         print(" 5/7 - Writing to disk...", end="\r")
         self.write_select_to_file(self.select_bits_filename)
-        self.select_to_lookup()
+        self.select_to_superblock()
 
         print(" 6/7 - Writing to disk...", end="\r")
         self.write_short_text_to_file(data_values)
@@ -264,7 +265,7 @@ class Trie:
             word_value = (
                 None if len(line.split(";")) == 1 else line.split(";", 1)[1].strip()
             )
-            assert word_value is not None
+            assert word_value is not None, f"Missing word value for {word_key}: {word_value}"
             yield word_key, word_value
         file.close()
 
@@ -495,7 +496,9 @@ class Trie:
                     else:
                         tmp_indices.append(indices[idx])
                 else:
-                    multi_text.append(data_values[idx])
+                    if idx not in indices:
+                        indices[idx] = None
+                        multi_text.append(data_values[idx])
             if len(multi_text) > 1:
                 tmp_txt = []
                 for mtx in multi_text:
@@ -504,13 +507,11 @@ class Trie:
                     else:
                         tmp_txt.append(141)  # separator between words/sentences
                         tmp_txt += mtx.copy()
-                idx_n = len(data_values)
                 short_texts.append(tmp_txt)
 
                 value = bin(sum_index)[2:].rjust(nr_bits_in_index_block, "0") + bin(
                     len(tmp_txt)
                 )[2:].rjust(nr_bits_in_value_block, "0")
-                indices[idx_n] = []  # value
                 tmp_indices.append(value)
                 sum_index += len(tmp_txt)
 
@@ -563,7 +564,7 @@ class Trie:
             i += 8
         return buffer
 
-    def hc_to_lookup(self):
+    def hc_to_superblock(self):
         # Writing to hc-superblock
         bib = 8
         block_size = (round(m.ceil(m.log2(len(self._hc)) / 2) + 5, -1) // bib) * bib
@@ -598,7 +599,7 @@ class Trie:
                 f.write(res)
                 f.close()
 
-    def select_to_lookup(self):
+    def select_to_superblock(self):
         io.open(self.s_sb_file, "w").close()
 
         bib = 8
