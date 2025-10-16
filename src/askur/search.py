@@ -2,11 +2,11 @@
 
 import argparse
 from . import config
-
 try:
     from .filemapping import Mapping
 except ImportError:
     from .filemapping_py import Mapping
+
 
 
 arg_parser = argparse.ArgumentParser(
@@ -25,6 +25,9 @@ arg_parser.add_argument(
     action="store_true",
     help="Use fuzzy-search (levenshtein distance 1) to find similar words.",
 )
+arg_parser.add_argument(
+    "-r", "--result", type=str, help="result format (dict or str). Default is dict."
+)
 
 
 class Search:
@@ -40,13 +43,13 @@ class Search:
 
     def _add_result(self, result):
         """Add a result to the search results."""
-
         if self.limit > 0 and len(self._results) >= self.limit:
             return
         if result not in self._results:
             if self.reversed:
                 # If the search is reversed, we need to reverse the result
-                result = {k[::-1]: v for k, v in result.items()}
+                # and remove the first character (143)
+                result = {k[::-1][:-1]: v for k, v in result.items()}
             self._results.append(result)
 
     def results(self):
@@ -343,7 +346,7 @@ class Search:
                 i += 1
         return "".join(res)
 
-    def fuzzy_search(self, query, limit=0):
+    def fuzzy_search(self, query, limit=0, result_format="dict"):
         """Fuzzy search for a word in the trie.
         This method uses Levenshtein distance to find similar words.
         """
@@ -351,6 +354,8 @@ class Search:
         self.limit = limit
         self.search(query)
         self.levenshtein = False
+        if result_format == "str":
+            return self.result_as_list()
         return self.results()
 
     def exists(self, query, limit=1):
@@ -366,7 +371,7 @@ class Search:
         self.mmap.set_check_key_exists(False)
         return 1 if self.results() else 0
 
-    def search(self, query) -> str:
+    def search(self, query, result_format="dict") -> str:
         modified_query = self._prepare_query(query)
         self.clear_results()
         self.reversed = modified_query[0] is not None and modified_query[0][0] == 143
@@ -383,7 +388,9 @@ class Search:
         else:
             """Using no wildcards in start of query:"""
             self._search(modified_query, 1)
-        return self.result_as_list()
+        if result_format == "list":
+            return self.result_as_list()
+        return self.results()
 
     def _prepare_query(self, query):
         """Modify the query to be used in the search.
@@ -475,13 +482,17 @@ def main():
     QUERY = args.w
     LIMIT = args.l if args.l > 0 else 0
     LEVENSHTEIN_QUERY = args.z
+    RESULT_FORMAT = args.result if args.result in ("dict", "str") else "dict"
+    
     assert COLLECTION is not None, "Collection 'c' is required."
     assert QUERY is not None, "query/word 'w' is required."
 
     S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
 
     for query in QUERY.split(","):
-        print(S.search(query))
+        for _, res in enumerate(S.search(query, result_format=RESULT_FORMAT)):
+            print(res)
+
 
 
 if __name__ == "__main__":
