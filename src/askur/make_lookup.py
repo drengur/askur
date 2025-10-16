@@ -265,7 +265,9 @@ class Trie:
             word_value = (
                 None if len(line.split(";")) == 1 else line.split(";", 1)[1].strip()
             )
-            assert word_value is not None, f"Missing word value for {word_key}: {word_value}"
+            assert word_value is not None, (
+                f"Missing word value for {word_key}: {word_value}"
+            )
             yield word_key, word_value
         file.close()
 
@@ -474,31 +476,29 @@ class Trie:
                 )
             )
             f.close()
+
         short_texts = []
         sum_index = 0
-        tmp_indices = []
+        len_values_index = [] # has same length and index ref as self._index
         indices = {}
-        for idxs in self._index:
+        for _, idxs in enumerate(self._index):
             multi_text = []
             for idx in idxs:
                 if len(idxs) == 1:
-                    if idx not in indices:
+                    if str(idx) not in indices:
                         short_texts.append(data_values[idx])
                         value = bin(sum_index)[2:].rjust(
                             nr_bits_in_index_block, "0"
                         ) + bin(len(data_values[idx]))[2:].rjust(
                             nr_bits_in_value_block, "0"
                         )
-                        indices[idx] = value
-                        tmp_indices.append(value)
+                        indices[str(idx)] = value
+                        len_values_index.append(value)
                         sum_index += len(data_values[idx])
-
                     else:
-                        tmp_indices.append(indices[idx])
+                        len_values_index.append(indices[str(idx)])
                 else:
-                    if idx not in indices:
-                        indices[idx] = None
-                        multi_text.append(data_values[idx])
+                    multi_text.append(data_values[idx])
             if len(multi_text) > 1:
                 tmp_txt = []
                 for mtx in multi_text:
@@ -507,13 +507,21 @@ class Trie:
                     else:
                         tmp_txt.append(141)  # separator between words/sentences
                         tmp_txt += mtx.copy()
-                short_texts.append(tmp_txt)
 
-                value = bin(sum_index)[2:].rjust(nr_bits_in_index_block, "0") + bin(
-                    len(tmp_txt)
-                )[2:].rjust(nr_bits_in_value_block, "0")
-                tmp_indices.append(value)
-                sum_index += len(tmp_txt)
+                idxs.sort()
+                idxs_str = "_".join([str(i) for i in idxs])
+                if idxs_str not in indices:
+                    short_texts.append(tmp_txt)
+                    value = bin(sum_index)[2:].rjust(
+                        nr_bits_in_index_block, "0"
+                    ) + bin(len(tmp_txt))[2:].rjust(
+                        nr_bits_in_value_block, "0"
+                    )
+                    indices[idxs_str] = value
+                    len_values_index.append(value)
+                    sum_index += len(tmp_txt)
+                else:
+                    len_values_index.append(indices[idxs_str])
 
             if len(short_texts) >= 10240:
                 with io.open(self.short_text_bits_filename, "ab") as f:
@@ -522,17 +530,17 @@ class Trie:
                     f.close()
                 short_texts.clear()
 
-            if len(tmp_indices) >= 10240:
+            if len(len_values_index) >= 10240:
                 with io.open(self.index_bits_filename, "ab") as f:
                     f.write(
-                        self.bit_bytes_to_bits("".join([txt for txt in tmp_indices]))
+                        self.bit_bytes_to_bits("".join([txt for txt in len_values_index]))
                     )
                     f.close()
-                tmp_indices.clear()
+                len_values_index.clear()
 
-        if len(tmp_indices) > 0:
+        if len(len_values_index) > 0:
             with io.open(self.index_bits_filename, "ab") as f:
-                f.write(self.bit_bytes_to_bits("".join([txt for txt in tmp_indices])))
+                f.write(self.bit_bytes_to_bits("".join([txt for txt in len_values_index])))
                 f.close()
 
         if len(short_texts) > 0:
