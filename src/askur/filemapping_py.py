@@ -4,6 +4,7 @@ import os
 # import configparser
 import mmap
 
+
 class Mapping:
     def __init__(self, collection: str) -> None:
         self._trie: mmap.mmap
@@ -351,7 +352,6 @@ class Mapping:
     def get_short_text(self, index, text_len) -> list[str]:
         """Returns the short text"""
         res = self._short_text[index : index + text_len]
-
         text_arr = []
         short_texts = []
         i = 0
@@ -363,7 +363,7 @@ class Mapping:
                 i += 1
                 continue
             if res[i] == 129:  # special character indicating a 4-byte character
-                bits = [bin(res[i + 1])[2:].rjust(8, "0") for i in range(1, 5)]
+                bits = [bin(res[i + n])[2:].rjust(8, "0") for n in range(1, 5)]
                 text_arr.append(chr(int("".join(bits), 2)))
                 i += 5
                 continue
