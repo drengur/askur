@@ -324,6 +324,8 @@ class Search:
         """Convert a query list of ASCII values back to a string."""
         if query is None:
             return ""
+        if len(query) > 1 and query[-1] == 42:
+            query = query[:-1][:]
 
         if self.multibyte_char not in query:
             return "".join([chr(c if c >= 0 else -1 * c) for c in query])
