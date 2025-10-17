@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
-
+import os
 import argparse
-from . import config
-try:
-    from .filemapping import Mapping
-except ImportError:
-    from .filemapping_py import Mapping
 
+
+if not os.getenv("ASKUR_TESTING", "0") == "1":
+    from . import config
+
+    try:
+        from .filemapping import Mapping
+    except ImportError:
+        from .filemapping_py import Mapping
+else:
+    import config
+    from filemapping_py import Mapping
 
 
 arg_parser = argparse.ArgumentParser(
-    description="Search for a word in a collection of words."
+    description="Search for a key in a collection of key-value pairs stored in a LOUDS trie."
 )
 arg_parser.add_argument("-c", type=str, help="The collection to search in.")
 arg_parser.add_argument(
     "-w",
     type=str,
-    help="""The word(s) to search for. Use * for wildcard, _ for any char.\n
-    Space separates list of words. Ex: "word1 word2 word3\n" escape wildcard with "\\".""",
+    help="The word to search for. Use * for wildcard, _ for any char.",
 )
 arg_parser.add_argument("-l", type=int, help="Limit number of results.", default=0)
 arg_parser.add_argument(
@@ -142,7 +147,6 @@ class Search:
         """Search for a word in the trie with wildcards (*) in the query."""
         if self.search_completed():
             return
-
         s_start, s_end = self.mmap.calculate_select(s_index)
         next_start_part = (
             start_part[:-1][:]
@@ -297,7 +301,12 @@ class Search:
                 # if we are at the end of the query and the last letter is a wildcard
                 # and we have perhaps a complete word at this point, even if there are no more letters
                 # in the query, we can still get a possible result
-                if n == len(query[0]) - 2 and query[0][-1] == 42:
+                if (
+                    n == len(query[0]) - 2
+                    and query[0][-1] == 42
+                    and not query[1]
+                    and not query[2]
+                ):
                     end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
                     if end_of_word == 1:
                         result = self.mmap.get_result(s_start + chr_index)
@@ -439,6 +448,10 @@ class Search:
                     continue
 
                 res.append(ord(c))
+        if esc:
+            # If the last character is an escape character, we treat it as a normal character
+            res.append(ord("\\"))
+            res.append(ord("\\"))
 
         if 42 in res:  # 42 is the ASCII code for '*'
             starts_with = (
@@ -485,14 +498,13 @@ def main():
     LIMIT = args.l if args.l > 0 else 0
     LEVENSHTEIN_QUERY = args.z
     RESULT_FORMAT = args.result if args.result in ("dict", "str") else "dict"
-    
+
     assert COLLECTION is not None, "Collection 'c' is required."
     assert QUERY is not None, "query/word 'w' is required."
 
     S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
     for res in enumerate(S.search(QUERY, result_format=RESULT_FORMAT)):
         print(res)
-
 
 
 if __name__ == "__main__":

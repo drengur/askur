@@ -5,11 +5,21 @@ Virkar eins og make_bin_trie, nema að það er bara
 listi yfir orð id og ekkert annað.
 """
 
+import os
+
+TESTING = os.getenv("ASKUR_TESTING", "0") == "1"
+
 import io
 import os
 import argparse
 import math as m
-from . import config
+import warnings
+
+if not TESTING:
+    from . import config
+else:
+    import config
+
 # import config
 
 
@@ -108,8 +118,12 @@ class Alphabet:
         If a character is not in the alphabet, it is added to the alphabet.
         If a character is a multibyte character, it is converted to 5 bytes.
         """
+        if word == "\\":
+            word = word + "\\"  # to handle single escape character
+        if word.endswith("\\") and not word.endswith("\\\\"):
+            word = word + "\\"  # to handle escape character at end of word
         res = bytearray()
-        for c in word:
+        for nr, c in enumerate(word):
             if ord(c) > 255:
                 bits = bin(ord(c))[2:].rjust(32, "0")
                 res.append(Alphabet.multibyte_char)
@@ -147,7 +161,7 @@ class Alphabet:
 class Trie:
     """A trie."""
 
-    def __init__(self, collection_name=None, reversed=False):
+    def __init__(self, collection_name="", reversed=False):
         """Create a new trie and associated files.
         usage:
             trie = Trie()
@@ -168,9 +182,10 @@ class Trie:
 
         # Check for environment variable first, then fall back to config file
         data_folder = os.environ.get("ASKUR_DATA_FOLDER")
-
         assert data_folder is not None, "DATA_FOLDER environment variable is not set."
-        assert collection_name is not None, "Collection name is not set.\ Exiting."
+        assert collection_name != "", (
+            "Collection name is not set.\nUse the --collection argument."
+        )
         frozen_folder = os.path.join(data_folder, self.collection_name)
         if not os.path.exists(frozen_folder):
             os.makedirs(frozen_folder, exist_ok=True)
@@ -443,11 +458,11 @@ class Trie:
         data_values = {v: self.alphabet.convert(k) for k, v in data_values.items()}
 
         total_sum = 0
-        max_tmp_short_text = 0
+        # max_tmp_short_text = 0
 
         for _, value in data_values.items():
             total_sum += len(value)
-            max_tmp_short_text = max(max_tmp_short_text, len(value))
+            # max_tmp_short_text = max(max_tmp_short_text, len(value))
 
         # byte_length er hægt að nota til að skipta út fyrir 32-bita lengdina
         nr_bytes_in_index_block = (
@@ -479,7 +494,7 @@ class Trie:
 
         short_texts = []
         sum_index = 0
-        len_values_index = [] # has same length and index ref as self._index
+        len_values_index = []  # has same length and index ref as self._index
         indices = {}
         for _, idxs in enumerate(self._index):
             multi_text = []
@@ -512,11 +527,9 @@ class Trie:
                 idxs_str = "_".join([str(i) for i in idxs])
                 if idxs_str not in indices:
                     short_texts.append(tmp_txt)
-                    value = bin(sum_index)[2:].rjust(
-                        nr_bits_in_index_block, "0"
-                    ) + bin(len(tmp_txt))[2:].rjust(
-                        nr_bits_in_value_block, "0"
-                    )
+                    value = bin(sum_index)[2:].rjust(nr_bits_in_index_block, "0") + bin(
+                        len(tmp_txt)
+                    )[2:].rjust(nr_bits_in_value_block, "0")
                     indices[idxs_str] = value
                     len_values_index.append(value)
                     sum_index += len(tmp_txt)
@@ -533,14 +546,18 @@ class Trie:
             if len(len_values_index) >= 10240:
                 with io.open(self.index_bits_filename, "ab") as f:
                     f.write(
-                        self.bit_bytes_to_bits("".join([txt for txt in len_values_index]))
+                        self.bit_bytes_to_bits(
+                            "".join([txt for txt in len_values_index])
+                        )
                     )
                     f.close()
                 len_values_index.clear()
 
         if len(len_values_index) > 0:
             with io.open(self.index_bits_filename, "ab") as f:
-                f.write(self.bit_bytes_to_bits("".join([txt for txt in len_values_index])))
+                f.write(
+                    self.bit_bytes_to_bits("".join([txt for txt in len_values_index]))
+                )
                 f.close()
 
         if len(short_texts) > 0:
@@ -651,7 +668,7 @@ def main():
 
     args = ARG_PARSER.parse_args()
     if args.file is not None and args.collection is not None:
-        trie = Trie(args.collection, reversed=args.reversed or False)
+        trie = Trie(collection_name=args.collection, reversed=args.reversed or False)
         trie.make_frozen_data(filename=args.file)
     else:
         ARG_PARSER.print_help()
