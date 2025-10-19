@@ -1,8 +1,14 @@
 import io
 import os
 
-# import configparser
 import mmap
+
+TESTING = os.getenv("ASKUR_TESTING", "0") == "1"
+if TESTING:
+    from alphabet import Alphabet as A
+else:
+    from . import alphabet
+    A = alphabet.Alphabet
 
 
 class Mapping:
@@ -352,25 +358,17 @@ class Mapping:
     def get_short_text(self, index, text_len) -> list[str]:
         """Returns the short text"""
         res = self._short_text[index : index + text_len]
-        text_arr = []
-        short_texts = []
+        unicodes = []
+        text_array = []
         i = 0
-        # Loop through the result bytes
         while i < len(res):
-            if res[i] == 141:  # new line of result
-                short_texts.append("".join(text_arr))
-                text_arr = []
-                i += 1
-                continue
-            if res[i] == 129:  # special character indicating a 4-byte character
-                bits = [bin(res[i + n])[2:].rjust(8, "0") for n in range(1, 5)]
-                text_arr.append(chr(int("".join(bits), 2)))
-                i += 5
-                continue
-            text_arr.append(chr(res[i]))
+            if res[i] == A.RES_SEPARATOR:
+                text_array.append(A.convert_int_to_str(unicodes))
+                unicodes = []
+            else:
+                unicodes.append(res[i])
             i += 1
+        if len(unicodes) > 0:
+            text_array.append(A.convert_int_to_str(unicodes))
+        return sorted(text_array)
 
-        if len(text_arr) > 0:
-            short_texts.append("".join(text_arr))
-            short_texts.sort()
-        return short_texts
