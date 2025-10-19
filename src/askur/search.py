@@ -2,17 +2,21 @@
 import os
 import argparse
 
-
-if not os.getenv("ASKUR_TESTING", "0") == "1":
+TESTING = os.getenv("ASKUR_TESTING", "0") == "1"
+if TESTING:
+    import config
+    from alphabet import Alphabet as A
+    from filemapping_py import Mapping
+else:
     from . import config
+    from . import alphabet
+
+    A = alphabet.Alphabet
 
     try:
         from .filemapping import Mapping
     except ImportError:
         from .filemapping_py import Mapping
-else:
-    import config
-    from filemapping_py import Mapping
 
 
 arg_parser = argparse.ArgumentParser(
@@ -336,6 +340,8 @@ class Search:
         if len(query) > 1 and query[-1] == 42:
             query = query[:-1][:]
 
+        return A.convert_int_to_str(query)
+
         if self.multibyte_char not in query:
             return "".join([chr(c if c >= 0 else -1 * c) for c in query])
         # 129 is the ASCII code for start of 4(5) byte char
@@ -429,12 +435,8 @@ class Search:
 
         for c in query:
             if ord(c) > 255:
-                res.append(
-                    129
-                )  # 129 is unused ASCII code, used to indicate start of 4(5) byte char
-                bits = bin(ord(c))[2:].rjust(32, "0")
-                for i in range(0, 32, 8):
-                    res.append(int(bits[i : i + 8], 2))
+                multi_bytes = A.convert(c)
+                res.append(b for b in multi_bytes)
             else:
                 if c == "\\" and not esc:
                     esc = True
