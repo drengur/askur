@@ -9,6 +9,8 @@ import io
 import os
 import mmap
 
+from alphabet import Alphabet
+A = Alphabet()
 cdef class Mapping:
     # C-level attributes for maximum speed
     cdef public object _trie
@@ -329,47 +331,20 @@ cdef class Mapping:
 
     cpdef list get_short_text(self, int index, int text_len):
         """Get short text using safe mmap access"""
-        cdef list text_arr = []
-        cdef list short_texts = []
+        cdef list text_array = []
         cdef int i = 0
-        cdef int current_byte
-        cdef int unicode_val
-        cdef str char_str
+        cdef list unicodes = []
+        cdef list res = []
 
-        # Get the result slice safely
-        res = self._short_text[index:index + text_len]
-
+        res = self._short_text[index : index + text_len]
         while i < len(res):
-            current_byte = res[i]
-            
-            if current_byte == 141:  # new line of result
-                if text_arr:
-                    short_texts.append("".join(text_arr))
-                    text_arr = []
-                i += 1
-                continue
-            
-            if current_byte == 129:  # special character indicating a 4-byte character
-                if i + 4 < len(res):
-                    # Get 4 bytes safely
-                    unicode_bytes = res[i + 1:i + 5]
-                    bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
-                    try:
-                        unicode_val = int("".join(bits), 2)
-                        char_str = chr(unicode_val)
-                        text_arr.append(char_str)
-                    except (ValueError, OverflowError):
-                        text_arr.append('?')  # fallback for invalid unicode
-                    i += 5
-                else:
-                    i += 1
-                continue
-            
-            text_arr.append(chr(current_byte))
+            if res[i] == A.RES_SEPARATOR:
+                text_array.append(A.convert_int_to_str(unicodes))
+                unicodes = []
+            else:
+                unicodes.append(res[i])
             i += 1
+        if len(unicodes) > 0:
+            text_array.append(A.convert_int_to_str(unicodes))
+        return text_array.sort()
 
-        if text_arr:
-            short_texts.append("".join(text_arr))
-        
-        short_texts.sort()
-        return short_texts
