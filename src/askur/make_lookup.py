@@ -17,8 +17,11 @@ import warnings
 
 if not TESTING:
     from . import config
+    from . import alphabet
+    A = alphabet.Alphabet
 else:
     import config
+    from alphabet import Alphabet as A
 
 # import config
 
@@ -71,91 +74,6 @@ class Node:
         self.index.append(idx)
 
 
-class Alphabet:
-    # None printable characters:
-    # 129 (0x81)
-    # 141 (0x8D)
-    # 143 (0x8F)
-    # 144 (0x90)
-    # 157 (0x9D)
-    multibyte_char = 129
-    reversed_char = 143  # This is a character that is not in the alphabet
-    reversed_index = False
-
-    def __init__(self, reversed=False):
-        assert os.getenv("ASKUR_ALPHABET") is not None, (
-            "ALPHABET environment variable is not set."
-        )
-
-        self._alphabet = {ord(c): n for n, c in enumerate(os.getenv("ASKUR_ALPHABET"))}
-        self._alphabet.setdefault(self.multibyte_char, len(self._alphabet))
-        self._alphabet.setdefault(self.reversed_char, len(self._alphabet))
-
-        self._used_alphabet = []  # used alphabet is empty at the start and gets filled as words are added
-        self.reversed_index = reversed
-
-    @property
-    def alphabet(self):
-        return self._alphabet
-
-    def add(self, key):
-        if isinstance(key, str):
-            key = ord(key)
-        self._alphabet.setdefault(key, len(self._alphabet))
-
-    def get_alphabet_index(self, key: int):
-        return self._alphabet.get(key)
-
-    @property
-    def inv_alphabet(self):
-        """Inverse alphabet. v is the index, k is the character.
-        example: {0: 'a', 1: 'b', ...}
-        """
-        return {v: k for k, v in self._alphabet.items()}
-
-    def convert(self, word: str) -> bytearray:
-        """Convert a word to a list of alphabet indices.
-        If a character is not in the alphabet, it is added to the alphabet.
-        If a character is a multibyte character, it is converted to 5 bytes.
-        """
-        if word == "\\":
-            word = word + "\\"  # to handle single escape character
-        if word.endswith("\\") and not word.endswith("\\\\"):
-            word = word + "\\"  # to handle escape character at end of word
-        res = bytearray()
-        for nr, c in enumerate(word):
-            if ord(c) > 255:
-                bits = bin(ord(c))[2:].rjust(32, "0")
-                res.append(Alphabet.multibyte_char)
-                for i in range(0, 32, 8):
-                    num = int(bits[i : i + 8], 2)
-                    self.add(num)
-                    res.append(num)
-                    if num not in self._used_alphabet:
-                        self._used_alphabet.append(num)
-                continue
-            if ord(c) not in self._alphabet:
-                self.add(c)
-            res.append(ord(c))
-            if ord(c) not in self._used_alphabet:
-                self._used_alphabet.append(ord(c))
-        return res
-
-    @property
-    def used_alphabet(self) -> list:
-        """Return the used letters in the alphabet."""
-        return self._used_alphabet
-
-    @property
-    def get_used(self) -> bytearray:
-        """Return the used letters in the alphabet as a bytearray."""
-        alphabet_bytes = bytearray()
-        if self.reversed_index:
-            alphabet_bytes.append(self.reversed_char)
-        for k in self._alphabet.keys():
-            if k in self._used_alphabet and k not in alphabet_bytes:
-                alphabet_bytes.append(k)
-        return alphabet_bytes
 
 
 class Trie:
@@ -178,7 +96,7 @@ class Trie:
         self.reversed = reversed  # make reversed index if True
 
         # The alphabet used in the trie.
-        self.alphabet = Alphabet(reversed)
+        self.alphabet = A(reversed)
 
         # Check for environment variable first, then fall back to config file
         data_folder = os.environ.get("ASKUR_DATA_FOLDER")
@@ -314,6 +232,7 @@ class Trie:
                 else:
                     self._is_eow.append(0)
                 child_nodes.append(node.letters[w_key])
+
         self.level_order_tree(child_nodes, inv_alphabet)
 
     def generate_data(self, big_string):
@@ -454,15 +373,12 @@ class Trie:
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
         # invert the dictionary:
-        # data_values = {v: self.modify_word(k) for k, v in data_values.items()}
         data_values = {v: self.alphabet.convert(k) for k, v in data_values.items()}
 
         total_sum = 0
-        # max_tmp_short_text = 0
 
         for _, value in data_values.items():
             total_sum += len(value)
-            # max_tmp_short_text = max(max_tmp_short_text, len(value))
 
         # byte_length er hægt að nota til að skipta út fyrir 32-bita lengdina
         nr_bytes_in_index_block = (
