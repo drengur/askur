@@ -1,29 +1,25 @@
 #! /usr/bin/env python3
 
-"""Make lookup tables for the trie.
-Virkar eins og make_bin_trie, nema að það er bara
-listi yfir orð id og ekkert annað.
+"""Make lookup tables for the LOUDS trie
+from input file
 """
 
 import os
 
-TESTING = os.getenv("ASKUR_TESTING", "0") == "1"
-
+A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 import io
-import os
 import argparse
 import math as m
-import warnings
 
-if not TESTING:
-    from . import config
-    from . import alphabet
-    A = alphabet.Alphabet
-else:
+
+if A_DEVELOPMENT:
     import config
     from alphabet import Alphabet as A
+else:
+    from . import config
+    from . import alphabet
 
-# import config
+    A = alphabet.Alphabet
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
@@ -74,16 +70,21 @@ class Node:
         self.index.append(idx)
 
 
-
-
 class Trie:
     """A trie."""
 
-    def __init__(self, collection_name="", reversed=False):
-        """Create a new trie and associated files.
+    def __init__(self, collection_name="", reversed=False, field_separator=";"):
+        """Creates a new trie with associated files.
+        Writes the trie structure to disk in LOUDS format along with
+        the head child array (HC), select array (S), end of word array (EOW),
+        index array (INDEX), and short text array (SHORT_TEXT).
+
         usage:
             trie = Trie()
             trie.make_frozen_data()
+        Args:
+            reversed: If True, create a reversed index.
+            collection_name: The name of the collection to create.
         """
 
         self._trie = bytearray()  # the LOUDS representation of the trie
@@ -94,6 +95,7 @@ class Trie:
         self._short_text = []  # the short text array (the words in the trie)
         self.collection_name = collection_name
         self.reversed = reversed  # make reversed index if True
+        self.field_separator = field_separator
 
         # The alphabet used in the trie.
         self.alphabet = A(reversed)
@@ -133,16 +135,19 @@ class Trie:
         # the root node of the trie
         self.root = Node()
 
-    def make_frozen_data(self, filename=None):
+    def make_frozen_data(self, input_data_file: str):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
-        nr_lines_in_file = sum(1 for line in open(filename))
-        print(f" Reading from file {filename}. Number of lines: {nr_lines_in_file}")
+        nr_lines_in_file = sum(1 for line in open(input_data_file))
+        assert nr_lines_in_file > 0, f"The input file {input_data_file} is empty."
+        print(
+            f" Reading from file {input_data_file}. Number of lines: {nr_lines_in_file}"
+        )
         data_values = {}
         index = 0
         line_nr = 0
 
-        for word_key, word_value in self.read_from_file(filename):
+        for word_key, word_value in self.read_from_file(input_data_file):
             line_nr += 1
             if line_nr % 1000 == 0:
                 print(f"Reading {line_nr / nr_lines_in_file * 100:.2f}%", end="\r")
@@ -159,7 +164,8 @@ class Trie:
                 index = data_values[word_value]
             self._add(key, index)
             if self.reversed:
-                # If reversed, we add the word in reverse order
+                # If reversed, we add the word to the trie in reverse order
+                # whith a special reversed character at the beginning
                 key.reverse()
                 key.insert(0, self.alphabet.reversed_char)
                 self._add(key, index)
@@ -191,16 +197,27 @@ class Trie:
     def read_from_file(self, filename):
         """Read a file line by line."""
         file = io.open(filename, "r", encoding="utf-8")
+        nr_cols = 0
         for line in file:
             if not line.strip():
                 continue
-            word_key = line.split(";", 1)[0].strip()
+            word_key = line.split(self.field_separator, 1)[0].strip()
             word_value = (
-                None if len(line.split(";")) == 1 else line.split(";", 1)[1].strip()
+                None
+                if len(line.split(self.field_separator)) == 1
+                else line.split(self.field_separator, 1)[1].strip()
             )
-            assert word_value is not None, (
-                f"Missing word value for {word_key}: {word_value}"
-            )
+            if nr_cols == 2 and word_value is None:
+                assert False, (
+                    f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}\nExpected two columns, got one.\n{'*' * 50}"
+                )
+            if nr_cols == 1 and word_value is not None:
+                assert False, (
+                    f"\n{'*' * 50}\n  Unexpected word value for '{word_key}'\n  Expected one column, got two.\n{'*' * 50}"
+                )
+            nr_cols = 1 if word_value is None else 2
+            if nr_cols == 1:
+                word_value = "1"
             yield word_key, word_value
         file.close()
 
@@ -585,7 +602,7 @@ def main():
     args = ARG_PARSER.parse_args()
     if args.file is not None and args.collection is not None:
         trie = Trie(collection_name=args.collection, reversed=args.reversed or False)
-        trie.make_frozen_data(filename=args.file)
+        trie.make_frozen_data(input_data_file=args.file)
     else:
         ARG_PARSER.print_help()
 
