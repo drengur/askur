@@ -47,8 +47,15 @@ class Search:
         self.levenshtein = use_levenshtein
         self.limit = limit  # 0 means no limit
         self._results = []
-        self.multibyte_char = 129  # ASCII code for start of 4(5) byte char
         self.reversed_char = 143  # ASCII code for start of reversed word
+
+    @property
+    def check_if_key_exists(self):
+        return self.mmap.check_if_key_exists
+
+    @check_if_key_exists.setter
+    def check_if_key_exists(self, value: bool):
+        self.mmap.set_check_key_exists(value)
 
     def _add_result(self, result):
         """Add a result to the search results."""
@@ -59,6 +66,10 @@ class Search:
                 # If the search is reversed, we need to reverse the result
                 # and remove the first character (143)
                 result = {k[::-1][:-1]: v for k, v in result.items()}
+            if self.check_if_key_exists:
+                # If we are only checking if the key exists, we can return a simple result
+                self._results.append(list(result.keys())[0])
+                return
             self._results.append(result)
 
     def results(self):
@@ -124,8 +135,7 @@ class Search:
                 42,
                 95,
                 self.reversed_char,
-                self.multibyte_char,
-            )  # 143 is reversed start, 129 is 4(5) byte char
+            )
         ]
 
         new_query = [None, None, None]
@@ -342,51 +352,27 @@ class Search:
 
         return A.convert_int_to_str(query)
 
-        if self.multibyte_char not in query:
-            return "".join([chr(c if c >= 0 else -1 * c) for c in query])
-        # 129 is the ASCII code for start of 4(5) byte char
-        # so we need to convert the 4(5) byte char back to a character
-        # this is done by taking the next 4 bytes and converting them to a character
-        # then we continue with the rest of the query
-        res = []
-        i = 0
-        while i < len(query):
-            c = query[i]
-            if c == self.multibyte_char:  # 129
-                bits = ""
-                for j in range(1, 5):
-                    bits += bin(query[i + j])[2:].rjust(8, "0")
-                res.append(chr(int(bits, 2)))
-                i += 5
-            else:
-                res.append(chr(c if c >= 0 else -1 * c))
-                i += 1
-        return "".join(res)
-
-    def fuzzy_search(self, query, limit=0, result_format="dict"):
+    def fuzzy_search(self, query, result_format="dict"):
         """Fuzzy search for a word in the trie.
         This method uses Levenshtein distance to find similar words.
         """
         self.levenshtein = True
-        self.limit = limit
         self.search(query)
         self.levenshtein = False
-        if result_format == "str":
-            return self.result_as_list()
         return self.results()
 
-    def exists(self, query, limit=1):
+    def exists(self, query) -> list[str]:
         """
         For faster search results.
         Check if a word exists in the collection.
         This method does not return the value associated with the word,
         it only checks if the word exists.
+        returns list of words.
         """
-        self.mmap.set_check_key_exists(True)
-        self.limit = limit
+        self.check_if_key_exists = True
         self.search(query)
-        self.mmap.set_check_key_exists(False)
-        return 1 if self.results() else 0
+        self.check_if_key_exists = False
+        return self.results()
 
     def search(self, query, result_format="dict") -> str:
         modified_query = self._prepare_query(query)
