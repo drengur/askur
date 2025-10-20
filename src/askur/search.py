@@ -2,8 +2,9 @@
 import os
 import argparse
 
-TESTING = os.getenv("ASKUR_TESTING", "0") == "1"
-if TESTING:
+A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
+
+if A_DEVELOPMENT:
     import config
     from alphabet import Alphabet as A
     from filemapping_py import Mapping
