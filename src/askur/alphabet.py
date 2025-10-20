@@ -2,13 +2,7 @@ import os
 
 
 class Alphabet:
-    # None printable characters:
-    # 129 (0x81)
-    # 141 (0x8D)
-    # 143 (0x8F)
-    # 144 (0x90)
-    # 157 (0x9D)
-    multibyte_char = 129
+    
     reversed_char = 143  # This is a character that is not in the alphabet
     reversed_index = False
     RES_SEPARATOR = 141 # separator between results for multiple results in the lookup
@@ -19,7 +13,6 @@ class Alphabet:
         )
 
         self._alphabet = {ord(c): n for n, c in enumerate(os.getenv("ASKUR_ALPHABET"))}
-        self._alphabet.setdefault(self.multibyte_char, len(self._alphabet))
         self._alphabet.setdefault(self.reversed_char, len(self._alphabet))
 
         self._used_alphabet = []  # used alphabet is empty at the start and gets filled as words are added
