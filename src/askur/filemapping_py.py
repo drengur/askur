@@ -1,10 +1,9 @@
 import io
 import os
-
 import mmap
 
-TESTING = os.getenv("ASKUR_TESTING", "0") == "1"
-if TESTING:
+A_DEVELOPEMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
+if A_DEVELOPEMENT:
     from alphabet import Alphabet as A
 else:
     from . import alphabet
