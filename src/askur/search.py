@@ -278,7 +278,6 @@ class Search:
         for i_letter in chr_range:
             if i_letter == 95 or i_letter == 42:  # "_" or "*"
                 i_letter *= -1  # Escape the character
-                # continue
             if self.search_completed():
                 return
             next_query[0] = [i_letter] + query[0][start + 1 :][:]
@@ -350,7 +349,9 @@ class Search:
             return ""
         if len(query) > 1 and query[-1] == 42:
             query = query[:-1][:]
-
+        for i, val in enumerate(query):
+            if val < 0:
+                query[i] *= -1
         return A.convert_int_to_str(query)
 
     def fuzzy_search(self, query, result_format="dict"):
@@ -437,10 +438,6 @@ class Search:
                     continue
 
                 res.append(ord(c))
-        if esc:
-            # If the last character is an escape character, we treat it as a normal character
-            res.append(ord("\\"))
-            res.append(ord("\\"))
 
         if 42 in res:  # 42 is the ASCII code for '*'
             starts_with = (
