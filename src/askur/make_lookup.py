@@ -194,6 +194,23 @@ class Trie:
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(self.alphabet.get_used)
 
+    def split_field(self, line: str) -> tuple:
+        """Split a line into key and value based on the field separator."""
+        esc = False
+        key = ""
+        value = ""
+        for i, c in enumerate(line):
+            if c == "\\":
+                esc = not esc
+                continue
+            if c == self.field_separator and not esc:
+                value = line[i + 1 :]
+                break
+            key += c
+            esc = False
+
+        return key, value
+
     def read_from_file(self, filename):
         """Read a file line by line."""
         file = io.open(filename, "r", encoding="utf-8")
@@ -201,17 +218,12 @@ class Trie:
         for line in file:
             if not line.strip():
                 continue
-            word_key = line.split(self.field_separator, 1)[0].strip()
-            word_value = (
-                None
-                if len(line.split(self.field_separator)) == 1
-                else line.split(self.field_separator, 1)[1].strip()
-            )
-            if nr_cols == 2 and word_value is None:
+            word_key, word_value = self.split_field(line.strip())
+            if nr_cols == 2 and word_value == "":
                 assert False, (
                     f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}\nExpected two columns, got one.\n{'*' * 50}"
                 )
-            if nr_cols == 1 and word_value is not None:
+            if nr_cols == 1 and word_value != "":
                 assert False, (
                     f"\n{'*' * 50}\n  Unexpected word value for '{word_key}'\n  Expected one column, got two.\n{'*' * 50}"
                 )
