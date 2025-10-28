@@ -38,17 +38,26 @@ arg_parser.add_argument(
 arg_parser.add_argument(
     "-r", "--result", type=str, help="result format (dict or str). Default is dict."
 )
+arg_parser.add_argument(
+    "-i",
+    "--insensitive",
+    action="store_true",
+    help="Use case insensitive search.",
+)
 
 
 class Search:
     """Search for words in the LOUDS trie."""
 
-    def __init__(self, collection, limit=0, use_levenshtein=False) -> None:
+    def __init__(
+        self, collection, limit=0, case_insensitive=False, use_levenshtein=False
+    ) -> None:
         self.mmap = Mapping(collection)
         self.levenshtein = use_levenshtein
         self.limit = limit  # 0 means no limit
         self._results = []
         self.reversed_char = 143  # ASCII code for start of reversed word
+        self.case_insensitive = case_insensitive
 
     @property
     def check_if_key_exists(self):
@@ -102,6 +111,14 @@ class Search:
         if self.limit > 0 and len(self._results) >= self.limit:
             return True
         return False
+
+    def case_folding(self, char: int) -> int:
+        """Convert character to lower case if it's upper case and vice versa."""
+        if (char >= 65 and char <= 90) or (char >= 192 and char <= 222):
+            return char + 32
+        if (char >= 97 and char <= 122) or (char >= 224 and char <= 254):
+            return char - 32
+        return char
 
     @property
     def levenshtein(self) -> bool:
@@ -276,12 +293,66 @@ class Search:
             next_query.append(query[0][0:start])
 
         for i_letter in chr_range:
-            if i_letter == 95 or i_letter == 42:  # "_" or "*"
-                i_letter *= -1  # Escape the character
             if self.search_completed():
                 return
+            if i_letter == 95 or i_letter == 42:  # "_" or "*"
+                i_letter *= -1  # Escape the character
             next_query[0] = [i_letter] + query[0][start + 1 :][:]
             self._search(next_query, s_index)
+
+    def case_insensitive_search(self, query, s_index, start=0) -> None:
+        """
+        Search for a word in the trie from a given index.
+        This method handles case insensitive search by checking both upper and lower case letters.
+        """
+        if start >= len(query[0]):
+            return
+        chr_range = []
+        next_query = [[], query[1], query[2]]
+        s_start, s_end = self.mmap.calculate_select(s_index)
+        range = self.mmap.get_trie_range(s_start, s_end)
+        i_letter = query[0][start]
+        i_fold_letter = self.case_folding(i_letter)
+        if range.find(i_letter) >= 0:
+            chr_range.append(i_letter)
+        if range.find(i_fold_letter) >= 0:
+            chr_range.append(i_fold_letter)
+
+        for nr, ic_letter in enumerate(chr_range):
+            chr_index = range.find(ic_letter)
+            nr_hc = self.mmap.calculate_hc(s_start + chr_index)
+            if nr_hc == 0 and start == len(query[0]) - 1:
+                if self.mmap.is_end_of_word(s_start + chr_index):
+                    result = self.mmap.get_result(s_start + chr_index)
+                    word = self._query_to_string(query[0][:][0:start]) + chr(ic_letter)
+                    if len(query) > 3:
+                        word = self._query_to_string(query[3]) + word
+                    self._add_result({word: result})
+                if nr < len(chr_range) - 1:
+                    continue
+                else:
+                    break
+
+            if self.search_completed():
+                return
+            s_index_next = nr_hc + 1
+
+            next_query[0] = query[0][:]
+            next_query[0][start] = ic_letter
+
+            next_query2 = [[], query[1], query[2]]
+            next_query2[0] = query[0][:][start:]
+            next_query2[0][0] = ic_letter
+            if len(query) > 3:
+                next_query2.append(query[3] + query[0][:][0:start])
+            else:
+                next_query2.append(query[0][:][0:start])
+            if ic_letter == 95 or ic_letter == 42:  # "_" or "*"
+                ic_letter *= -1  # Escape the character
+            
+            self._search(next_query2, s_index)
+            self.case_insensitive_search(next_query, s_index_next, start + 1)
+
 
     def _search(self, query, s_index) -> None:
         chr_index = -1
@@ -387,6 +458,9 @@ class Search:
                 print("Invalid query for Levenshtein search.")
                 return []
             self._levhenshtein_find(modified_query)
+        elif self.case_insensitive:
+            """Using case insensitive search."""
+            self.case_insensitive_search(modified_query, 1)
         elif modified_query[0] is None:
             """Using wildcards in start of query:"""
             self._wildcard_search(1, [], modified_query[1], modified_query[2])
@@ -483,12 +557,18 @@ def main():
     QUERY = args.w
     LIMIT = args.l if args.l > 0 else 0
     LEVENSHTEIN_QUERY = args.z
+    CASE_INSENSITIVE = args.insensitive
     RESULT_FORMAT = args.result if args.result in ("dict", "str") else "dict"
 
     assert COLLECTION is not None, "Collection 'c' is required."
     assert QUERY is not None, "query/word 'w' is required."
 
-    S = Search(COLLECTION, LIMIT, use_levenshtein=LEVENSHTEIN_QUERY)
+    S = Search(
+        COLLECTION,
+        LIMIT,
+        case_insensitive=CASE_INSENSITIVE,
+        use_levenshtein=LEVENSHTEIN_QUERY,
+    )
     for res in enumerate(S.search(QUERY, result_format=RESULT_FORMAT)):
         print(res)
 
