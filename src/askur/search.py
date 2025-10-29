@@ -173,12 +173,13 @@ class Search:
                 new_word[n] = i_letter
                 self._search([new_word, None, None], s_index=1)
 
-    def _wildcard_search(
-        self, s_index, start_part, middle_parts, end_part, original_start_part=None
-    ) -> None:
+    def _wildcard_search(self, s_index, query, original_start_part=None) -> None:
         """Search for a word in the trie with wildcards (*) in the query."""
         if self.search_completed():
             return
+        start_part = query[0]
+        middle_parts = query[1]
+        end_part = query[2]
         s_start, s_end = self.mmap.calculate_select(s_index)
         next_start_part = (
             start_part[:-1][:]
@@ -216,16 +217,16 @@ class Search:
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
                 word = self._query_to_string(next_start_part)
+                if original_start_part:
+                    word = self._query_to_string(original_start_part) + word
                 self._add_result({word: result})
             # If we have a match, continue searching
-            # if self.mmap.has_child(s_start + idx):
+            # bitsum is nr_children (nr_hc)
             bitsum = self.mmap.calculate_hc(s_start + idx)
             if bitsum > 0:
                 self._wildcard_search(
                     bitsum + 1,
-                    next_start_part,
-                    middle_parts,
-                    end_part,
+                    [next_start_part, middle_parts, end_part],
                     original_start_part,
                 )
             next_start_part.pop()
@@ -251,7 +252,6 @@ class Search:
 
         word_len = len(word_part)
         search_start = 0
-
         # MUST match ALL patterns in the given order
         for pattern in word_parts:
             pattern_len = len(pattern)
@@ -261,10 +261,20 @@ class Search:
             for i in range(search_start, word_len - pattern_len + 1):
                 match = True
                 for j in range(pattern_len):
-                    # 95 represents wildcard character '_'
-                    if pattern[j] != 95 and pattern[j] != word_part[i + j]:
-                        match = False
-                        break
+                    if self.case_insensitive:
+                        # Case insensitive comparison
+                        if (
+                            pattern[j] != 95
+                            and pattern[j] != word_part[i + j]
+                            and pattern[j] != self.case_folding(word_part[i + j])
+                        ):
+                            match = False
+                            break
+                    else:
+                        # 95 represents wildcard character '_'
+                        if pattern[j] != 95 and pattern[j] != word_part[i + j]:
+                            match = False
+                            break
 
                 if match:
                     # Pattern found! Next pattern must start after this one
@@ -305,18 +315,24 @@ class Search:
         Search for a word in the trie from a given index.
         This method handles case insensitive search by checking both upper and lower case letters.
         """
+
         if start >= len(query[0]):
             return
+
+        if len(query) == 3:
+            query.append([])
         chr_range = []
-        next_query = [[], query[1], query[2]]
+        next_query = [[], query[1], query[2], query[3] or []]
         s_start, s_end = self.mmap.calculate_select(s_index)
         range = self.mmap.get_trie_range(s_start, s_end)
         i_letter = query[0][start]
         i_fold_letter = self.case_folding(i_letter)
         if range.find(i_letter) >= 0:
             chr_range.append(i_letter)
-        if range.find(i_fold_letter) >= 0:
+        if i_letter != i_fold_letter and range.find(i_fold_letter) >= 0:
             chr_range.append(i_fold_letter)
+        if chr_range == [] and i_letter == 95:  #  "_"
+            chr_range = range
 
         for nr, ic_letter in enumerate(chr_range):
             chr_index = range.find(ic_letter)
@@ -340,19 +356,18 @@ class Search:
             next_query[0] = query[0][:]
             next_query[0][start] = ic_letter
 
-            next_query2 = [[], query[1], query[2]]
+            next_query2 = [None, query[1], query[2]]
             next_query2[0] = query[0][:][start:]
             next_query2[0][0] = ic_letter
             if len(query) > 3:
                 next_query2.append(query[3] + query[0][:][0:start])
             else:
                 next_query2.append(query[0][:][0:start])
-            if ic_letter == 95 or ic_letter == 42:  # "_" or "*"
-                ic_letter *= -1  # Escape the character
-            
-            self._search(next_query2, s_index)
-            self.case_insensitive_search(next_query, s_index_next, start + 1)
 
+            if next_query2[0][-1] == 42 and len(next_query2[0]) == 2:
+                self._search(next_query2, s_index)
+
+            self.case_insensitive_search(next_query, s_index_next, start + 1)
 
     def _search(self, query, s_index) -> None:
         chr_index = -1
@@ -360,7 +375,9 @@ class Search:
             return
         for n, i_letter in enumerate(query[0]):
             if i_letter == 42:  # "*"
-                self._wildcard_search(s_index, query[0], query[1], query[2])
+                self._wildcard_search(
+                    s_index, query, query[3] if len(query) > 3 else None
+                )
                 return
             if i_letter == 95:  # "_"
                 self._underscore_search(s_index, query, n)
