@@ -226,7 +226,12 @@ class Search:
             if bitsum > 0:
                 self._wildcard_search(
                     bitsum + 1,
-                    [next_start_part, middle_parts, end_part, query[3] if len(query) > 3 else None],
+                    [
+                        next_start_part,
+                        middle_parts,
+                        end_part,
+                        query[3] if len(query) > 3 else None,
+                    ],
                     original_start_part,
                 )
             next_start_part.pop()
@@ -337,13 +342,15 @@ class Search:
         for nr, ic_letter in enumerate(chr_range):
             chr_index = range.find(ic_letter)
             nr_hc = self.mmap.calculate_hc(s_start + chr_index)
-            if nr_hc == 0 and start == len(query[0]) - 1:
-                if self.mmap.is_end_of_word(s_start + chr_index):
-                    result = self.mmap.get_result(s_start + chr_index)
-                    word = self._query_to_string(query[0][:][0:start]) + chr(ic_letter)
-                    if len(query) > 3:
-                        word = self._query_to_string(query[3]) + word
-                    self._add_result({word: result})
+
+            if start == len(query[0]) - 1 and self.mmap.is_end_of_word(
+                s_start + chr_index
+            ):
+                result = self.mmap.get_result(s_start + chr_index)
+                word = self._query_to_string(query[0][:][0:start]) + chr(ic_letter)
+                if len(query) > 3:
+                    word = self._query_to_string(query[3]) + word
+                self._add_result({word: result})
                 if nr < len(chr_range) - 1:
                     continue
                 else:
