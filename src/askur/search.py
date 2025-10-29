@@ -217,8 +217,8 @@ class Search:
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
                 word = self._query_to_string(next_start_part)
-                if original_start_part:
-                    word = self._query_to_string(original_start_part) + word
+                if len(query) > 3:
+                    word = self._query_to_string(query[3]) + word
                 self._add_result({word: result})
             # If we have a match, continue searching
             # bitsum is nr_children (nr_hc)
@@ -226,7 +226,7 @@ class Search:
             if bitsum > 0:
                 self._wildcard_search(
                     bitsum + 1,
-                    [next_start_part, middle_parts, end_part],
+                    [next_start_part, middle_parts, end_part, query[3] if len(query) > 3 else None],
                     original_start_part,
                 )
             next_start_part.pop()
@@ -261,6 +261,7 @@ class Search:
             for i in range(search_start, word_len - pattern_len + 1):
                 match = True
                 for j in range(pattern_len):
+                    # 95 represents wildcard character '_'
                     if self.case_insensitive:
                         # Case insensitive comparison
                         if (
@@ -271,7 +272,6 @@ class Search:
                             match = False
                             break
                     else:
-                        # 95 represents wildcard character '_'
                         if pattern[j] != 95 and pattern[j] != word_part[i + j]:
                             match = False
                             break
@@ -375,9 +375,7 @@ class Search:
             return
         for n, i_letter in enumerate(query[0]):
             if i_letter == 42:  # "*"
-                self._wildcard_search(
-                    s_index, query, query[3] if len(query) > 3 else None
-                )
+                self._wildcard_search(s_index, query)
                 return
             if i_letter == 95:  # "_"
                 self._underscore_search(s_index, query, n)
@@ -475,12 +473,12 @@ class Search:
                 print("Invalid query for Levenshtein search.")
                 return []
             self._levhenshtein_find(modified_query)
-        elif self.case_insensitive:
+        elif self.case_insensitive and modified_query[0] is not None:
             """Using case insensitive search."""
             self.case_insensitive_search(modified_query, 1)
         elif modified_query[0] is None:
             """Using wildcards in start of query:"""
-            self._wildcard_search(1, [], modified_query[1], modified_query[2])
+            self._wildcard_search(1, modified_query)
         else:
             """Using no wildcards in start of query:"""
             self._search(modified_query, 1)
