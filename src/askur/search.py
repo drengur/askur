@@ -53,11 +53,11 @@ class Search:
         self, collection, limit=0, case_insensitive=False, use_levenshtein=False
     ) -> None:
         self.mmap = Mapping(collection)
-        self.levenshtein = use_levenshtein
-        self.limit = limit  # 0 means no limit
+        self._levenshtein = use_levenshtein
+        self._limit = limit  # 0 means no limit
         self._results = []
-        self.reversed_char = 143  # ASCII code for start of reversed word
-        self.case_insensitive = case_insensitive
+        self._reversed_char = 143  # ASCII code for start of reversed word
+        self._case_insensitive = case_insensitive
 
     @property
     def check_if_key_exists(self):
@@ -69,7 +69,7 @@ class Search:
 
     def _add_result(self, result):
         """Add a result to the search results."""
-        if self.limit > 0 and len(self._results) >= self.limit:
+        if self._limit > 0 and len(self._results) >= self._limit:
             return
         if result not in self._results:
             if self.reversed:
@@ -108,7 +108,7 @@ class Search:
 
     def search_completed(self) -> bool:
         """Check if the search is completed."""
-        if self.limit > 0 and len(self._results) >= self.limit:
+        if self._limit > 0 and len(self._results) >= self._limit:
             return True
         return False
 
@@ -122,18 +122,32 @@ class Search:
 
     @property
     def levenshtein(self) -> bool:
-        return self.use_levenshtein
+        return self._levenshtein
 
     @levenshtein.setter
     def levenshtein(self, use_levenshtein: bool):
         """Set whether to use Levenshtein distance for the search."""
-        self.use_levenshtein = use_levenshtein
+        self._levenshtein = use_levenshtein
 
-    def set_reversed(self, reversed: bool):
+    @property
+    def reversed(self) -> bool:
+        """return  whether to search in reversed order."""
+        return self._reversed and self.mmap.is_reversed()
+    
+    @reversed.setter
+    def reversed(self, reversed: bool):
         """Set whether to search in reversed order."""
-        self.reversed = reversed and self.mmap.is_reversed()
+        self._reversed = reversed and self.mmap.is_reversed()
 
-    def _levhenshtein_find(self, query):
+    @property
+    def case_insensitive(self) -> bool:
+        return self._case_insensitive
+
+    @case_insensitive.setter
+    def case_insensitive(self, value: bool):
+        self._case_insensitive = value
+
+    def levhenshtein_find(self, query):
         """Method to find similar words
         Levenshtein distance of 1 is used to find similar words
         """
@@ -152,10 +166,9 @@ class Search:
             not in (
                 42,
                 95,
-                self.reversed_char,
+                self._reversed_char,
             )
         ]
-
         new_query = [None, None, None]
         for i_letter in alphabet:
             # add extra letter at the start of the word
@@ -189,7 +202,7 @@ class Search:
             else []
         )
         for idx, i_letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
-            if i_letter == self.reversed_char:
+            if i_letter == self._reversed_char:
                 continue
             if i_letter == 95 or i_letter == 42:  # "_" or "*"
                 i_letter *= -1
@@ -315,7 +328,7 @@ class Search:
             next_query[0] = [i_letter] + query[0][start + 1 :][:]
             self._search(next_query, s_index)
 
-    def case_insensitive_search(self, query, s_index, start=0) -> None:
+    def _case_insensitive_search(self, query, s_index, start=0) -> None:
         """
         Search for a word in the trie from a given index.
         This method handles case insensitive search by checking both upper and lower case letters.
@@ -374,7 +387,7 @@ class Search:
             if next_query2[0][-1] == 42 and len(next_query2[0]) == 2:
                 self._search(next_query2, s_index)
 
-            self.case_insensitive_search(next_query, s_index_next, start + 1)
+            self._case_insensitive_search(next_query, s_index_next, start + 1)
 
     def _search(self, query, s_index) -> None:
         chr_index = -1
@@ -479,10 +492,10 @@ class Search:
             if modified_query is None or modified_query[0] is None:
                 print("Invalid query for Levenshtein search.")
                 return []
-            self._levhenshtein_find(modified_query)
+            self.levhenshtein_find(modified_query)
         elif self.case_insensitive and modified_query[0] is not None:
             """Using case insensitive search."""
-            self.case_insensitive_search(modified_query, 1)
+            self._case_insensitive_search(modified_query, 1)
         elif modified_query[0] is None:
             """Using wildcards in start of query:"""
             self._wildcard_search(1, modified_query)
@@ -591,6 +604,7 @@ def main():
         case_insensitive=CASE_INSENSITIVE,
         use_levenshtein=LEVENSHTEIN_QUERY,
     )
+
     for res in enumerate(S.search(QUERY, result_format=RESULT_FORMAT)):
         print(res)
 
