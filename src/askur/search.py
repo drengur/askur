@@ -58,6 +58,7 @@ class Search:
         self._results = []
         self._reversed_char = 143  # ASCII code for start of reversed word
         self._case_insensitive = case_insensitive
+        self._collection_name = collection
 
     @property
     def check_if_key_exists(self):
@@ -121,6 +122,17 @@ class Search:
         return char
 
     @property
+    def collection_name(self) -> str:
+        return self._collection_name
+    @property
+    def limit(self) -> int:
+        return self._limit
+
+    @limit.setter
+    def limit(self, value: int):
+        self._limit = value
+
+    @property
     def levenshtein(self) -> bool:
         return self._levenshtein
 
@@ -133,7 +145,7 @@ class Search:
     def reversed(self) -> bool:
         """return  whether to search in reversed order."""
         return self._reversed and self.mmap.is_reversed()
-    
+
     @reversed.setter
     def reversed(self, reversed: bool):
         """Set whether to search in reversed order."""
@@ -340,7 +352,7 @@ class Search:
         if len(query) == 3:
             query.append([])
         chr_range = []
-        next_query = [[], query[1], query[2], query[3] or []]
+        next_query = [[], query[1], query[2], query[3]]
         s_start, s_end = self.mmap.calculate_select(s_index)
         range = self.mmap.get_trie_range(s_start, s_end)
         i_letter = query[0][start]
@@ -386,8 +398,8 @@ class Search:
 
             if next_query2[0][-1] == 42 and len(next_query2[0]) == 2:
                 self._search(next_query2, s_index)
-
-            self._case_insensitive_search(next_query, s_index_next, start + 1)
+            if nr_hc > 0:
+                self._case_insensitive_search(next_query, s_index_next, start + 1)
 
     def _search(self, query, s_index) -> None:
         chr_index = -1
