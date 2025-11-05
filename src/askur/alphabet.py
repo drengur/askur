@@ -62,8 +62,8 @@ class Alphabet:
 
     def convert(self, word: str) -> bytearray:
         """Convert a word to a list of alphabet chars to bytes.
-        If a character is not in the alphabet, it is added to the alphabet.
-        If a character is a multibyte character, it is converted to 5 bytes.
+        If a character is not in the alphabet, it is added to the end of it.
+        If a character is a multibyte character, it is converted to multiple single bytes.
         """
         if word == "\\":
             word = word + "\\"  # to handle single escape character
