@@ -11,9 +11,7 @@ if A_DEVELOPMENT:
 else:
     from . import config
     from . import alphabet
-
     A = alphabet.Alphabet
-
     try:
         from .filemapping import Mapping
     except ImportError:
@@ -333,8 +331,6 @@ class Search:
             next_query.append(query[0][0:start])
 
         for i_letter in chr_range:
-            if self.search_completed():
-                return
             if i_letter == 95 or i_letter == 42:  # "_" or "*"
                 i_letter *= -1  # Escape the character
             next_query[0] = [i_letter] + query[0][start + 1 :][:]
