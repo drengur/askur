@@ -5,6 +5,7 @@ from input file
 """
 
 import os
+import sys
 
 A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 import io
@@ -14,12 +15,15 @@ import math as m
 
 if A_DEVELOPMENT:
     import config
-    from alphabet import Alphabet as A
+    import alphabet
+    import watchdog
 else:
     from . import config
     from . import alphabet
+    from . import watchdog
 
-    A = alphabet.Alphabet
+WD = watchdog.Watchdog(threshold=5, interval=10)
+A = alphabet.Alphabet
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
@@ -102,10 +106,14 @@ class Trie:
 
         # Check for environment variable first, then fall back to config file
         data_folder = os.environ.get("ASKUR_DATA_FOLDER")
-        assert data_folder is not None, "DATA_FOLDER environment variable is not set."
-        assert collection_name != "", (
-            "Collection name is not set.\nUse the --collection argument."
-        )
+        if data_folder is None:
+            print("DATA_FOLDER environment variable is not set.", file=sys.stderr)
+            sys.exit(1)
+
+        if collection_name == "":
+            print("Collection name is not set.", file=sys.stderr)
+            sys.exit(1)
+
         frozen_folder = os.path.join(data_folder, self.collection_name)
         if not os.path.exists(frozen_folder):
             os.makedirs(frozen_folder, exist_ok=True)
@@ -138,11 +146,7 @@ class Trie:
     def make_frozen_data(self, input_data_file: str):
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
-        nr_lines_in_file = sum(1 for line in open(input_data_file))
-        assert nr_lines_in_file > 0, f"The input file {input_data_file} is empty."
-        print(
-            f" Reading from file {input_data_file}. Number of lines: {nr_lines_in_file}"
-        )
+        nr_lines_in_file = sum(1 for _ in open(input_data_file))
         data_values = {}
         index = 0
         line_nr = 0
@@ -150,11 +154,10 @@ class Trie:
         for word_key, word_value in self.read_from_file(input_data_file):
             line_nr += 1
             if line_nr % 1000 == 0:
-                print(f"Reading {line_nr / nr_lines_in_file * 100:.2f}%", end="\r")
-            if word_key.startswith("#") or word_key.startswith("\n"):
-                continue
-            if not word_key:
-                continue
+                print(
+                    f"  {line_nr / nr_lines_in_file * 100:.2f}% {WD.memory_status['label']}",
+                    end="\r",
+                )
 
             key = self.alphabet.convert(word_key)
             if word_value not in data_values:
@@ -169,30 +172,31 @@ class Trie:
                 key.reverse()
                 key.insert(0, self.alphabet.reversed_char)
                 self._add(key, index)
-
-        print(" 1/7 - Writing to disk...", end="\r")
+        print(" "*100, end="\r")
+        print(f" 1/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         self.level_order_tree([self.root], self.alphabet.inv_alphabet)
-        print(" 2/7 - Writing to disk...", end="\r")
+        print(f" 2/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         self.write_tree_to_file()
 
-        print(" 3/7 - Writing to disk...", end="\r")
+        print(f" 3/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         self.write_eow_values_to_file(self.value_bits_filename)
         self.write_eow_sums_to_file(self.eow_sb)
 
-        print(" 4/7 - Writing to disk...", end="\r")
+        print(f" 4/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         self.write_hc_to_file(self.hc_bits_filename)
         self.hc_to_superblock()
 
-        print(" 5/7 - Writing to disk...", end="\r")
+        print(f" 5/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_superblock()
 
-        print(" 6/7 - Writing to disk...", end="\r")
+        print(f" 6/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         self.write_short_text_to_file(data_values)
 
-        print(" 7/7 - Writing to disk...", end="\r")
+        print(f" 7/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(self.alphabet.get_used)
+        print(" "*100, end="\r")
 
     def split_field(self, line: str) -> tuple:
         """Split a line into key and value based on the field separator."""
@@ -215,18 +219,26 @@ class Trie:
         """Read a file line by line."""
         file = io.open(filename, "r", encoding="utf-8")
         nr_cols = 0
+        line_nr = 0
         for line in file:
+            line_nr += 1
             if not line.strip():
+                continue
+            if line.strip().startswith("#"):
                 continue
             word_key, word_value = self.split_field(line.strip())
             if nr_cols == 2 and word_value == "":
-                assert False, (
-                    f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}\nExpected two columns, got one.\n{'*' * 50}"
+                print(
+                    f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}, line {line_nr}\n{'*' * 50}"
                 )
+                sys.exit(1)
+
             if nr_cols == 1 and word_value != "":
-                assert False, (
-                    f"\n{'*' * 50}\n  Unexpected word value for '{word_key}'\n  Expected one column, got two.\n{'*' * 50}"
+                print(
+                    f"\n{'*' * 50}\n  Unexpected word value for '{word_key}': {word_value}, line {line_nr}\n  Expected one column, got two.\n{'*' * 50}"
                 )
+                sys.exit(1)
+
             nr_cols = 1 if word_value is None else 2
             if nr_cols == 1:
                 word_value = "1"
