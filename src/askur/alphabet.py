@@ -1,59 +1,66 @@
 import os
-
+import sys
 
 class Alphabet:
-    
-    reversed_char = 143  # This is a character that is not in the alphabet
+    reversed_char = 143  # This is a character that is not in the alphabet.
+    # It indicates the beginning of a reversed index as first character in the reversed index.
     reversed_index = False
-    RES_SEPARATOR = 141 # separator between results for multiple results in the lookup
+    RES_SEPARATOR = 141  # separator between results for multiple results in the lookup result (short_text)
 
-    def __init__(self, reversed=False):
-        assert os.getenv("ASKUR_ALPHABET") is not None, (
-            "ALPHABET environment variable is not set."
-        )
+    def __init__(self, reversed=False) -> None:
+        if os.getenv("ASKUR_ALPHABET") is None:
+            raise EnvironmentError("ALPHABET environment variable is not set.")
+            sys.exit(1)
 
-        self._alphabet = {ord(c): n for n, c in enumerate(os.getenv("ASKUR_ALPHABET"))}
+        self._alphabet: dict[int, int] = {
+            ord(c): n for n, c in enumerate(os.getenv("ASKUR_ALPHABET"))
+        }
         self._alphabet.setdefault(self.reversed_char, len(self._alphabet))
 
-        self._used_alphabet = []  # used alphabet is empty at the start and gets filled as words are added
-        self.reversed_index = reversed
+        self._used_alphabet: list[
+            dict[int, int]
+        ] = []  # used alphabet is empty at the start and gets filled as words are added
+
+        # Are we using a reversed index?
+        self.reversed_index: bool = reversed
 
     @property
-    def alphabet(self):
+    def alphabet(self) -> dict[int, int]:
         return self._alphabet
 
-    def add(self, key):
+    def add(self, key) -> None:
         if isinstance(key, str):
-            key = ord(key)
+            key: int = ord(key)
         self._alphabet.setdefault(key, len(self._alphabet))
 
-    def get_alphabet_index(self, key: int):
+    def get_alphabet_index(self, key: int) -> int | None:
         return self._alphabet.get(key)
 
     @property
-    def inv_alphabet(self):
+    def inv_alphabet(self) -> dict[int, int]:
         """Inverse alphabet. v is the index, k is the character.
-        example: {0: 'a', 1: 'b', ...}
+        example: {0: 97, 1: 98, ...}
         """
         return {v: k for k, v in self._alphabet.items()}
 
-    def convert_int_to_str(query) -> str:
+    def convert_int_to_str(query: list[int]) -> str:
         """
         converts list of integers to text
-        multibyte chars are begin with number 2 to 4
+        multibyte chars begin with number 2 to 4, indicating how many bytes follow
+        single byte chars are represented by their ascii/unicode value directly
         """
-        text_array = []
-        i = 0
+        text_array: list[str] = []
+        i: int = 0
+        bits: list[str]
         while i < len(query):
             if query[i] <= 4:
-                unicode_bytes = query[i + 1 : i + 1 + query[i]]
+                unicode_bytes: list[int] = query[i + 1 : i + 1 + query[i]]
                 bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
                 try:
                     unicode_val = int("".join(bits), 2)
-                    char_str = chr(unicode_val)
-                    text_array.append(char_str)
+                    text_array.append(chr(unicode_val))
                 except (ValueError, OverflowError):
-                    text_array.append('?')  # fallback for invalid unicode
+                    text_array.append("?")  # fallback for invalid unicode
                 i = 1 + i + query[i]
                 continue
             text_array.append(chr(query[i]))
@@ -70,16 +77,21 @@ class Alphabet:
         if word.endswith("\\") and not word.endswith("\\\\"):
             word = word + "\\"  # to handle escape character at end of word
         res = bytearray()
+        num: int = 0
+        ny_bits: str
+        nr_bytes: int
         for _, c in enumerate(word):
             if ord(c) > 255:
                 ny_bits = bin(ord(c))[2:]
-                nr_bytes = len(ny_bits) // 8 + (1 if len(ny_bits) % 8 != 0 else 0)
-                ny_bits = bin(ord(c))[2:].rjust(nr_bytes * 8, "0")
+                ny_bits = ny_bits.rjust(
+                    ((len(ny_bits) + 7) // 8) * 8, "0"
+                )  # pad to full bytes
+                nr_bytes = len(ny_bits) // 8
 
                 res.append(nr_bytes)
                 self.add(nr_bytes)
                 for i in range(0, nr_bytes * 8, 8):
-                    num = int(ny_bits[i : i + 8].rjust(8, "0"), 2)
+                    num = int(ny_bits[i : i + 8], 2)
                     self.add(num)
                     res.append(num)
                 continue
@@ -92,7 +104,7 @@ class Alphabet:
         return res
 
     @property
-    def used_alphabet(self) -> list:
+    def used_alphabet(self) -> list[dict[int, int]]:
         """Return the used letters in the alphabet."""
         return self._used_alphabet
 
