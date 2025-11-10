@@ -277,9 +277,10 @@ cdef class Mapping:
         if start_byte >= len(self._eow_bits):
             return 0
             
-        cdef int byte_val = self._eow_bits[start_byte]
-        cdef str bits = bin(byte_val)[2:].rjust(8, "0")
-        return int(bits[extra_bits:extra_bits + 1])
+        if self._eow_bits[start_byte : start_byte + 1][0] & (1 << (7 - extra_bits)):
+            return 1
+        return 0
+
 
     cpdef int get_value_bits_sum(self, int index):
         """Get value bits sum using safe mmap access"""
