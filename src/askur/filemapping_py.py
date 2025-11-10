@@ -7,6 +7,7 @@ if A_DEVELOPEMENT:
     from alphabet import Alphabet as A
 else:
     from . import alphabet
+
     A = alphabet.Alphabet
 
 
@@ -149,7 +150,7 @@ class Mapping:
         res_end_index: int = None
         res_start_index: int = None
         r_start: int = 7
-        superblock_start = sum_ones_wanted // self.bits_in_superblock
+        superblock_start: int = sum_ones_wanted // self.bits_in_superblock
         start_index: int = 0
         start_byte: int = 0
         extra_bits: int = 0
@@ -201,15 +202,15 @@ class Mapping:
                 start_byte += 1
         return [res_start_index, res_end_index]
 
-    def calculate_hc(self, end_request_index) -> int:
+    def calculate_hc(self, end_request_index: int) -> int:
         """Hver er heildar summan við end_request_index"""
         bits_in_byte = 8
-        superblock_start = end_request_index // self.bits_in_superblock
+        superblock_start: int = end_request_index // self.bits_in_superblock
 
         if superblock_start == 0:
             index = 0
             bitsum = 0
-            end_block = self.bits_in_superblock // bits_in_byte + 1
+            end_block: int = self.bits_in_superblock // bits_in_byte + 1
             for byte in self._hc_bitarray[0:end_block]:
                 if not byte:
                     index += 8
@@ -235,9 +236,9 @@ class Mapping:
 
         # það er búið að reikna summu frá 0 til start_block -1
         # þá vantar summuna frá start_block til end_request_index
-        start_block = superblock_start * self.bits_in_superblock // bits_in_byte
-        end_block = start_block + self.bits_in_superblock // bits_in_byte + 1
-        index = superblock_start * self.bits_in_superblock
+        start_block: int = superblock_start * self.bits_in_superblock // bits_in_byte
+        end_block: int = start_block + self.bits_in_superblock // bits_in_byte + 1
+        index: int = superblock_start * self.bits_in_superblock
         for byte in self._hc_bitarray[start_block:end_block]:  # bytes:
             if not byte:
                 index += 8
@@ -250,20 +251,20 @@ class Mapping:
                 index += 1
         return 0
 
-    def has_child(self, index) -> bool:
+    def has_child(self, index: int) -> bool:
         """Returns True if node has child = '1'"""
-        byte = self._hc_bitarray[0] if index < 9 else self._hc_bitarray[index // 8]
+        byte: int = self._hc_bitarray[0] if index < 9 else self._hc_bitarray[index // 8]
         return byte & (1 << (7 - index % 8)) > 0
 
-    def get_trie_range(self, start, end) -> list[int]:
+    def get_trie_range(self, start: int, end: int) -> list[int]:
         """Returns the letter (int of letter) in the given range or the range itself"""
         return self._trie[start:end]
 
-    def get_trie_index_of(self, start, end, letter) -> int:
+    def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
         """Returns the index of the of letter in the given range of the mmap"""
         return self._trie[start:end].find(letter)
 
-    def get_index(self, index_value) -> int:
+    def get_index(self, index_value: int) -> int:
         """Skilar gildi í index sem segir til hvar í short text er að finna niðurstöðuna sem á að skila til baka
         Skilar einnig lengd textans sem á að skila
         """
@@ -271,44 +272,39 @@ class Mapping:
             start_idx = 0
         else:
             # start_idx = index_value * 6 # 4 + 2 byte = 32 + 16 bitar
-            start_idx = index_value * (
+            start_idx: int = index_value * (
                 self.nr_bytes_in_index_block + self.nr_bytes_in_value_block
             )
-        end_idx = start_idx + self.nr_bytes_in_index_block
+        end_idx: int = start_idx + self.nr_bytes_in_index_block
 
-        start_len = end_idx
-        end_len = start_len + self.nr_bytes_in_value_block
+        # start_len: int = end_idx
+        end_len: int = end_idx + self.nr_bytes_in_value_block
 
-        index_val = int.from_bytes(
+        index_val: int = int.from_bytes(
             self._index_bits[start_idx:end_idx],
             byteorder="big",
             signed=False,
         )
-        len_value = int.from_bytes(
-            self._index_bits[start_len:end_len],
+        len_value: int = int.from_bytes(
+            self._index_bits[end_idx:end_len],
             byteorder="big",
             signed=False,
         )
         return [index_val, len_value]
 
-    def is_end_of_word(self, index) -> int:
+    def is_end_of_word(self, index:int) -> int:
         """
         Returns 1 if is end of word, else 0
         """
 
-        start_byte = index // 8
-        extra_bits = index % 8
+        start_byte: int = index // 8
+        extra_bits: int = index % 8
 
-        bits = bin(
-            int.from_bytes(
-                self._eow_bits[start_byte : start_byte + 1],
-                byteorder="big",
-                signed=False,
-            )
-        )[2:].rjust(8, "0")
-        return int(bits[extra_bits : extra_bits + 1])
+        if self._eow_bits[start_byte : start_byte + 1][0] & (1 << (7 - extra_bits)):
+            return 1
+        return 0
 
-    def get_value_bits_sum(self, index) -> int:
+    def get_value_bits_sum(self, index: int) -> int:
         """
         Returns the sum of "0"  bits in the value bits
         Það eru 32 bitar í hverju boxi sem skiptist í 4 bæt (4*8 = 32)
@@ -316,19 +312,19 @@ class Mapping:
         þessir 32 bitar í boxi geyma tölu á fjölda bita í byrjun boxins
         end_index er fjöldi bita í næsta boxi á eftir.
         """
-        s_start = (index // 32 - 1) * 4
-        s_end = s_start + 4
-        start_bytes = self._eow_sb[s_start : s_start + 4]
-        start_index = int.from_bytes(start_bytes, byteorder="big", signed=False)
+        s_start: int = (index // 32 - 1) * 4
+        s_end: int = s_start + 4
+        start_bytes: bytes = self._eow_sb[s_start : s_start + 4]
+        start_index: int = int.from_bytes(start_bytes, byteorder="big", signed=False)
 
-        end_bytes = self._eow_sb[s_end : s_end + 4]
-        end_index = int.from_bytes(end_bytes, byteorder="big", signed=False)
+        end_bytes: bytes = self._eow_sb[s_end : s_end + 4]
+        end_index: int = int.from_bytes(end_bytes, byteorder="big", signed=False)
 
         if end_index == start_index:
             return start_index
 
-        extra_bits = index - s_end * 8 + 1
-        value_bits = self._eow_bits[s_end : s_end + 4]
+        extra_bits: int = index - s_end * 8 + 1
+        value_bits: bytes = self._eow_bits[s_end : s_end + 4]
         for byte in value_bits:
             if not byte and extra_bits > 8:
                 extra_bits -= 8
@@ -342,7 +338,7 @@ class Mapping:
                     return start_index - 1
         return start_index - 1
 
-    def get_result(self, value_index, reversed=False) -> list[str]:
+    def get_result(self, value_index: int) -> list[str]:
         """Returns result of the query"""
 
         # We know that the key exists at this point and the user
@@ -350,16 +346,16 @@ class Mapping:
         if self.check_if_key_exists:
             return ["1"]
 
-        value_sum = self.get_value_bits_sum(value_index)
+        value_sum: int = self.get_value_bits_sum(value_index)
         index_value, text_len = self.get_index(value_sum)
         return self.get_short_text(index_value, text_len)
 
-    def get_short_text(self, index, text_len) -> list[str]:
+    def get_short_text(self, index: int, text_len: int) -> list[str]:
         """Returns the short text"""
-        res = self._short_text[index : index + text_len]
-        unicodes = []
-        text_array = []
-        i = 0
+        res: bytes = self._short_text[index : index + text_len]
+        unicodes: list[int] = []
+        text_array: list[str] = []
+        i: int = 0
         while i < len(res):
             if res[i] == A.RES_SEPARATOR:
                 text_array.append(A.convert_int_to_str(unicodes))
@@ -370,4 +366,3 @@ class Mapping:
         if len(unicodes) > 0:
             text_array.append(A.convert_int_to_str(unicodes))
         return sorted(text_array)
-
