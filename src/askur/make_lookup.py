@@ -7,6 +7,7 @@ from input file
 import os
 import sys
 
+
 A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 import io
 import argparse
@@ -22,8 +23,8 @@ else:
     from . import alphabet
     from . import watchdog
 
-WD = watchdog.Watchdog(threshold=5, interval=10)
-A = alphabet.Alphabet
+WD: watchdog.Watchdog | None = watchdog.Watchdog(threshold=5, interval=10)
+A: alphabet.Alphabet | None = alphabet.Alphabet
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
@@ -41,18 +42,18 @@ ARG_PARSER.add_argument(
 
 
 class Node:
-    __slots__ = ["index", "letters"]
+    __slots__: list[str] = ["index", "letters"]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.index = None  # Only create list when needed
         self.letters = None  # Only create dict when needed
 
     @property
-    def has_children(self):
+    def has_children(self) -> bool:
         return self.letters is not None
 
     @property
-    def end(self):
+    def end(self) -> bool:
         # Is this node an end/leaf node? (end of word)
         return self.index is not None
 
@@ -63,7 +64,7 @@ class Node:
             self.letters[key] = Node()
         return self.letters[key]
 
-    def add_index(self, idx):
+    def add_index(self, idx) -> None:
         """Add an index to the end/leaf node.
         Leaf nodes can have multiple indices.
         """
@@ -77,7 +78,7 @@ class Node:
 class Trie:
     """A trie."""
 
-    def __init__(self, collection_name="", reversed=False, field_separator=";"):
+    def __init__(self, collection_name="", reversed=False, field_separator=";") -> None:
         """Creates a new trie with associated files.
         Writes the trie structure to disk in LOUDS format along with
         the head child array (HC), select array (S), end of word array (EOW),
@@ -105,16 +106,16 @@ class Trie:
         self.alphabet = A(reversed)
 
         # Check for environment variable first, then fall back to config file
-        data_folder = os.environ.get("ASKUR_DATA_FOLDER")
+        data_folder: str | None = os.environ.get("ASKUR_DATA_FOLDER")
         if data_folder is None:
-            print("DATA_FOLDER environment variable is not set.", file=sys.stderr)
+            print("DATA_FOLDER environment variable is not set.")
             sys.exit(1)
 
         if collection_name == "":
-            print("Collection name is not set.", file=sys.stderr)
+            print("Collection name is not set.")
             sys.exit(1)
 
-        frozen_folder = os.path.join(data_folder, self.collection_name)
+        frozen_folder: str = os.path.join(data_folder, self.collection_name)
         if not os.path.exists(frozen_folder):
             os.makedirs(frozen_folder, exist_ok=True)
 
@@ -143,13 +144,13 @@ class Trie:
         # the root node of the trie
         self.root = Node()
 
-    def make_frozen_data(self, input_data_file: str):
+    def make_frozen_data(self, input_data_file: str) -> None:
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
-        nr_lines_in_file = sum(1 for _ in open(input_data_file))
-        data_values = {}
-        index = 0
-        line_nr = 0
+        nr_lines_in_file: int = sum(1 for _ in open(input_data_file))
+        data_values: dict[str, int] = {}
+        index: int = 0
+        line_nr: int = 0
 
         for word_key, word_value in self.read_from_file(input_data_file):
             line_nr += 1
@@ -159,9 +160,9 @@ class Trie:
                     end="\r",
                 )
 
-            key = self.alphabet.convert(word_key)
+            key: bytearray  = self.alphabet.convert(word_key)
             if word_value not in data_values:
-                index = len(data_values)
+                index: int = len(data_values)
                 data_values.setdefault(word_value, index)
             else:
                 index = data_values[word_value]
@@ -200,9 +201,9 @@ class Trie:
 
     def split_field(self, line: str) -> tuple:
         """Split a line into key and value based on the field separator."""
-        esc = False
-        key = ""
-        value = ""
+        esc: bool = False
+        key: str = ""
+        value: str = ""
         for i, c in enumerate(line):
             if c == "\\":
                 esc = not esc
@@ -215,11 +216,11 @@ class Trie:
 
         return key, value
 
-    def read_from_file(self, filename):
+    def read_from_file(self, filename) -> tuple[str, str]:
         """Read a file line by line."""
-        file = io.open(filename, "r", encoding="utf-8")
-        nr_cols = 0
-        line_nr = 0
+        file: io.TextIOWrapper = io.open(filename, "r", encoding="utf-8")
+        nr_cols: int = 0
+        line_nr: int = 0
         for line in file:
             line_nr += 1
             if not line.strip():
@@ -245,21 +246,22 @@ class Trie:
             yield word_key, word_value
         file.close()
 
-    def _add(self, word: list, index_id: int):
+    def _add(self, word: bytearray, index_id: int) -> None:
         """Add a word to the trie."""
-        node = self.root
+        node: Node = self.root
         for ch in word:
             node = node.get_child(self.alphabet.get_alphabet_index(ch))
         node.add_index(index_id)
 
-    def level_order_tree(self, nodes, inv_alphabet):
+    def level_order_tree(self, nodes: list[Node], inv_alphabet: dict[int, int]) -> None:
         """Level out trie.
         Traverse the trie in level order and write to the _trie, _hc,
         _select, _is_eow and _index arrays.
         """
         if len(nodes) == 0:
             return
-        child_nodes = []
+        first: int = 1
+        child_nodes: list[Node] = []
         for node in nodes:
             first = 1
             for w_key in sorted(node.letters and node.letters.keys() or []):
@@ -276,17 +278,17 @@ class Trie:
 
         self.level_order_tree(child_nodes, inv_alphabet)
 
-    def generate_data(self, big_string):
+    def generate_data(self, big_string: bytearray) -> bytearray:
         """Generate data from a big string in chunks to minimize memory usage.
         This function is a placeholder for generating data.
         """
-        i = 0
-        chunk_size = 1024
+        i: int = 0
+        chunk_size: int = 1024
         while i < len(big_string):
             yield big_string[i : i + chunk_size]
             i += chunk_size
 
-    def write_tree_to_file(self):
+    def write_tree_to_file(self) -> None:
         """Write level ordered trie to a file."""
         io.open(self.trie_file, "w").close()
         with io.open(self.trie_file, "ab") as f:
