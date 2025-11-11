@@ -240,7 +240,7 @@ class Trie:
                 )
                 sys.exit(1)
 
-            nr_cols = 1 if word_value is None else 2
+            nr_cols = 1 if word_value == "" else 2
             if nr_cols == 1:
                 word_value = "1"
             yield word_key, word_value
