@@ -43,6 +43,7 @@ class Alphabet:
         """
         return {v: k for k, v in self._alphabet.items()}
 
+    @staticmethod
     def convert_int_to_str(query: list[int]) -> str:
         """
         converts list of integers to text
@@ -67,7 +68,8 @@ class Alphabet:
             i += 1
         return "".join(text_array)
 
-    def convert(self, word: str) -> bytearray:
+    @staticmethod
+    def convert(word: str) -> bytearray:
         """Convert a word to a list of alphabet chars to bytes.
         If a character is not in the alphabet, it is added to the end of it.
         If a character is a multibyte character, it is converted to multiple single bytes.
