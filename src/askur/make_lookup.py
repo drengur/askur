@@ -42,7 +42,7 @@ ARG_PARSER.add_argument(
 
 
 class Node:
-    __slots__: list[str] = ["index", "letters"]
+    __slots__    = ["index", "letters"]
 
     def __init__(self) -> None:
         self.index = None  # Only create list when needed
