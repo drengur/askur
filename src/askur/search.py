@@ -11,6 +11,7 @@ if A_DEVELOPMENT:
 else:
     from . import config
     from . import alphabet
+
     A = alphabet.Alphabet
     try:
         from .filemapping import Mapping
@@ -122,6 +123,7 @@ class Search:
     @property
     def collection_name(self) -> str:
         return self._collection_name
+
     @property
     def limit(self) -> int:
         return self._limit
