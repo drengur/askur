@@ -181,19 +181,18 @@ class Search:
                 self._reversed_char,
             )
         ]
-        new_query = [None, None, None]
+
         for i_letter in alphabet:
-            # add extra letter at the start of the word
-            new_query[0] = [i_letter] + query[0][:]
-            self._search(new_query, s_index=1)
+            # add letter between every letter in the word
+            # beginning and end as well
+            for n in range(len(query[0]) + 1):
+                new_word = query[0][:]
+                new_word.insert(n, i_letter)
+                self._search([new_word, None, None], s_index=1)
 
-            # add extra letter at the end of the word
-            new_query[0] = query[0][:] + [i_letter]
-            self._search(new_query, s_index=1)
-
+        # replace the letter at position n with i_letter
         for n in range(len(query[0])):
             for i_letter in alphabet:
-                # replace the letter at position n with i_letter
                 new_word = query[0][:]
                 new_word[n] = i_letter
                 self._search([new_word, None, None], s_index=1)
