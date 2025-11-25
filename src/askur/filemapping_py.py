@@ -353,16 +353,16 @@ class Mapping:
     def get_short_text(self, index: int, text_len: int) -> list[str]:
         """Returns the short text"""
         res: bytes = self._short_text[index : index + text_len]
-        unicodes: list[int] = []
+        unicodes: bytearray = bytearray()
         text_array: list[str] = []
         i: int = 0
         while i < len(res):
             if res[i] == A.RES_SEPARATOR:
-                text_array.append(A.convert_int_to_str(unicodes))
+                text_array.append(A.convert_bytes_to_str(unicodes))
                 unicodes = []
             else:
                 unicodes.append(res[i])
             i += 1
         if len(unicodes) > 0:
-            text_array.append(A.convert_int_to_str(unicodes))
+            text_array.append(A.convert_bytes_to_str(unicodes))
         return sorted(text_array)
