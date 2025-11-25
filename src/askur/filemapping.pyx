@@ -9,8 +9,8 @@ import io
 import os
 import mmap
 
-from alphabet import Alphabet
-A = Alphabet()
+from . import alphabet
+A = alphabet.Alphabet()
 cdef class Mapping:
     # C-level attributes for maximum speed
     cdef public object _trie
@@ -334,18 +334,19 @@ cdef class Mapping:
         """Get short text using safe mmap access"""
         cdef list text_array = []
         cdef int i = 0
-        cdef list unicodes = []
-        cdef list res = []
+        cdef bytearray unicodes = bytearray()
+        cdef bytes res = b""
 
         res = self._short_text[index : index + text_len]
         while i < len(res):
             if res[i] == A.RES_SEPARATOR:
-                text_array.append(A.convert_int_to_str(unicodes))
-                unicodes = []
+                text_array.append(A.convert_bytes_to_str(unicodes))
+                unicodes = bytearray()
             else:
                 unicodes.append(res[i])
             i += 1
         if len(unicodes) > 0:
-            text_array.append(A.convert_int_to_str(unicodes))
-        return text_array.sort()
+            text_array.append(A.convert_bytes_to_str(unicodes))
+        text_array.sort()
+        return text_array
 
