@@ -6,13 +6,14 @@ A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 
 if A_DEVELOPMENT:
     import config
-    from alphabet import Alphabet as A
+    import alphabet
     from filemapping_py import Mapping
+    A = alphabet.Alphabet()
 else:
     from . import config
-    from . import alphabet
+    from . import alphabet as alphabet
+    A = alphabet.Alphabet() 
 
-    A = alphabet.Alphabet
     try:
         from .filemapping import Mapping
     except ImportError:
@@ -466,8 +467,8 @@ class Search:
             query = query[:-1][:]
         for i, val in enumerate(query):
             if val < 0:
-                query[i] *= -1
-        return A.convert_int_to_str(query)
+                query[i] *= -1        
+        return A.convert_bytes_to_str(query)
 
     def fuzzy_search(self, query, result_format="dict"):
         """Fuzzy search for a word in the trie.
@@ -541,8 +542,9 @@ class Search:
 
         for c in query:
             if ord(c) > 255:
-                multi_bytes = A.convert(c)
-                res.append(b for b in multi_bytes)
+                multi_bytes = A.convert_str_to_bytes(c)
+                for b in multi_bytes:
+                    res.append(int(b))
             else:
                 if c == "\\" and not esc:
                     esc = True
