@@ -44,22 +44,20 @@ class Alphabet:
         return {v: k for k, v in self._alphabet.items()}
 
     @staticmethod
-    def convert_int_to_str(query: list[int]) -> str:
+    def convert_bytes_to_str(query: list[bytes]) -> str:
         """
-        converts list of integers to text
+        converts list of bytes to text
         multibyte chars begin with number 2 to 4, indicating how many bytes follow
         single byte chars are represented by their ascii/unicode value directly
         """
         text_array: list[str] = []
         i: int = 0
-        bits: list[str]
         while i < len(query):
             if query[i] <= 4:
-                unicode_bytes: list[int] = query[i + 1 : i + 1 + query[i]]
-                bits = [bin(b)[2:].rjust(8, "0") for b in unicode_bytes]
+                unicode_bytes: list[bytes] = query[i + 1 : i + 1 + query[i]]
                 try:
-                    unicode_val = int("".join(bits), 2)
-                    text_array.append(chr(unicode_val))
+                    ints =int.from_bytes(bytearray(unicode_bytes), "big")
+                    text_array.append(chr(ints))
                 except (ValueError, OverflowError):
                     text_array.append("?")  # fallback for invalid unicode
                 i = 1 + i + query[i]
@@ -68,8 +66,7 @@ class Alphabet:
             i += 1
         return "".join(text_array)
 
-    @staticmethod
-    def convert(word: str) -> bytearray:
+    def convert_str_to_bytes(self, word: str) -> bytearray:
         """Convert a word to a list of alphabet chars to bytes.
         If a character is not in the alphabet, it is added to the end of it.
         If a character is a multibyte character, it is converted to multiple single bytes.
