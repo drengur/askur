@@ -155,12 +155,13 @@ class Trie:
         for word_key, word_value in self.read_from_file(input_data_file):
             line_nr += 1
             if line_nr % 1000 == 0:
-                print(
-                    f"  {line_nr / nr_lines_in_file * 100:.2f}% {WD.memory_status['label']}",
-                    end="\r",
-                )
+                # print(
+                #     f"  {line_nr / nr_lines_in_file * 100:.2f}% {WD.memory_status['label']}",
+                #     end="\r",
+                # )
+                WD.print_label(f"  {line_nr / nr_lines_in_file * 100:.2f}%")
 
-            key: bytearray  = self.alphabet.convert(word_key)
+            key: bytearray  = self.alphabet.convert_str_to_bytes(word_key)
             if word_value not in data_values:
                 index: int = len(data_values)
                 data_values.setdefault(word_value, index)
@@ -173,31 +174,33 @@ class Trie:
                 key.reverse()
                 key.insert(0, self.alphabet.reversed_char)
                 self._add(key, index)
-        print(" "*100, end="\r")
-        print(f" 1/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" Finalizing...")
+        # print(f" 1/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" 1/7 - Writing to disk...")
         self.level_order_tree([self.root], self.alphabet.inv_alphabet)
-        print(f" 2/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        # print(f" 2/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" 2/7 - Writing to disk...")
         self.write_tree_to_file()
 
-        print(f" 3/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" 3/7 - Writing to disk...")
         self.write_eow_values_to_file(self.value_bits_filename)
         self.write_eow_sums_to_file(self.eow_sb)
 
-        print(f" 4/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" 4/7 - Writing to disk...")
         self.write_hc_to_file(self.hc_bits_filename)
         self.hc_to_superblock()
 
-        print(f" 5/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" 5/7 - Writing to disk...")
         self.write_select_to_file(self.select_bits_filename)
         self.select_to_superblock()
 
-        print(f" 6/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" 6/7 - Writing to disk...")
         self.write_short_text_to_file(data_values)
 
-        print(f" 7/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+        WD.print_label(" 7/7 - Writing to disk...")
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(self.alphabet.get_used)
-        print(" "*100, end="\r")
+        WD.clear_label()
 
     def split_field(self, line: str) -> tuple:
         """Split a line into key and value based on the field separator."""
@@ -416,7 +419,7 @@ class Trie:
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
         # invert the dictionary:
-        data_values = {v: self.alphabet.convert(k) for k, v in data_values.items()}
+        data_values = {v: self.alphabet.convert_str_to_bytes(k) for k, v in data_values.items()}
 
         total_sum = 0
 
