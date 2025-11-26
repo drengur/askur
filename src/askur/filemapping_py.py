@@ -204,41 +204,26 @@ class Mapping:
 
     def calculate_hc(self, end_request_index: int) -> int:
         """Hver er heildar summan við end_request_index"""
-        bits_in_byte = 8
+        bits_in_byte: int = 8
         superblock_start: int = end_request_index // self.bits_in_superblock
-
-        if superblock_start == 0:
-            index = 0
-            bitsum = 0
-            end_block: int = self.bits_in_superblock // bits_in_byte + 1
-            for byte in self._hc_bitarray[0:end_block]:
-                if not byte:
-                    index += 8
-                    continue
-                for i in range(7, -1, -1):
-                    if byte & (1 << i):
-                        bitsum += 1
-                        if index == end_request_index:
-                            return bitsum
-                    index += 1
-        else:
-            bitsum = int(
-                "".join(
-                    [
-                        bin(byte)[2:].rjust(8, "0")
-                        for byte in self._hc_super_blocks[
-                            (superblock_start - 1) * 4 : (superblock_start - 1) * 4 + 4
-                        ]
-                    ]
-                ),
-                2,
+        start_block: int = 0
+        index: int = 0
+        bitsum: int = 0
+        superblock_bytes: bytes = b""
+        if superblock_start > 0:
+            start_block = superblock_start * self.bits_in_superblock // bits_in_byte
+            superblock_bytes: bytes = self._hc_super_blocks[
+                (superblock_start - 1) * 4 : (superblock_start - 1) * 4 + 4
+            ]
+            bitsum = int.from_bytes(
+                superblock_bytes,
+                byteorder="big",
+                signed=False,
             )
-
+            index = superblock_start * self.bits_in_superblock
+        end_block: int = start_block + self.bits_in_superblock // bits_in_byte + 1
         # það er búið að reikna summu frá 0 til start_block -1
         # þá vantar summuna frá start_block til end_request_index
-        start_block: int = superblock_start * self.bits_in_superblock // bits_in_byte
-        end_block: int = start_block + self.bits_in_superblock // bits_in_byte + 1
-        index: int = superblock_start * self.bits_in_superblock
         for byte in self._hc_bitarray[start_block:end_block]:  # bytes:
             if not byte:
                 index += 8
@@ -265,19 +250,19 @@ class Mapping:
         return self._trie[start:end].find(letter)
 
     def get_index(self, index_value: int) -> int:
-        """Skilar gildi í index sem segir til hvar í short text er að finna niðurstöðuna sem á að skila til baka
+        """Skilar gildi í index sem segir til hvar í short text 
+        er að finna niðurstöðuna sem á að skila til baka
         Skilar einnig lengd textans sem á að skila
         """
         if index_value == 0:
             start_idx = 0
         else:
-            # start_idx = index_value * 6 # 4 + 2 byte = 32 + 16 bitar
+            # start_idx = index_value * 6 # 4 byte + 2 byte = 32 bits + 16 bits
             start_idx: int = index_value * (
                 self.nr_bytes_in_index_block + self.nr_bytes_in_value_block
             )
         end_idx: int = start_idx + self.nr_bytes_in_index_block
 
-        # start_len: int = end_idx
         end_len: int = end_idx + self.nr_bytes_in_value_block
 
         index_val: int = int.from_bytes(
@@ -292,7 +277,7 @@ class Mapping:
         )
         return [index_val, len_value]
 
-    def is_end_of_word(self, index:int) -> int:
+    def is_end_of_word(self, index: int) -> int:
         """
         Returns 1 if is end of word, else 0
         """
@@ -307,14 +292,14 @@ class Mapping:
     def get_value_bits_sum(self, index: int) -> int:
         """
         Returns the sum of "0"  bits in the value bits
-        Það eru 32 bitar í hverju boxi sem skiptist í 4 bæt (4*8 = 32)
+        Það eru 32 bitar í hverju boxi (= 4 bytes)
         Þess vegna þarf að margfalda index með 4 til að fá réttu bætin sem við erum að leita í
-        þessir 32 bitar í boxi geyma tölu á fjölda bita í byrjun boxins
-        end_index er fjöldi bita í næsta boxi á eftir.
+        þessir 32 bitar í superblock geyma tölu á fjölda bita í byrjun boxins
+        end_index er fjöldi bita í byrjun á næsta boxi sem kemur á eftir.
         """
         s_start: int = (index // 32 - 1) * 4
         s_end: int = s_start + 4
-        start_bytes: bytes = self._eow_sb[s_start : s_start + 4]
+        start_bytes: bytes = self._eow_sb[s_start : s_end]
         start_index: int = int.from_bytes(start_bytes, byteorder="big", signed=False)
 
         end_bytes: bytes = self._eow_sb[s_end : s_end + 4]
@@ -324,8 +309,8 @@ class Mapping:
             return start_index
 
         extra_bits: int = index - s_end * 8 + 1
-        value_bits: bytes = self._eow_bits[s_end : s_end + 4]
-        for byte in value_bits:
+        value_bytes: bytes = self._eow_bits[s_end : s_end + 4]
+        for byte in value_bytes:
             if not byte and extra_bits > 8:
                 extra_bits -= 8
                 continue
@@ -359,7 +344,7 @@ class Mapping:
         while i < len(res):
             if res[i] == A.RES_SEPARATOR:
                 text_array.append(A.convert_bytes_to_str(unicodes))
-                unicodes = []
+                unicodes = bytearray()
             else:
                 unicodes.append(res[i])
             i += 1
