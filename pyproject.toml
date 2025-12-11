@@ -18,7 +18,10 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "Operating System :: OS Independent",
+    "Operating System :: Unix",
+    "Operating System :: POSIX",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
@@ -27,6 +30,13 @@ classifiers = [
 
 license = "MIT"
 license-files = ["LICENSE"]
+
+[project.optional-dependencies]
+dev = [
+    "psutil>=7.1.2",
+    "cibuildwheel>=2.21.3",
+    "pytest>=7.0.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/drengur/askur"
@@ -48,6 +58,54 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+askur = ["*.conf"]
+
+# Exclude files from distribution
+[tool.setuptools.exclude-package-data]
+askur = [ "tests/*"]
+
+# CIBuildWheel configuration
+[tool.cibuildwheel]
+# Build for specific Python versions
+build = ["cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+
+# Skip 32-bit builds and musllinux for now (can be enabled later)
+skip = ["*-win32", "*-manylinux_i686", "*-musllinux*"]
+
+# Build configuration
+[tool.cibuildwheel.environment]
+# Set environment variables for all platforms
+CIBW_BUILD_VERBOSITY = "3"
+
+# Platform-specific settings
+[tool.cibuildwheel.linux]
+# Use manylinux2014 for broader compatibility
+archs = ["x86_64", "aarch64"]
+
+before-build = [
+    "yum install -y gcc-c++ || apt-get update && apt-get install -y g++ || dnf install -y gcc-c++",
+    "pip install cython>=0.29.0"
+ ]
+
+[tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
+before-build = [
+    "brew install pkg-config || true",
+    "pip install cython>=0.29.0"
+]
+environment = { MACOSX_DEPLOYMENT_TARGET = "10.14" }
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]
+before-build = [
+    "pip install cython>=0.29.0"
+]
+
+# Test configuration
+test-requires = ["pytest"]
+test-command = "python -c 'import askur; print(\"Import successful\")'"
 
 
 
