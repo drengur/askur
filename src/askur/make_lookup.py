@@ -28,21 +28,32 @@ A: alphabet.Alphabet | None = alphabet.Alphabet
 
 
 ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
-# ARG_PARSER.add_argument("--filename", "-f", type=str, help="The filename to read from.")
+
 ARG_PARSER.add_argument(
     "--collection", "-C", type=str, help="The name of the collection to create."
 )
-ARG_PARSER.add_argument("--file", "-f", type=str, help="File to read from.")
+ARG_PARSER.add_argument(
+    "--file",
+    "-f",
+    type=argparse.FileType("r", encoding="utf-8"),
+    nargs="?",
+    help="Input file (default: stdin).",
+    default=sys.stdin,
+)
 ARG_PARSER.add_argument(
     "--reversed", "-R", action="store_true", help="Make reversed index"
 )
 ARG_PARSER.add_argument(
-    "-F", type=str, default=";", help="Field separator (default: ';')"
+    "--field-separator",
+    "-F",
+    type=str,
+    default=";",
+    help="Field separator (default: ';')",
 )
 
 
 class Node:
-    __slots__    = ["index", "letters"]
+    __slots__ = ["index", "letters"]
 
     def __init__(self) -> None:
         self.index = None  # Only create list when needed
@@ -69,7 +80,13 @@ class Node:
         Leaf nodes can have multiple indices.
         """
         if self.index is None:
-            self.index = []
+            self.index = idx
+            return
+        if type(self.index) is int:
+            if self.index == idx:
+                return
+            self.index = [self.index, idx]
+            return
         if idx in self.index:
             return
         self.index.append(idx)
@@ -144,26 +161,22 @@ class Trie:
         # the root node of the trie
         self.root = Node()
 
-    def make_frozen_data(self, input_data_file: str) -> None:
+    def make_frozen_data(self, input_data: str) -> None:
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
 
-        nr_lines_in_file: int = sum(1 for _ in open(input_data_file))
+        nr_lines_in_file: int = len(input_data)
         data_values: dict[str, int] = {}
         index: int = 0
         line_nr: int = 0
 
-        for word_key, word_value in self.read_from_file(input_data_file):
+        for word_key, word_value in self.read_from_input(input_data):
             line_nr += 1
             if line_nr % 1000 == 0:
-                # print(
-                #     f"  {line_nr / nr_lines_in_file * 100:.2f}% {WD.memory_status['label']}",
-                #     end="\r",
-                # )
                 WD.print_label(f"  {line_nr / nr_lines_in_file * 100:.2f}%")
 
-            key: bytearray  = self.alphabet.convert_str_to_bytes(word_key)
+            key: bytearray = self.alphabet.convert_str_to_bytes(word_key)
             if word_value not in data_values:
-                index: int = len(data_values)
+                index = len(data_values)
                 data_values.setdefault(word_value, index)
             else:
                 index = data_values[word_value]
@@ -175,10 +188,9 @@ class Trie:
                 key.insert(0, self.alphabet.reversed_char)
                 self._add(key, index)
         WD.print_label(" Finalizing...")
-        # print(f" 1/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
         WD.print_label(" 1/7 - Writing to disk...")
         self.level_order_tree([self.root], self.alphabet.inv_alphabet)
-        # print(f" 2/7 - Writing to disk...{WD.memory_status['label']}", end="\r")
+
         WD.print_label(" 2/7 - Writing to disk...")
         self.write_tree_to_file()
 
@@ -202,7 +214,7 @@ class Trie:
             f.write(self.alphabet.get_used)
         WD.clear_label()
 
-    def split_field(self, line: str) -> tuple:
+    def split_line(self, line: str) -> tuple:
         """Split a line into key and value based on the field separator."""
         esc: bool = False
         key: str = ""
@@ -219,35 +231,33 @@ class Trie:
 
         return key, value
 
-    def read_from_file(self, filename) -> tuple[str, str]:
+    def read_from_input(self, input_data: str) -> tuple[str, str]:
         """Read a file line by line."""
-        file: io.TextIOWrapper = io.open(filename, "r", encoding="utf-8")
-        nr_cols: int = 0
+        nr_cols: int = input_data[0].count(self.field_separator) + 1
         line_nr: int = 0
-        for line in file:
+
+        for line in input_data:
             line_nr += 1
-            if not line.strip():
+            if not line.strip() or line.strip().startswith("#"):
                 continue
-            if line.strip().startswith("#"):
-                continue
-            word_key, word_value = self.split_field(line.strip())
+            word_key, word_value = self.split_line(line.strip())
             if nr_cols == 2 and word_value == "":
                 print(
-                    f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}, line {line_nr}\n{'*' * 50}"
+                    f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}, line {line_nr}\n  Exiting\n{'*' * 50}"
                 )
                 sys.exit(1)
-
             if nr_cols == 1 and word_value != "":
                 print(
-                    f"\n{'*' * 50}\n  Unexpected word value for '{word_key}': {word_value}, line {line_nr}\n  Expected one column, got two.\n{'*' * 50}"
+                    f"\n{'*' * 50}\n  Unexpected word value for '{word_key}': {word_value}, line {line_nr}\n  Expected one column, got two.\n  Exiting \n{'*' * 50}"
+                )
+                sys.exit(1)
+            if word_key == "":
+                print(
+                    f"\n{'*' * 50}\n  Missing word key for line {line_nr}\n  Exiting\n{'*' * 50}"
                 )
                 sys.exit(1)
 
-            nr_cols = 1 if word_value == "" else 2
-            if nr_cols == 1:
-                word_value = "1"
-            yield word_key, word_value
-        file.close()
+            yield word_key, word_value or "1"
 
     def _add(self, word: bytearray, index_id: int) -> None:
         """Add a word to the trie."""
@@ -274,7 +284,10 @@ class Trie:
                 self._hc.append(1 if node.letters[w_key].has_children else 0)
                 if node.letters[w_key].end:
                     self._is_eow.append(1)
-                    self._index.append(node.letters[w_key].index)
+                    if type(node.letters[w_key].index) is list:
+                        self._index.append(sorted(node.letters[w_key].index))
+                    else:
+                        self._index.append([node.letters[w_key].index])
                 else:
                     self._is_eow.append(0)
                 child_nodes.append(node.letters[w_key])
@@ -419,7 +432,9 @@ class Trie:
         # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
         # invert the dictionary:
-        data_values = {v: self.alphabet.convert_str_to_bytes(k) for k, v in data_values.items()}
+        data_values = {
+            v: self.alphabet.convert_str_to_bytes(k) for k, v in data_values.items()
+        }
 
         total_sum = 0
 
@@ -623,15 +638,21 @@ class Trie:
 
 
 def main():
-    """Load a tree from a file.
-    The file should contain one word per line along with the word id.
-    Saving the trie and associated data to files in frozen folder.
+    """Load text from a file (or stdin).
+    The input should contain text lines in the format "<key><separator><value>" or just "<key>".
+    The separator can be specified with the -F option (default is ';').
+    Creates LOUDS trie from the input text and write the trie and associated
+    lookup tables to disk in the specified collection folder.
     """
 
     args = ARG_PARSER.parse_args()
-    if args.file is not None and args.collection is not None:
+    txt = args.file
+    if txt is not None and args.collection is not None:
         trie = Trie(collection_name=args.collection, reversed=args.reversed or False)
-        trie.make_frozen_data(input_data_file=args.file)
+        trie.make_frozen_data(txt.readlines())
+        # Close the input file if it's not stdin
+        if txt != sys.stdin:
+            txt.close()
     else:
         ARG_PARSER.print_help()
 
