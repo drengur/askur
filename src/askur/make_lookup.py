@@ -12,6 +12,7 @@ A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 import io
 import argparse
 import math as m
+from dataclasses import dataclass
 
 
 if A_DEVELOPMENT:
@@ -52,12 +53,11 @@ ARG_PARSER.add_argument(
 )
 
 
+@dataclass(slots=True)
 class Node:
-    __slots__ = ["index", "letters"]
-
-    def __init__(self) -> None:
-        self.index = None  # Only create list when needed
-        self.letters = None  # Only create dict when needed
+    leaf_indices: list[int] = None
+    letters: dict[int, "Node"] = None
+    single_index: int = None
 
     @property
     def has_children(self) -> bool:
@@ -66,7 +66,7 @@ class Node:
     @property
     def end(self) -> bool:
         # Is this node an end/leaf node? (end of word)
-        return self.index is not None
+        return self.leaf_indices is not None or self.single_index is not None
 
     def get_child(self, key):
         if self.letters is None:
@@ -78,19 +78,31 @@ class Node:
     def add_index(self, idx) -> None:
         """Add an index to the end/leaf node.
         Leaf nodes can have multiple indices.
+        Using single_index for single index to save memory.
+        Args:
+            idx: The index to add.
+        Returns: None
         """
-        if self.index is None:
-            self.index = idx
+        if self.leaf_indices is None and self.single_index is None:
+            self.single_index = idx
             return
-        if type(self.index) is int:
-            if self.index == idx:
+        if self.single_index is not None:
+            if self.single_index == idx:
                 return
-            self.index = [self.index, idx]
+            self.leaf_indices = [self.single_index, idx]
+            self.single_index = None
             return
         if idx in self.index:
             return
         self.index.append(idx)
 
+    def get_indices(self) -> list[int]:
+        """Get the indices of the end/leaf node."""
+        if self.leaf_indices is not None:
+            return self.leaf_indices
+        if self.single_index is not None:
+            return [self.single_index]
+        return []
 
 class Trie:
     """A trie."""
@@ -163,20 +175,20 @@ class Trie:
 
     def make_frozen_data(self, input_data: str) -> None:
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
-
         nr_lines_in_file: int = len(input_data)
         data_values: dict[str, int] = {}
-        index: int = 0
+        index: int = -1
         line_nr: int = 0
+        key: bytearray()
 
         for word_key, word_value in self.read_from_input(input_data):
             line_nr += 1
             if line_nr % 1000 == 0:
                 WD.print_label(f"  {line_nr / nr_lines_in_file * 100:.2f}%")
 
-            key: bytearray = self.alphabet.convert_str_to_bytes(word_key)
+            key = self.alphabet.convert_str_to_bytes(word_key)
             if word_value not in data_values:
-                index = len(data_values)
+                index += 1
                 data_values.setdefault(word_value, index)
             else:
                 index = data_values[word_value]
@@ -190,7 +202,7 @@ class Trie:
         WD.print_label(" Finalizing...")
         WD.print_label(" 1/7 - Writing to disk...")
         self.level_order_tree([self.root], self.alphabet.inv_alphabet)
-
+        
         WD.print_label(" 2/7 - Writing to disk...")
         self.write_tree_to_file()
 
@@ -253,7 +265,7 @@ class Trie:
                 sys.exit(1)
             if word_key == "":
                 print(
-                    f"\n{'*' * 50}\n  Missing word key for line {line_nr}\n  Exiting\n{'*' * 50}"
+                    f"\n{'*' * 50}\n  Missing key in line {line_nr}\n  Exiting\n{'*' * 50}"
                 )
                 sys.exit(1)
 
@@ -284,10 +296,7 @@ class Trie:
                 self._hc.append(1 if node.letters[w_key].has_children else 0)
                 if node.letters[w_key].end:
                     self._is_eow.append(1)
-                    if type(node.letters[w_key].index) is list:
-                        self._index.append(sorted(node.letters[w_key].index))
-                    else:
-                        self._index.append([node.letters[w_key].index])
+                    self._index.append(node.letters[w_key].get_indices())
                 else:
                     self._is_eow.append(0)
                 child_nodes.append(node.letters[w_key])
