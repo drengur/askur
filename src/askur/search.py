@@ -2,17 +2,20 @@
 import os
 import argparse
 
+
 A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 
 if A_DEVELOPMENT:
     import config
     import alphabet
     from filemapping_py import Mapping
+
     A = alphabet.Alphabet()
 else:
     from . import config
     from . import alphabet as alphabet
-    A = alphabet.Alphabet() 
+
+    A = alphabet.Alphabet()
 
     try:
         from .filemapping import Mapping
@@ -36,29 +39,28 @@ arg_parser.add_argument(
     help="Use fuzzy-search (levenshtein distance 1) to find similar words.",
 )
 arg_parser.add_argument(
-    "-r", "--result", type=str, help="result format (dict or str). Default is dict."
-)
-arg_parser.add_argument(
     "-i",
     "--insensitive",
     action="store_true",
     help="Use case insensitive search.",
 )
 
-
 class Search:
     """Search for words in the LOUDS trie."""
-
     def __init__(
-        self, collection, limit=0, case_insensitive=False, use_levenshtein=False
+        self,
+        collection,
+        limit=0,
+        case_insensitive=False,
+        use_levenshtein=False,
     ) -> None:
         self.mmap = Mapping(collection)
         self._levenshtein = use_levenshtein
         self._limit = limit  # 0 means no limit
-        self._results = []
         self._reversed_char = 143  # ASCII code for start of reversed word
         self._case_insensitive = case_insensitive
         self._collection_name = collection
+        self._nr_results = 0
 
     @property
     def check_if_key_exists(self):
@@ -68,50 +70,23 @@ class Search:
     def check_if_key_exists(self, value: bool):
         self.mmap.set_check_key_exists(value)
 
-    def _add_result(self, result):
-        """Add a result to the search results."""
-        if self._limit > 0 and len(self._results) >= self._limit:
-            return
-        if result not in self._results:
-            if self.reversed:
-                # If the search is reversed, we need to reverse the result
-                # and remove the first character (143)
-                result = {k[::-1][:-1]: v for k, v in result.items()}
-            if self.check_if_key_exists:
-                # If we are only checking if the key exists, we can return a simple result
-                self._results.append(list(result.keys())[0])
-                return
-            self._results.append(result)
-
-    def results(self):
-        """Return the results of the search."""
-        return self._results
-
-    def result_as_list(self):
-        """Return the results of the search as a string."""
-        res = []
-        for items in self.results():
-            if isinstance(items, str):
-                res.append(items)
-            elif isinstance(items, list):
-                for item in items:
-                    res.append(item)
-            elif isinstance(items, dict):
-                for key, value in items.items():
-                    res.append(f"{key}: {value}")
-            else:
-                res.append(str(items))
-        return res
-
-    def clear_results(self):
-        """Clear the search results."""
-        self._results = []
+    def _add_result(self, value) -> None:
+        if self._limit > 0 and self._nr_results >= self._limit:
+            return None
+        self._nr_results += 1
+        if self.reversed:
+            # If the search is reversed, we need to reverse the result
+            # and remove the first character (143)
+            value = {k[::-1][:-1]: v for k, v in value.items()}
+        if self.check_if_key_exists:
+            # If we are only checking for existance of keys.
+            # The result is a single integer value (ID)
+            value = {k: v[0] for k, v in value.items() if v is not None}
+        return value
 
     def search_completed(self) -> bool:
         """Check if the search is completed."""
-        if self._limit > 0 and len(self._results) >= self._limit:
-            return True
-        return False
+        return self._limit > 0 and self._nr_results >= self._limit or False
 
     def case_folding(self, char: int) -> int:
         """Convert character to lower case if it's upper case and vice versa."""
@@ -160,7 +135,7 @@ class Search:
     def case_insensitive(self, value: bool):
         self._case_insensitive = value
 
-    def levhenshtein_find(self, query):
+    def levenshtein_find(self, query):
         """Method to find similar words
         Levenshtein distance of 1 is used to find similar words
         """
@@ -189,14 +164,14 @@ class Search:
             for n in range(len(query[0]) + 1):
                 new_word = query[0][:]
                 new_word.insert(n, i_letter)
-                self._search([new_word, None, None], s_index=1)
+                yield from self._search([new_word, None, None], s_index=1)
 
         # replace the letter at position n with i_letter
         for n in range(len(query[0])):
             for i_letter in alphabet:
                 new_word = query[0][:]
                 new_word[n] = i_letter
-                self._search([new_word, None, None], s_index=1)
+                yield from self._search([new_word, None, None], s_index=1)
 
     def _wildcard_search(self, s_index, query, original_start_part=None) -> None:
         """Search for a word in the trie with wildcards (*) in the query."""
@@ -244,12 +219,18 @@ class Search:
                 word = self._query_to_string(next_start_part)
                 if len(query) > 3:
                     word = self._query_to_string(query[3]) + word
-                self._add_result({word: result})
+
+                res = self._add_result({word: result})
+                if res is not None:
+                    yield res
+                else:
+                    return
+
             # If we have a match, continue searching
             # bitsum is nr_children (nr_hc)
             bitsum = self.mmap.calculate_hc(s_start + idx)
             if bitsum > 0:
-                self._wildcard_search(
+                yield from self._wildcard_search(
                     bitsum + 1,
                     [
                         next_start_part,
@@ -343,7 +324,6 @@ class Search:
         Search for a word in the trie from a given index.
         This method handles case insensitive search by checking both upper and lower case letters.
         """
-
         if start >= len(query[0]):
             return
 
@@ -373,7 +353,13 @@ class Search:
                 word = self._query_to_string(query[0][:][0:start]) + chr(ic_letter)
                 if len(query) > 3:
                     word = self._query_to_string(query[3]) + word
-                self._add_result({word: result})
+
+                result = self._add_result({word: result})
+                if result is not None:
+                    yield result
+                else:
+                    return
+
                 if nr < len(chr_range) - 1:
                     continue
                 else:
@@ -395,9 +381,11 @@ class Search:
                 next_query2.append(query[0][:][0:start])
 
             if next_query2[0][-1] == 42 and len(next_query2[0]) == 2:
-                self._search(next_query2, s_index)
+                yield from self._search(next_query2, s_index)
             if nr_hc > 0:
-                self._case_insensitive_search(next_query, s_index_next, start + 1)
+                yield from self._case_insensitive_search(
+                    next_query, s_index_next, start + 1
+                )
 
     def _search(self, query, s_index) -> None:
         chr_index = -1
@@ -405,7 +393,7 @@ class Search:
             return
         for n, i_letter in enumerate(query[0]):
             if i_letter == 42:  # "*"
-                self._wildcard_search(s_index, query)
+                yield from self._wildcard_search(s_index, query)
                 return
             if i_letter == 95:  # "_"
                 self._underscore_search(s_index, query, n)
@@ -445,7 +433,12 @@ class Search:
                             len(query) > 3
                         ):  # If there is a prefix in the query from underscore search
                             word = self._query_to_string(query[3]) + word
-                        self._add_result({word: result})
+
+                        res = self._add_result({word: result})
+                        if res is not None:
+                            yield res
+                        else:
+                            return
 
                 s_index = nr_hc + 1
         end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
@@ -457,7 +450,12 @@ class Search:
                 len(query) > 3
             ):  # If there is a prefix in the query from underscore search
                 word = self._query_to_string(query[3]) + word
-            self._add_result({word: result})
+
+            res = self._add_result({word: result})
+            if res is not None:
+                yield res
+            else:
+                return
 
     def _query_to_string(self, query) -> str:
         """Convert a query list of ASCII values back to a string."""
@@ -467,7 +465,7 @@ class Search:
             query = query[:-1][:]
         for i, val in enumerate(query):
             if val < 0:
-                query[i] *= -1        
+                query[i] *= -1
         return A.convert_bytes_to_str(query)
 
     def fuzzy_search(self, query, result_format="dict"):
@@ -475,9 +473,7 @@ class Search:
         This method uses Levenshtein distance to find similar words.
         """
         self.levenshtein = True
-        self.search(query)
-        self.levenshtein = False
-        return self.results()
+        return self.search(query)
 
     def exists(self, query) -> list[str]:
         """
@@ -488,33 +484,47 @@ class Search:
         returns list of words.
         """
         self.check_if_key_exists = True
-        self.search(query)
-        self.check_if_key_exists = False
-        return self.results()
+        return self.search(query)
 
-    def search(self, query, result_format="dict") -> str:
+        # self.check_if_key_exists = False
+
+        # return self.results
+
+    def get_by_id(self, id) -> str:
+        # Implement the method to get a word by its ID
+        res = self.mmap.get_by_id(id)
+        return res
+
+    def search(self, query) -> str:
         modified_query = self._prepare_query(query)
-        self.clear_results()
+        # self.clear_results()
         self.reversed = modified_query[0] is not None and modified_query[0][0] == 143
 
         if self.levenshtein:
             """Using Levenshtein distance to find similar words."""
-            if modified_query is None or modified_query[0] is None:
-                print("Invalid query for Levenshtein search.")
-                return []
-            self.levhenshtein_find(modified_query)
+            if (
+                modified_query is None
+                or modified_query[0] is None
+                or modified_query[1] is not None
+                or modified_query[2] is not None
+            ):
+                print("Invalid query for fuzzy search.")
+                return
+
+            yield from self.levenshtein_find(modified_query)
+            self.levenshtein = False
         elif self.case_insensitive and modified_query[0] is not None:
             """Using case insensitive search."""
-            self._case_insensitive_search(modified_query, 1)
+            yield from self._case_insensitive_search(modified_query, 1)
+            self.case_insensitive = False
         elif modified_query[0] is None:
             """Using wildcards in start of query:"""
-            self._wildcard_search(1, modified_query)
+            yield from self._wildcard_search(1, modified_query)
         else:
             """Using no wildcards in start of query:"""
-            self._search(modified_query, 1)
-        if result_format == "list":
-            return self.result_as_list()
-        return self.results()
+            yield from self._search(modified_query, 1)
+            if self.check_if_key_exists:
+                self.check_if_key_exists = False
 
     def _prepare_query(self, query):
         """Modify the query to be used in the search.
@@ -602,23 +612,21 @@ def main():
     COLLECTION = args.c
     QUERY = args.w
     LIMIT = args.l if args.l > 0 else 0
-    LEVENSHTEIN_QUERY = args.z
+    FUZZY_SEARCH = args.z
     CASE_INSENSITIVE = args.insensitive
-    RESULT_FORMAT = args.result if args.result in ("dict", "str") else "dict"
 
     assert COLLECTION is not None, "Collection 'c' is required."
     assert QUERY is not None, "query/word 'w' is required."
 
     S = Search(
-        COLLECTION,
-        LIMIT,
+        collection=COLLECTION,
+        limit=LIMIT,
         case_insensitive=CASE_INSENSITIVE,
-        use_levenshtein=LEVENSHTEIN_QUERY,
+        use_levenshtein=FUZZY_SEARCH,
     )
-
-    for res in enumerate(S.search(QUERY, result_format=RESULT_FORMAT)):
-        print(res)
+    return S.search(QUERY)
 
 
 if __name__ == "__main__":
-    main()
+    for item in main():
+        print(item)
