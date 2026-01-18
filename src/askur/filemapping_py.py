@@ -81,29 +81,35 @@ class Mapping:
             self._s_superblocks = mmap.mmap(
                 f_s_superblocks.fileno(), 0, access=mmap.ACCESS_READ
             )
+            self._s_superblocks.madvise(mmap.MADV_SEQUENTIAL)
             self.bits_in_superblock = self._s_superblocks[0]
             self._s_superblocks = self._s_superblocks[1:]
 
         with io.open(TRIE_FILE, "rb") as f_trie:
             self._trie = mmap.mmap(f_trie.fileno(), 0, access=mmap.ACCESS_READ)
+            self._trie.madvise(mmap.MADV_SEQUENTIAL)
 
         with io.open(HC_BITS_FILE, "rb") as f_hc_bitarray:
             self._hc_bitarray = mmap.mmap(
                 f_hc_bitarray.fileno(), 0, access=mmap.ACCESS_READ
             )
+            self._hc_bitarray.madvise(mmap.MADV_SEQUENTIAL)
 
         with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:
             self._hc_super_blocks = mmap.mmap(
                 f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ
             )
+            self._hc_super_blocks.madvise(mmap.MADV_SEQUENTIAL)
 
         with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:
             self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
+            self._s_bits.madvise(mmap.MADV_SEQUENTIAL)
 
         with io.open(EOW_BITS_FILE, "rb") as f_value_bits:
             self._eow_bits = mmap.mmap(
                 f_value_bits.fileno(), 0, access=mmap.ACCESS_READ
             )
+            self._eow_bits.madvise(mmap.MADV_SEQUENTIAL)
 
         with io.open(
             EOW_BITS_SUMMARY_FILE, "r", encoding="utf-8"
@@ -111,18 +117,22 @@ class Mapping:
             self._eow_sb = mmap.mmap(
                 f_eow_bits_summary.fileno(), 0, access=mmap.ACCESS_READ
             )
+            self._eow_sb.madvise(mmap.MADV_SEQUENTIAL)
 
         with io.open(INDEX_BITS_FILE, "rb") as f_index_bits:
             self._index_bits = mmap.mmap(
                 f_index_bits.fileno(), 0, access=mmap.ACCESS_READ
             )
+            self._index_bits.madvise(mmap.MADV_SEQUENTIAL)
+
             self.nr_bytes_in_index_block = int.from_bytes(
                 self._index_bits[0:1], byteorder="little", signed=False
             )
-            self.nr_bytes_in_value_block = int.from_bytes(
-                self._index_bits[1:2], byteorder="little", signed=False
-            )
-            self._index_bits = self._index_bits[2:]
+
+            # self.nr_bytes_in_value_block = int.from_bytes(
+            #     self._index_bits[1:2], byteorder="little", signed=False
+            # )
+            self._index_bits = self._index_bits[1:]
 
         with io.open(SHORT_TEXT_BITS_FILE, "r", encoding="utf-8") as f_short_text:
             self._short_text = mmap.mmap(
@@ -249,32 +259,26 @@ class Mapping:
         """Returns the index of the of letter in the given range of the mmap"""
         return self._trie[start:end].find(letter)
 
-    def get_index(self, index_value: int) -> int:
-        """Skilar gildi í index sem segir til hvar í short text 
+    def get_index(self, index_value: int) -> list[int, int]:
+        """Skilar gildi í index sem segir til hvar í short text
         er að finna niðurstöðuna sem á að skila til baka
         Skilar einnig lengd textans sem á að skila
         """
-        if index_value == 0:
-            start_idx = 0
-        else:
-            # start_idx = index_value * 6 # 4 byte + 2 byte = 32 bits + 16 bits
-            start_idx: int = index_value * (
-                self.nr_bytes_in_index_block + self.nr_bytes_in_value_block
-            )
+        start_idx: int = index_value * self.nr_bytes_in_index_block
         end_idx: int = start_idx + self.nr_bytes_in_index_block
-
-        end_len: int = end_idx + self.nr_bytes_in_value_block
 
         index_val: int = int.from_bytes(
             self._index_bits[start_idx:end_idx],
             byteorder="big",
             signed=False,
         )
-        len_value: int = int.from_bytes(
-            self._index_bits[end_idx:end_len],
+        end_value: int = int.from_bytes(
+            self._index_bits[end_idx : end_idx + self.nr_bytes_in_index_block],
             byteorder="big",
             signed=False,
         )
+        len_value: int = end_value - index_val
+
         return [index_val, len_value]
 
     def is_end_of_word(self, index: int) -> int:
@@ -299,7 +303,7 @@ class Mapping:
         """
         s_start: int = (index // 32 - 1) * 4
         s_end: int = s_start + 4
-        start_bytes: bytes = self._eow_sb[s_start : s_end]
+        start_bytes: bytes = self._eow_sb[s_start:s_end]
         start_index: int = int.from_bytes(start_bytes, byteorder="big", signed=False)
 
         end_bytes: bytes = self._eow_sb[s_end : s_end + 4]
@@ -326,14 +330,25 @@ class Mapping:
     def get_result(self, value_index: int) -> list[str]:
         """Returns result of the query"""
 
+        value_sum: int = self.get_value_bits_sum(value_index)
+
         # We know that the key exists at this point and the user
         # is only interested to know if it does exist.
         if self.check_if_key_exists:
-            return ["1"]
-
-        value_sum: int = self.get_value_bits_sum(value_index)
+            return [value_sum]
         index_value, text_len = self.get_index(value_sum)
         return self.get_short_text(index_value, text_len)
+
+    def get_by_id(self, id: int) -> list[str]:
+        # id is the value_sum from the method get_result()
+        index_value, text_len = self.get_index(id)
+        return self.get_short_text(index_value, text_len)
+
+    def get_short_text_index(self, value_index: int) -> list[int, int]:
+        """Returns the short text index and length"""
+        value_sum: int = self.get_value_bits_sum(value_index)
+        index_value, text_len = self.get_index(value_sum)
+        return [index_value, text_len]
 
     def get_short_text(self, index: int, text_len: int) -> list[str]:
         """Returns the short text"""
