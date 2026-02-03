@@ -6,14 +6,12 @@ from input file
 
 import os
 import sys
-
-
-A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 import io
 import argparse
 import math as m
 from dataclasses import dataclass
 
+A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
 
 if A_DEVELOPMENT:
     import config
@@ -23,6 +21,7 @@ else:
     from . import config
     from . import alphabet
     from . import watchdog
+
 
 WD: watchdog.Watchdog | None = watchdog.Watchdog(threshold=5, interval=10)
 A: alphabet.Alphabet | None = alphabet.Alphabet
@@ -92,9 +91,8 @@ class Node:
             self.leaf_indices = [self.single_index, idx]
             self.single_index = None
             return
-        if idx in self.index:
-            return
-        self.index.append(idx)
+        if idx not in self.leaf_indices:
+            self.leaf_indices.append(idx)
 
     def get_indices(self) -> list[int]:
         """Get the indices of the end/leaf node."""
@@ -103,6 +101,7 @@ class Node:
         if self.single_index is not None:
             return [self.single_index]
         return []
+
 
 class Trie:
     """A trie."""
@@ -119,6 +118,7 @@ class Trie:
         Args:
             reversed: If True, create a reversed index.
             collection_name: The name of the collection to create.
+            field_separator: The field separator used in the input data.
         """
 
         self._trie = bytearray()  # the LOUDS representation of the trie
@@ -127,9 +127,11 @@ class Trie:
         self._is_eow = []  # the value array (is the end of the word)
         self._index = []  # the counter array (the number of words that have been added to the trie)
         self._short_text = []  # the short text array (the words in the trie)
-        self.collection_name = collection_name
-        self.reversed = reversed  # make reversed index if True
+        self.collection_name: str = collection_name
+        self.reversed: bool = reversed  # make reversed index if True
         self.field_separator = field_separator
+        self.super_block_size: int = 0
+        self.frozen_folder: str = ""
 
         # The alphabet used in the trie.
         self.alphabet = A(reversed)
@@ -144,89 +146,153 @@ class Trie:
             print("Collection name is not set.")
             sys.exit(1)
 
-        frozen_folder: str = os.path.join(data_folder, self.collection_name)
-        if not os.path.exists(frozen_folder):
-            os.makedirs(frozen_folder, exist_ok=True)
+        self.frozen_folder: str = os.path.join(data_folder, self.collection_name)
+        if not os.path.exists(self.frozen_folder):
+            os.makedirs(self.frozen_folder, exist_ok=True)
 
-        self.select_bits_filename = os.path.join(frozen_folder, "s_bits.bin")
+        self.select_bits_filename = os.path.join(self.frozen_folder, "s_bits.bin")
+        self.trie_file = os.path.join(self.frozen_folder, "trie")
 
-        self.trie_file = os.path.join(frozen_folder, "trie")
+        self.index_bits_filename = os.path.join(self.frozen_folder, "index_bits.bin")
+        self.hc_bits_filename = os.path.join(self.frozen_folder, "hc_bits.bin")
 
-        self.index_bits_filename = os.path.join(frozen_folder, "index_bits.bin")
-        self.hc_bits_filename = os.path.join(frozen_folder, "hc_bits.bin")
-
-        self.value_bits_filename = os.path.join(frozen_folder, "eow_bits.bin")
+        self.value_bits_filename = os.path.join(self.frozen_folder, "eow_bits.bin")
 
         self.short_text_bits_filename = os.path.join(
-            frozen_folder, "short_text_bits.bin"
+            self.frozen_folder, "short_text_bits.bin"
         )
 
         # end of word super block file
-        self.eow_sb = os.path.join(frozen_folder, "eow_sb.bin")
+        self.eow_sb = os.path.join(self.frozen_folder, "eow_sb.bin")
 
         # hc superblock
-        self.hc_sb_file = os.path.join(frozen_folder, "hc_sb.bin")
+        self.hc_sb_file = os.path.join(self.frozen_folder, "hc_sb.bin")
 
         # select superblock
-        self.s_sb_file = os.path.join(frozen_folder, "s_sb.bin")
+        self.s_sb_file = os.path.join(self.frozen_folder, "s_sb.bin")
+
+        self.data_file = os.path.join(self.frozen_folder, "data.bin")
 
         # the root node of the trie
         self.root = Node()
 
+        io.open(self.s_sb_file, "w").close()
+        io.open(self.hc_sb_file, "w").close()
+        io.open(self.eow_sb, "w").close()
+
+        io.open(self.value_bits_filename, "w").close()
+        io.open(self.hc_bits_filename, "w").close()
+        io.open(self.trie_file, "w").close()
+        io.open(self.select_bits_filename, "w").close()
+        io.open(self.index_bits_filename, "w").close()
+        io.open(self.short_text_bits_filename, "w").close()
+        io.open(self.trie_file + ".alphabet", "w").close()
+
     def make_frozen_data(self, input_data: str) -> None:
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
+
+        io.open(self.data_file, "w").close()
+
         nr_lines_in_file: int = len(input_data)
         data_values: dict[str, int] = {}
         index: int = -1
         line_nr: int = 0
         key: bytearray()
-
+        next_index: int = -1
         for word_key, word_value in self.read_from_input(input_data):
             line_nr += 1
             if line_nr % 1000 == 0:
                 WD.print_label(f"  {line_nr / nr_lines_in_file * 100:.2f}%")
 
-            key = self.alphabet.convert_str_to_bytes(word_key)
             if word_value not in data_values:
-                index += 1
-                data_values.setdefault(word_value, index)
+                next_index += 1
+                data_values[word_value] = next_index
+                index = next_index
             else:
                 index = data_values[word_value]
+            key = self.alphabet.convert_str_to_bytes(word_key)
             self._add(key, index)
-            if self.reversed:
-                # If reversed, we add the word to the trie in reverse order
-                # whith a special reversed character at the beginning
-                key.reverse()
-                key.insert(0, self.alphabet.reversed_char)
-                self._add(key, index)
-        WD.print_label(" Finalizing...")
-        WD.print_label(" 1/7 - Writing to disk...")
+
+        WD.clear_label()
+        WD.print_label(" Write to disk...")
         self.level_order_tree([self.root], self.alphabet.inv_alphabet)
-        
-        WD.print_label(" 2/7 - Writing to disk...")
+
         self.write_tree_to_file()
 
-        WD.print_label(" 3/7 - Writing to disk...")
-        self.write_eow_values_to_file(self.value_bits_filename)
-        self.write_eow_sums_to_file(self.eow_sb)
+        self.write_select_to_file(self.select_bits_filename)
+        self.super_block_size = self.select_to_superblock()
 
-        WD.print_label(" 4/7 - Writing to disk...")
         self.write_hc_to_file(self.hc_bits_filename)
         self.hc_to_superblock()
 
-        WD.print_label(" 5/7 - Writing to disk...")
-        self.write_select_to_file(self.select_bits_filename)
-        self.select_to_superblock()
+        self.write_eow_values_to_file(self.value_bits_filename)
+        self.write_eow_sums_to_file(self.eow_sb)
 
-        WD.print_label(" 6/7 - Writing to disk...")
-        self.write_short_text_to_file(data_values)
+        index_byte_len = self.write_short_text_to_file(data_values)
 
-        WD.print_label(" 7/7 - Writing to disk...")
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(self.alphabet.get_used)
         WD.clear_label()
 
-    def split_line(self, line: str) -> tuple:
+        bytes_per_info: int = 4
+        superblock_size: int = self.super_block_size
+        bytes_per_indexblock: int = index_byte_len
+
+        start_bytes = [int.to_bytes(0, bytes_per_info, "big") for _ in range(30)]
+        start_bytes[0] = int.to_bytes(bytes_per_info, bytes_per_info, "big")
+        start_bytes[1] = int.to_bytes(superblock_size, bytes_per_info, "big")
+        start_bytes[2] = int.to_bytes(bytes_per_indexblock, bytes_per_info, "big")
+
+        with io.open(self.data_file, "ab") as f:
+            f.write(b"".join(start_bytes))
+
+        next_start: list[int] = [os.path.getsize(self.data_file)]
+        start_bytes[3] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.trie_file + ".alphabet")
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[4] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.trie_file)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[5] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.select_bits_filename)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[6] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.s_sb_file)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[7] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.hc_bits_filename)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[8] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.hc_sb_file)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[9] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.value_bits_filename)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[10] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.eow_sb)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[11] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.index_bits_filename)
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[12] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.short_text_bits_filename)
+
+        with io.open(self.data_file, "rb+") as f:
+            f.seek(0)
+            f.write(b"".join(start_bytes))
+
+        self.remove_build_files()
+
+    def split_line(self, line: str) -> tuple[str, str]:
         """Split a line into key and value based on the field separator."""
         esc: bool = False
         key: str = ""
@@ -278,6 +344,18 @@ class Trie:
             node = node.get_child(self.alphabet.get_alphabet_index(ch))
         node.add_index(index_id)
 
+    def sorted_trie_range(self, node: Node) -> None:
+        """Get the sorted range of letters in the trie node.
+        so that we always traverse the trie in alphabetical order (unless reversed).
+        Args:
+            node: The trie node.
+        """
+        if node.letters is None:
+            return []
+        if self.reversed:
+            return node.letters.keys()
+        return sorted(node.letters.keys())
+
     def level_order_tree(self, nodes: list[Node], inv_alphabet: dict[int, int]) -> None:
         """Level out trie.
         Traverse the trie in level order and write to the _trie, _hc,
@@ -289,7 +367,7 @@ class Trie:
         child_nodes: list[Node] = []
         for node in nodes:
             first = 1
-            for w_key in sorted(node.letters and node.letters.keys() or []):
+            for w_key in self.sorted_trie_range(node):
                 self._trie.append(inv_alphabet.get(w_key))
                 self._select.append(first)
                 first = 0
@@ -315,7 +393,6 @@ class Trie:
 
     def write_tree_to_file(self) -> None:
         """Write level ordered trie to a file."""
-        io.open(self.trie_file, "w").close()
         with io.open(self.trie_file, "ab") as f:
             for chunk in self.generate_data(self._trie):
                 f.write(chunk)
@@ -323,14 +400,12 @@ class Trie:
 
     def write_hc_to_file(self, filename):
         """Write the head child array to a file."""
-        io.open(filename, "w").close()
-
         buffer = bytearray()  # Buffer to hold bytes before Writing to disk
         i = 0
+
         extra_bits = len(self._hc) % 8
-        if extra_bits > 0:
-            for _ in range(8 - extra_bits):
-                self._hc.append(0)  # Pad with zeros to make it a multiple of 8 bits
+        self._hc.extend([0 for _ in range(8 - extra_bits)])
+
         while i < len(self._hc):
             buffer.append(int("".join([str(c) for c in self._hc[i : i + 8]]), 2))
             i += 8
@@ -345,17 +420,15 @@ class Trie:
 
     def write_select_to_file(self, filename):
         """Write the select array to a file."""
-        io.open(filename, "w").close()
 
-        # Það þarf að bæta við 1 í enda á select fylkinu til að geta staðsett síðasta bókstafinn í trie-skránni
-        # Að öðrum kosti finnst ekki verður select útreikningurinn óendanlegur
-        self._select.append(1)  # Pad with 1 to make it a multiple
+        self._select.append(1)  # Pad with 1 to mark end of last char range in trie
         buffer = bytearray()  # Buffer to hold bytes before Writing to disk
         i = 0
+
+        # Total lengt of select has to be a multiple of 8
         extra_bits = len(self._select) % 8
-        if extra_bits > 0:
-            for _ in range(8 - extra_bits):
-                self._select.append(0)  # Pad with zeros to make it a multiple of 8 bits
+        self._select.extend(0 for _ in range(8 - extra_bits))
+
         while i < len(self._select):
             buffer.append(int("".join([str(c) for c in self._select[i : i + 8]]), 2))
             i += 8
@@ -366,19 +439,16 @@ class Trie:
         if len(buffer) > 0:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
-                f.close()
 
-    def write_eow_values_to_file(self, filename):
+    def write_eow_values_to_file(self, filename: str) -> None:
         """Write the value array to a file."""
-        io.open(filename, "w").close()
+        buffer: bytearray = bytearray()  # Buffer to hold bytes before Writing to disk
+        i: int = 0
 
-        buffer = bytearray()  # Buffer to hold bytes before Writing to disk
-        i = 0
-        extra_bits = len(self._is_eow) % 8
-        if extra_bits > 0:
-            for _ in range(8 - extra_bits):
-                self._is_eow.append(0)  # Pad with zeros to make it a multiple of 8 bits
-        # self._is_eow.append([0] * (8 - extra_bits) if extra_bits > 0 else 0)
+        # Total lengt of is_eow has to be a multiple of 8
+        rest_bits: int = len(self._is_eow) % 8
+        self._is_eow.extend([0 for _ in range(8 - rest_bits)])
+
         while i < len(self._is_eow):
             buffer.append(int("".join([str(c) for c in self._is_eow[i : i + 8]]), 2))
             i += 8
@@ -386,180 +456,130 @@ class Trie:
                 with io.open(filename, "ab") as f:
                     f.write(buffer)
                 buffer.clear()
+
         # add remaining bits
         if len(buffer) > 0:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
-                f.close()
 
-    def write_eow_sums_to_file(self, filename):
-        # bits in block = 32
-        # sum of "1"-bits in a block of 32 bits
-        io.open(filename, "w").close()
+    def write_eow_sums_to_file(self, filename: str) -> None:
+        """sum of "1"-bits in a block of 32 bits to a file."""
 
-        sum = 0
-        i = 0
-        buffer = []
-        bits_in_block = 32
-        # Hérns er mögulegt að minnka bits_in_block
-        for byte in range(0, len(self._is_eow)):
-            sum += 1 if self._is_eow[byte] > 0 else 0
+        bitsum: int = 0
+        i: int = 0
+        buffer: list(int) = []
+        bits_in_block: int = 32
+        bytes_in_block: int = 4
+        # TODO : calculate bits_in_block and bytes_in_block based on size of self._is_eow to save space/speed up search
+        for idx in range(0, len(self._is_eow)):
+            bitsum += 1 if self._is_eow[idx] > 0 else 0
             i += 1
             if i == bits_in_block:
                 i = 0
-                buffer.append(sum)
+                buffer.append(bitsum)
                 if len(buffer) >= 10240:
-                    with io.open(filename, "ab") as f:
-                        f.write(
-                            self.bit_bytes_to_bits(
-                                "".join(
-                                    [
-                                        bin(item)[2:].rjust(bits_in_block, "0")
-                                        for item in buffer
-                                    ]
-                                )
-                            )
-                        )
+                    with io.open(filename, "ab") as fb:
+                        for summa in buffer:
+                            fb.write(summa.to_bytes(bytes_in_block, "big"))
                     buffer.clear()
-        if sum:
-            buffer.append(sum)
-            with io.open(filename, "ab") as f:
-                f.write(
-                    self.bit_bytes_to_bits(
-                        "".join(
-                            [bin(item)[2:].rjust(bits_in_block, "0") for item in buffer]
-                        )
-                    )
-                )
-                f.close()
+        if bitsum:
+            buffer.append(bitsum)
+            with io.open(filename, "ab") as fb:
+                for summa in buffer:
+                    fb.write(summa.to_bytes(bytes_in_block, "big"))
 
-    def write_short_text_to_file(self, data_values):
-        """Write the short text array to a file."""
-        io.open(self.short_text_bits_filename, "w").close()
-        io.open(self.index_bits_filename, "w").close()
-
-        # Hérna snúum við data_values svo að röðin sé lykill og lykill sé value
+    def write_short_text_to_file(self, data_values) -> int:
+        """Write the short text array to a file.
+        Returns the index_byte length (block size) used to store the index values.
+        """
+        if len(data_values) == 1:
+            return 1
+        # Hérna snúum við data_values svo að value verður key og key verður value
         # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
         # invert the dictionary:
         data_values = {
             v: self.alphabet.convert_str_to_bytes(k) for k, v in data_values.items()
         }
 
-        total_sum = 0
+        # total length of all short texts
+        total_short_len = sum(len(value) for value in data_values.values())
 
-        for _, value in data_values.items():
-            total_sum += len(value)
-
-        # byte_length er hægt að nota til að skipta út fyrir 32-bita lengdina
-        nr_bytes_in_index_block = (
-            len(bin(total_sum)[2:]) // 8 + (1 if len(bin(total_sum)[2:]) % 8 else 0) + 1
+        # byte_length is minimum number of bytes needed to represent total_short_len
+        byte_len = len(bin(total_short_len)[2:]) // 8 + (
+            1 if len(bin(total_short_len)[2:]) % 8 else 0
         )
-        nr_bits_in_index_block = nr_bytes_in_index_block * 8  # 32
 
-        # athuga lengd á tmp_short_text, s.s. spurning hvort að það séu mörg gildi fyrir sama key-index
-        max_text_len = 0
-        for idxs in self._index:
-            text_len = 0
-            for idx in idxs:
-                text_len += len(data_values[idx]) + 1
-            max_text_len = max(max_text_len, text_len)
-        if max_text_len > 0:
-            nr_bytes_in_value_block = len(bin(max_text_len)[2:]) // 8 + (
-                1 if len(bin(max_text_len)[2:]) % 8 else 0
-            )
-            nr_bits_in_value_block = nr_bytes_in_value_block * 8
+        # Write the block sizes to the index bits file
+        # This is needed for reading the index bits file in the mapping module
+        # with io.open(self.index_bits_filename, "ab") as fb:
+        #     fb.write(bytes([byte_len]))
 
-        with io.open(self.index_bits_filename, "ab") as f:
-            f.write(
-                self.bit_bytes_to_bits(
-                    bin(nr_bytes_in_index_block)[2:].rjust(8, "0")
-                    + bin(nr_bytes_in_value_block)[2:].rjust(8, "0")
-                )
-            )
-            f.close()
+        short_texts: list[bytearray] = []
+        sum_index: int = 0
 
-        short_texts = []
-        sum_index = 0
-        len_values_index = []  # has same length and index ref as self._index
+        # short_text_index has same length and index reference as self._index
+        # it points to the correct position of the resulting text value (the reusult)
+        short_text_index: list[bytes] = []
         indices = {}
         for _, idxs in enumerate(self._index):
             multi_text = []
             for idx in idxs:
                 if len(idxs) == 1:
                     if str(idx) not in indices:
+                        byte_value = sum_index.to_bytes(byte_len, "big")
+                        indices[str(idx)] = byte_value
+                        short_text_index.append(byte_value)
                         short_texts.append(data_values[idx])
-                        value = bin(sum_index)[2:].rjust(
-                            nr_bits_in_index_block, "0"
-                        ) + bin(len(data_values[idx]))[2:].rjust(
-                            nr_bits_in_value_block, "0"
-                        )
-                        indices[str(idx)] = value
-                        len_values_index.append(value)
                         sum_index += len(data_values[idx])
                     else:
-                        len_values_index.append(indices[str(idx)])
+                        short_text_index.append(indices[str(idx)])
                 else:
                     multi_text.append(data_values[idx])
             if len(multi_text) > 1:
-                tmp_txt = []
+                tmp_txt: bytes = []
                 for mtx in multi_text:
                     if len(tmp_txt) == 0:
-                        tmp_txt = mtx.copy()
+                        tmp_txt = mtx[:]
                     else:
-                        tmp_txt.append(141)  # separator between words/sentences
-                        tmp_txt += mtx.copy()
-
-                idxs.sort()
+                        tmp_txt.append(141)
+                        for c in mtx:
+                            tmp_txt.append(c)
+                idxs.sort()  # sort to make sure indexes are uniqe
                 idxs_str = "_".join([str(i) for i in idxs])
                 if idxs_str not in indices:
+                    byte_value = sum_index.to_bytes(byte_len, "big")
+                    indices[idxs_str] = byte_value
+                    short_text_index.append(byte_value)
                     short_texts.append(tmp_txt)
-                    value = bin(sum_index)[2:].rjust(nr_bits_in_index_block, "0") + bin(
-                        len(tmp_txt)
-                    )[2:].rjust(nr_bits_in_value_block, "0")
-                    indices[idxs_str] = value
-                    len_values_index.append(value)
                     sum_index += len(tmp_txt)
                 else:
-                    len_values_index.append(indices[idxs_str])
+                    short_text_index.append(indices[idxs_str])
 
             if len(short_texts) >= 10240:
-                with io.open(self.short_text_bits_filename, "ab") as f:
+                with io.open(self.short_text_bits_filename, "ab") as fb:
                     for item in short_texts:
-                        f.write(item)
-                    f.close()
+                        fb.write(item)
                 short_texts.clear()
 
-            if len(len_values_index) >= 10240:
-                with io.open(self.index_bits_filename, "ab") as f:
-                    f.write(
-                        self.bit_bytes_to_bits(
-                            "".join([txt for txt in len_values_index])
-                        )
-                    )
-                    f.close()
-                len_values_index.clear()
+            if len(short_text_index) >= 10240:
+                with io.open(self.index_bits_filename, "ab") as fb:
+                    fb.write(b"".join(short_text_index))
+                short_text_index.clear()
 
-        if len(len_values_index) > 0:
-            with io.open(self.index_bits_filename, "ab") as f:
-                f.write(
-                    self.bit_bytes_to_bits("".join([txt for txt in len_values_index]))
-                )
-                f.close()
+        # don't forget to append the last sum_index,
+        # othewise the last item in short text will have length of zero
+        byte_value = sum_index.to_bytes(byte_len, "big")
+        short_text_index.append(byte_value)
+        with io.open(self.index_bits_filename, "ab") as fb:
+            fb.write(b"".join(short_text_index))
 
         if len(short_texts) > 0:
-            with io.open(self.short_text_bits_filename, "ab") as f:
+            with io.open(self.short_text_bits_filename, "ab") as fb:
                 for item in short_texts:
-                    f.write(item)
-                f.close()
+                    fb.write(item)
+        return byte_len
 
-    def to_bytearray(self, s_bytes):
-        """Convert chr to ord(chr)."""
-        buffer = bytearray()
-        for _, c in enumerate(s_bytes):
-            buffer.append(ord(c))
-        return buffer
-
-    def bit_bytes_to_bits(self, s_bytes):
+    def bit_bytes_to_bits(self, s_bytes: str) -> bytearray:
         """Convert ones and zeros from select and range series to bytes.
         s_bytes contain only 0 and 1, but are stored as bytes on the disk.
         We are converting the ones and zeros to bytes to compress their size.
@@ -576,74 +596,177 @@ class Trie:
         return buffer
 
     def hc_to_superblock(self):
-        # Writing to hc-superblock
-        bib = 8
-        block_size = (round(m.ceil(m.log2(len(self._hc)) / 2) + 5, -1) // bib) * bib
+        """Writing to hc-superblock file"""
 
-        # bit lengd getur verið (len(bin(self._hc)) // 8 + 1 (byte)) * 8  í stað föstu tölunnar 32
-        # það ætti að spara í það minnsta 1 byte fyrir hvert 32 bita block
-        # sama er hægt að gera fyrir select_lookup
-        io.open(self.hc_sb_file, "w").close()
-
-        res = bytearray()
-        bitsum = 0
-        index = 0
+        nr_bytes: int = 4
+        buffer: bytearray = bytearray()
+        bitsum: int = 0
+        index: int = 0
         for i, val in enumerate(self._hc):
             bitsum += val
             index += 1
-            if index == block_size:
-                bits = bin(bitsum)[2:].rjust(32, "0")
-                for j in range(0, len(bits), 8):
-                    res.append(int(bits[j : j + 8], 2))
+            if index == self.super_block_size:
+                byte_value = bitsum.to_bytes(nr_bytes, "big")
+                buffer.extend(byte_value)
                 index = 0
-                if len(res) >= 1024:
-                    with io.open(self.hc_sb_file, "ab") as f:
-                        f.write(res)
-                        f.close()
-                    res.clear()
+
+                if len(buffer) >= 1024:
+                    with io.open(self.hc_sb_file, "ab") as fb:
+                        fb.write(buffer)
+                    buffer.clear()
         if index > 0:
-            bits = bin(bitsum)[2:].rjust(32, "0")
-            for j in range(0, len(bits), 8):
-                res.append(int(bits[j : j + 8], 2))
-        if len(res) > 0:
-            with io.open(self.hc_sb_file, "ab") as f:
-                f.write(res)
-                f.close()
+            byte_value = bitsum.to_bytes(nr_bytes, "big")
+            buffer.extend(byte_value)
+        if len(buffer) > 0:
+            with io.open(self.hc_sb_file, "ab") as fb:
+                fb.write(buffer)
 
-    def select_to_superblock(self):
-        io.open(self.s_sb_file, "w").close()
+    def select_to_superblock(self) -> int:
+        """Write the select superblock to a file.
+        returns the block size used in bits for the select superblock and hc superblock.
 
-        bib = 8
-        bits = ""
-        block_size = (round(m.ceil(m.log2(len(self._select)) / 2) + 5, -1) // bib) * bib
-        bitsum = 0
-        res = bytearray()
-        res.append(block_size)
+        return block_size: int
+        """
+        # block size in bits has to be multiple of 8
+        block_size: int = m.ceil(m.log2(len(self._select)) / 2) // 8 * 8
+        block_size = max(8, block_size)
+
+        bitsum: int = 0
+        nr_bytes: int = 4
+        buffer = bytearray()
+        # buffer.append(block_size)
         for i, val in enumerate(self._select):
             bitsum += val
             if bitsum == block_size:
-                bits = bin(i)[2:].rjust(32, "0")
-                for j in range(0, len(bits), 8):
-                    res.append(int(bits[j : j + 8], 2))
+                bytes = i.to_bytes(nr_bytes, "big")
+                buffer.extend(bytes)
                 bitsum = 0
-                if len(res) >= 1024:
+                if len(buffer) >= 1024:
                     with io.open(self.s_sb_file, "ab") as f:
-                        f.write(res)
-                        f.close()
-                    res.clear()
-                    bits = ""
+                        f.write(buffer)
+                    buffer.clear()
 
         if bitsum > 0:
-            bits = bin(i)[2:].rjust(32, "0")
-            for j in range(0, len(bits), 8):
-                res.append(int(bits[j : j + 8], 2))
-        if len(res) > 0:
-            with io.open(self.s_sb_file, "ab") as f:
-                f.write(res)
-                f.close()
+            bytes = i.to_bytes(nr_bytes, "big")
+            buffer.extend(bytes)
 
-    def __str__(self):
-        return str(self.root)
+        if buffer:
+            with io.open(self.s_sb_file, "ab") as f:
+                f.write(buffer)
+        return block_size
+
+    def make_reversed(self) -> None:
+        """Make a reversed trie from the original data."""
+        WD.print_label(" Create index...")
+        self.super_block_size = 0
+        index_byte_len: int = 0
+
+        with io.open(self.data_file, "rb") as f_data:
+            vals = f_data.read(1024)  # read first 1024 bytes
+            self.super_block_size = int.from_bytes(vals[4:8], "big")
+            index_byte_len = int.from_bytes(vals[8:12], "big")
+            short_text_start: int = int.from_bytes(vals[48:52], "big")
+            short_text_len: int = len(
+                vals[short_text_start:]
+            )  # just to see if there is any short text
+
+        from search import Search
+
+        search: Search = Search(collection=self.collection_name)
+
+        # All entries in the trie
+        for items in search.exists("*"):
+            for key, value in items.items():
+                self._add(self.alphabet.convert_str_to_bytes(key[::-1]), value)
+
+        self.level_order_tree([self.root], self.alphabet.inv_alphabet)
+
+        # Translate self._index to short text indices used in the original trie
+        if short_text_len > 0:
+            with io.open(self.index_bits_filename, "wb") as f_index:
+                f_index.write(
+                    b"".join(
+                        [i[0].to_bytes(index_byte_len, "big") for i in self._index]
+                    )
+                )
+
+        WD.clear_label()
+        self.write_tree_to_file()
+
+        self.write_select_to_file(self.select_bits_filename)
+        self.select_to_superblock()
+
+        self.write_eow_values_to_file(self.value_bits_filename)
+        self.write_eow_sums_to_file(self.eow_sb)
+
+        self.write_hc_to_file(self.hc_bits_filename)
+        self.hc_to_superblock()
+        WD.clear_label()
+
+        start_bytes: list[bytes] = []
+        bytes_per_info: int = 4
+        # merge reversed files into data file
+        next_start: list[int] = [os.path.getsize(self.data_file)]
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.trie_file)
+        # select
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.select_bits_filename)
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.s_sb_file)
+        # hc files
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.hc_bits_filename)
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.hc_sb_file)
+        # eow files
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.value_bits_filename)
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.eow_sb)
+        # index bits file
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        self.merge_files(self.data_file, self.index_bits_filename)
+
+        with io.open(self.data_file, "rb+") as f:
+            start_index: int = 60
+            for n in range(len(start_bytes)):
+                f.seek(start_index + n * bytes_per_info)
+                vals = start_bytes[n]
+                f.write(vals)
+
+        # clean up temporary files
+        self.remove_build_files()
+
+    def merge_files(self, master_file: str, temp_file: str) -> None:
+        """Merge two files into one."""
+        with io.open(master_file, "ab") as f_master:
+            with io.open(temp_file, "rb") as f_temp:
+                while True:
+                    chunk = f_temp.read(10240)
+                    if not chunk:
+                        break
+                    f_master.write(chunk)
+
+    def remove_build_files(self) -> None:
+        """Remove temporary files."""
+        os.remove(self.trie_file)
+        os.remove(self.select_bits_filename)
+        os.remove(self.s_sb_file)
+        os.remove(self.hc_bits_filename)
+        os.remove(self.hc_sb_file)
+        os.remove(self.value_bits_filename)
+        os.remove(self.eow_sb)
+        os.remove(self.index_bits_filename)
+        os.remove(self.short_text_bits_filename)
+        os.remove(self.trie_file + ".alphabet")
 
 
 def main():
@@ -656,13 +779,27 @@ def main():
 
     args = ARG_PARSER.parse_args()
     txt = args.file
+    field_separator = args.field_separator or ";"
+
     if txt is not None and args.collection is not None:
-        trie = Trie(collection_name=args.collection, reversed=args.reversed or False)
+        trie = Trie(
+            collection_name=args.collection,
+            reversed=args.reversed,
+            field_separator=field_separator,
+        )
         trie.make_frozen_data(txt.readlines())
-        # Close the input file if it's not stdin
         if txt != sys.stdin:
             txt.close()
-    else:
+
+    if args.reversed and args.collection:
+        trie = Trie(
+            collection_name=args.collection,
+            reversed=True,
+            field_separator=field_separator,
+        )
+        trie.make_reversed()
+
+    if args.collection is None or (txt is None and not args.revesed):
         ARG_PARSER.print_help()
 
 
