@@ -25,14 +25,14 @@ class Watchdog:
                 )
                 os._exit(1)
 
-            print(f"{self._text_label}: {self.memory_status['label']}", end="\r")
+            print(f"{self.memory_status['label'] + (self._text_label if self._print_label else ' ')}", end="\r")
             time.sleep(self.interval)
 
     @property
     def memory_status(self) -> dict:
         mem = psutil.virtual_memory()
 
-        total_length = 50  # Length of the label bar
+        total_length = 24  # Length of the label bar
         total_used = (int(mem.percent) * total_length) // 100
         total_available = total_length - total_used
         mem_total_gb = mem.total / (1024 * 1024 * 1024)
@@ -54,7 +54,7 @@ class Watchdog:
     def clear_label(self) -> None:
         self._print_label = False
         self._text_label = ""
-        print(" " * 100, end="\n")
+        print(" " * 100, end="\r")
 
 
 if __name__ == "__main__":
