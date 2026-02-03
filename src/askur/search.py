@@ -4,6 +4,8 @@ import argparse
 
 
 A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
+UNDERSCORE = 95  # ASCII code for '_'
+WILDCARD = 42  # ASCII code for '*'
 
 if A_DEVELOPMENT:
     import config
@@ -44,9 +46,17 @@ arg_parser.add_argument(
     action="store_true",
     help="Use case insensitive search.",
 )
+arg_parser.add_argument(
+    "-e",
+    "--exists",
+    action="store_true",
+    help="Check if the word exists in the collection.",
+)
+
 
 class Search:
     """Search for words in the LOUDS trie."""
+
     def __init__(
         self,
         collection,
@@ -61,6 +71,7 @@ class Search:
         self._case_insensitive = case_insensitive
         self._collection_name = collection
         self._nr_results = 0
+        self._reversed = False
 
     @property
     def check_if_key_exists(self):
@@ -77,7 +88,7 @@ class Search:
         if self.reversed:
             # If the search is reversed, we need to reverse the result
             # and remove the first character (143)
-            value = {k[::-1][:-1]: v for k, v in value.items()}
+            value = {k[::-1][:]: v for k, v in value.items()}
         if self.check_if_key_exists:
             # If we are only checking for existance of keys.
             # The result is a single integer value (ID)
@@ -120,12 +131,13 @@ class Search:
     @property
     def reversed(self) -> bool:
         """return  whether to search in reversed order."""
-        return self._reversed and self.mmap.is_reversed()
+        return self._reversed and self.mmap.has_reversed_index()
 
     @reversed.setter
     def reversed(self, reversed: bool):
         """Set whether to search in reversed order."""
-        self._reversed = reversed and self.mmap.is_reversed()
+        self._reversed = reversed and self.mmap.has_reversed_index()
+        self.mmap.do_reversed_lookup(self._reversed)
 
     @property
     def case_insensitive(self) -> bool:
@@ -138,23 +150,27 @@ class Search:
     def levenshtein_find(self, query):
         """Method to find similar words
         Levenshtein distance of 1 is used to find similar words
+
+        WORD can be transformed into another word by:
+        - add a letter
+        - remove a letter
+        - replace a letter
         """
         if (
             query[0] is None
-            or 95 in query[0]  # "_" wildcard
-            or 42 in query[0]  # "*" wildcard
+            or UNDERSCORE in query[0]  # "_" wildcard
+            or WILDCARD in query[0]  # "*" wildcard
         ):
             # If there are wildcards in the query, we cannot use Levenshtein distance
             return
 
         alphabet = [
-            ord(c)
+            c
             for c in self.mmap.alphabet
-            if ord(c)
+            if c
             not in (
-                42,
-                95,
-                self._reversed_char,
+                UNDERSCORE,
+                WILDCARD,
             )
         ]
 
@@ -191,7 +207,7 @@ class Search:
         for idx, i_letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
             if i_letter == self._reversed_char:
                 continue
-            if i_letter == 95 or i_letter == 42:  # "_" or "*"
+            if i_letter == UNDERSCORE or i_letter == WILDCARD:  # "_" or "*"
                 i_letter *= -1
 
             next_start_part.append(i_letter)
@@ -221,7 +237,7 @@ class Search:
                     word = self._query_to_string(query[3]) + word
 
                 res = self._add_result({word: result})
-                if res is not None:
+                if res:
                     yield res
                 else:
                     return
@@ -272,18 +288,17 @@ class Search:
             for i in range(search_start, word_len - pattern_len + 1):
                 match = True
                 for j in range(pattern_len):
-                    # 95 represents wildcard character '_'
                     if self.case_insensitive:
                         # Case insensitive comparison
                         if (
-                            pattern[j] != 95
+                            pattern[j] != UNDERSCORE
                             and pattern[j] != word_part[i + j]
                             and pattern[j] != self.case_folding(word_part[i + j])
                         ):
                             match = False
                             break
                     else:
-                        if pattern[j] != 95 and pattern[j] != word_part[i + j]:
+                        if pattern[j] != UNDERSCORE and pattern[j] != word_part[i + j]:
                             match = False
                             break
 
@@ -314,7 +329,7 @@ class Search:
             next_query.append(query[0][0:start])
 
         for i_letter in chr_range:
-            if i_letter == 95 or i_letter == 42:  # "_" or "*"
+            if i_letter == UNDERSCORE or i_letter == WILDCARD:
                 i_letter *= -1  # Escape the character
             next_query[0] = [i_letter] + query[0][start + 1 :][:]
             yield from self._search(next_query, s_index)
@@ -339,7 +354,7 @@ class Search:
             chr_range.append(i_letter)
         if i_letter != i_fold_letter and range.find(i_fold_letter) >= 0:
             chr_range.append(i_fold_letter)
-        if chr_range == [] and i_letter == 95:  #  "_"
+        if chr_range == [] and i_letter == UNDERSCORE:  #  "_"
             chr_range = range
 
         for nr, ic_letter in enumerate(chr_range):
@@ -392,10 +407,10 @@ class Search:
         if self.search_completed():
             return
         for n, i_letter in enumerate(query[0]):
-            if i_letter == 42:  # "*"
+            if i_letter == WILDCARD:  # "*"
                 yield from self._wildcard_search(s_index, query)
                 return
-            if i_letter == 95:  # "_"
+            if i_letter == UNDERSCORE:  # "_"
                 yield from self._underscore_search(s_index, query, n)
                 return
             if i_letter < 0:  # Negative ASCII value means escaped character
@@ -439,7 +454,6 @@ class Search:
                             yield res
                         else:
                             return
-
                 s_index = nr_hc + 1
         end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
 
@@ -486,10 +500,6 @@ class Search:
         self.check_if_key_exists = True
         return self.search(query)
 
-        # self.check_if_key_exists = False
-
-        # return self.results
-
     def get_by_id(self, id) -> str:
         # Implement the method to get a word by its ID
         res = self.mmap.get_by_id(id)
@@ -497,8 +507,6 @@ class Search:
 
     def search(self, query) -> str:
         modified_query = self._prepare_query(query)
-        # self.clear_results()
-        self.reversed = modified_query[0] is not None and modified_query[0][0] == 143
 
         if self.levenshtein:
             """Using Levenshtein distance to find similar words."""
@@ -539,17 +547,15 @@ class Search:
         esc = False  # Escape character for wildcards '\'
 
         reversed_query = (
-            self.mmap.is_reversed()
+            self.mmap.has_reversed_index()
             and query.startswith("*")
             and not query.endswith("*")
             and len(query) > 1
         )
-        if reversed_query:
-            query = query[::-1]
-            res.append(
-                143
-            )  # 143 is unused ASCII code, used to indicate start of reversed query
 
+        if reversed_query:
+            self.reversed = True
+            query = query[::-1]
         for c in query:
             if ord(c) > 255:
                 multi_bytes = A.convert_str_to_bytes(c)
@@ -569,18 +575,20 @@ class Search:
 
                 res.append(ord(c))
 
-        if 42 in res:  # 42 is the ASCII code for '*'
+        if WILDCARD in res:  # 42 is the ASCII code for '*' /WILDCARD
             starts_with = (
-                None  # Every character before the first 42 belong to the start
+                None  # Every character before the first wildcard belong to the start
             )
-            middle_part = []  # Every character between the first and last 42 belongs to the middle
-            ends_with = None  # Every character after the last 42 belongs to the end
-            # split at first 42
-            index = res.index(42)
+            middle_part = []  # Every character between the first and last wildcard belongs to the middle
+            ends_with = (
+                None  # Every character after the last wildcard belongs to the end
+            )
+            # split at first wildcard
+            index = res.index(WILDCARD)
             if index > 0:
                 starts_with = res[: index + 1]
-            # Split at the last occurrence of 42
-            last_index = len(res) - 1 - res[::-1].index(42)
+            # Split at the last occurrence of wildcard
+            last_index = len(res) - 1 - res[::-1].index(WILDCARD)
             ends_with = res[last_index + 1 :]
             if not ends_with:
                 ends_with = None
@@ -589,7 +597,7 @@ class Search:
             res = res[index + 1 :]
             sublist = []
             for _, item in enumerate(parts):
-                if item == 42:
+                if item == WILDCARD:
                     middle_part.append(sublist)
                     sublist = []
                 else:
@@ -614,6 +622,7 @@ def main():
     LIMIT = args.l if args.l > 0 else 0
     FUZZY_SEARCH = args.z
     CASE_INSENSITIVE = args.insensitive
+    EXISTS = args.exists
 
     assert COLLECTION is not None, "Collection 'c' is required."
     assert QUERY is not None, "query/word 'w' is required."
@@ -624,6 +633,9 @@ def main():
         case_insensitive=CASE_INSENSITIVE,
         use_levenshtein=FUZZY_SEARCH,
     )
+    if EXISTS:
+        return S.exists(QUERY)
+
     return S.search(QUERY)
 
 
