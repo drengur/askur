@@ -4,55 +4,124 @@
 # cython: wraparound=False
 # cython: cdivision=True
 # cython: profile=False
-
 import io
 import os
 import mmap
-
-from . import alphabet
+import alphabet
 A = alphabet.Alphabet()
+
 cdef class Mapping:
     # C-level attributes for maximum speed
-    cdef public object _trie
-    cdef public object _hc_bitarray
-    cdef public object _s_bits
-    cdef public object _eow_bits
-    cdef public int short_text_len
-    cdef public object _s_lookup_blocks
-    cdef public object _s_superblocks
-    cdef public object _hc_super_blocks
-    cdef public object _hc_lookup_blocks
+    cdef public bytes _trie
+    
+    cdef public bytes _s_bits
+    cdef public bytes _s_superblocks
+
+    cdef public bytes _hc_bitarray
+    cdef public bytes _hc_super_blocks
+
+    cdef public bytes _eow_bits
+    cdef public bytes _eow_sb
+
+    cdef public bytes _index_bits
+    cdef public bytes _index_values_length
+    
+    # cdef public int short_text_len
     cdef public int bits_in_superblock
     cdef public str collection
-    cdef public object _eow_sb
+
+    # pointers for start of the sections
+    cdef public int _triet_start 
+    cdef public int _select_start
+    cdef public int _select_superblock_start
+    cdef public int _hc_start
+    cdef public int _hc_superblock_start
+    cdef public int _eow_start
+    cdef public int _eow_superblock_start
+    cdef public int _index_start
+    cdef public int alphabet_index_start
+
+    cdef public bytes alphabet
+    cdef public bint _has_reversed_index  # does the index have reversed entries?
+    cdef public bint _reversed_lookup  # are we looking up reversed entries?
+    cdef public bint check_if_key_exists  # are we only checking if key exists?
+    # cdef public bytes _data
+
     cdef public int nr_bytes_in_index_block
-    cdef public int nr_bytes_in_value_block
-    cdef public object alphabet
-    cdef public bint reversed
-    cdef public bint check_if_key_exists
-    cdef public object _index_bits
-    cdef public object _short_text
+
+    cdef public bytes _reversed_trie
+
+    cdef public bytes _reversed_s_bits
+    cdef public bytes _reversed_s_superblocks
+    cdef public bytes _reversed_hc_bits
+    cdef public bytes _reversed_hc_super_blocks
+
+    cdef public bytes _reversed_eow_bits
+    cdef public bytes _reversed_eow_sb
+
+    cdef public bytes _reversed_index_bits
+    cdef public bytes _translate_index_bits
+
+    cdef public bytes _short_text
+
+    # pointers to the starts of the reversed sections
+    cdef public int _reversed_trie_start
+
+    cdef public int _reversed_select_start
+    cdef public int _reversed_select_superblock_start
+    cdef public int _reversed_hc_start
+    cdef public int _reversed_hc_superblock_start
+
+    cdef public int _reversed_eow_start
+    cdef public int _reversed_eow_superblock_start
+
+    # cdef public int _reversed_index_start
+
+    # lookup tables in use for index lookups or reverse index lookups
+    cdef public  bytes _lookup_trie_list
+
+    cdef public bytes _lookup_s_bits_list
+    cdef public bytes _lookup_s_superblocks_list
+    cdef public bytes _lookup_hc_bits_list
+    cdef public bytes _lookup_hc_super_blocks_list
+
+    cdef public bytes _lookup_eow_bits_list
+    cdef public bytes _lookup_eow_sb_list
+
+    cdef public bytes _lookup_index_bits_list
+
 
     def __init__(self, collection: str) -> None:
-        self.short_text_len = 0
+        # self.short_text_len = 0
         self.bits_in_superblock = 0
         self.collection = collection
         self.nr_bytes_in_index_block = 0
-        self.nr_bytes_in_value_block = 0
-        self.alphabet = bytearray()
-        self.reversed = False
         self.check_if_key_exists = False
+        self._reversed_lookup = False
+        self._has_reversed_index = False
         self._load_files()
 
-    def _load_files(self):
-        cdef str DATA_FOLDER, frozen_folder
+    cdef void _load_files(self):
+        cdef int alphabet_start, trie_start
+        cdef int select_bits_start, select_superblock_start
+        cdef int hc_start, hc_superblock_start
+        
+        cdef int eow_bytes_start, eow_superblock_start
+        cdef int index_value_start, short_text_start
+        cdef int reversed_trie_start, reversed_select_start
+        cdef int reversed_select_superblock_start, reversed_hc_start
+        cdef int reversed_hc_superblock_start, reversed_eow_start
+        cdef int reversed_eow_superblock_start, reversed_index_start
+        cdef object data 
+        cdef str data_filename
         
         # Check for environment variable first, then fall back to config file
-        DATA_FOLDER = os.environ.get('ASKUR_DATA_FOLDER')
-        frozen_folder = os.path.join(DATA_FOLDER, self.collection)
+        # Use Python-level variables to avoid unsafe C derivatives
+        data_folder = os.environ.get('ASKUR_DATA_FOLDER')
+        frozen_folder = os.path.join(data_folder, self.collection)
             
         if not os.path.exists(frozen_folder):
-            data_parent = DATA_FOLDER if os.path.isabs(DATA_FOLDER) else os.path.join(os.path.dirname(__file__), DATA_FOLDER)
+            data_parent = data_folder if os.path.isabs(data_folder) else os.path.join(os.path.dirname(__file__), data_folder)
             if os.path.exists(data_parent):
                 existing_collections = os.listdir(data_parent)
             else:
@@ -60,61 +129,126 @@ cdef class Mapping:
             raise FileNotFoundError(f"{self.collection} collection does not exist!\n Existing collections are: {existing_collections}\n Data folder: {data_parent}")
 
         # File paths
-        cdef str SELECT_BITS_FILE = os.path.join(frozen_folder, "s_bits.bin")
-        cdef str HC_BITS_FILE = os.path.join(frozen_folder, "hc_bits.bin")
-        cdef str HC_SB_BIN = os.path.join(frozen_folder, "hc_sb.bin")
-        cdef str S_SB_BIN = os.path.join(frozen_folder, "s_sb.bin")
-        cdef str TRIE_FILE = os.path.join(frozen_folder, "trie")
-        cdef str EOW_BITS_FILE = os.path.join(frozen_folder, "eow_bits.bin")
-        cdef str EOW_BITS_SUMMARY_FILE = os.path.join(frozen_folder, "eow_sb.bin")
-        cdef str INDEX_BITS_FILE = os.path.join(frozen_folder, "index_bits.bin")
-        cdef str SHORT_TEXT_BITS_FILE = os.path.join(frozen_folder, "short_text_bits.bin")
-        cdef str ALPHABET_FILE = os.path.join(frozen_folder, "trie.alphabet")
-
+        data_filename = os.path.join(frozen_folder, "data.bin")    
+        
         # Load files without pointer caching
-        with io.open(S_SB_BIN, "rb") as f_s_superblocks:
-            self._s_superblocks = mmap.mmap(f_s_superblocks.fileno(), 0, access=mmap.ACCESS_READ)
-            self.bits_in_superblock = self._s_superblocks[0]
-            self._s_superblocks = self._s_superblocks[1:]
+        with io.open(data_filename, "rb") as f_data:
+            data = mmap.mmap(f_data.fileno(), 0, access=mmap.ACCESS_READ)
+            self.bits_in_superblock = int.from_bytes(data[4:8], byteorder="big")
+            self.nr_bytes_in_index_block = int.from_bytes(data[8:12], byteorder="big")
 
-        with io.open(TRIE_FILE, "rb") as f_trie:
-            self._trie = mmap.mmap(f_trie.fileno(), 0, access=mmap.ACCESS_READ)
+            alphabet_start = int.from_bytes(data[12:16], byteorder="big")
 
-        with io.open(HC_BITS_FILE, "rb") as f_hc_bitarray:
-            self._hc_bitarray = mmap.mmap(f_hc_bitarray.fileno(), 0, access=mmap.ACCESS_READ)
+            trie_start = int.from_bytes(data[16:20], byteorder="big")
 
-        with io.open(HC_SB_BIN, "rb") as f_hc_super_blocks:
-            self._hc_super_blocks = mmap.mmap(f_hc_super_blocks.fileno(), 0, access=mmap.ACCESS_READ)
+            select_bits_start = int.from_bytes(data[20:24], byteorder="big")
+            select_superblock_start = int.from_bytes(data[24:28], byteorder="big")
 
-        with io.open(SELECT_BITS_FILE, "rb") as f_select_bits:
-            self._s_bits = mmap.mmap(f_select_bits.fileno(), 0, access=mmap.ACCESS_READ)
+            hc_start = int.from_bytes(data[28:32], byteorder="big")
+            hc_superblock_start = int.from_bytes(data[32:36], byteorder="big")
 
-        with io.open(EOW_BITS_FILE, "rb") as f_value_bits:
-            self._eow_bits = mmap.mmap(f_value_bits.fileno(), 0, access=mmap.ACCESS_READ)
+            eow_bytes_start = int.from_bytes(data[36:40], byteorder="big")
+            eow_superblock_start = int.from_bytes(data[40:44], byteorder="big")
+            
+            index_value_start = int.from_bytes(data[44:48], byteorder="big")
+            index_values_length_start = int.from_bytes(data[48:52], byteorder="big")
+            short_text_start = int.from_bytes(data[52:56], byteorder="big")
 
-        with io.open(EOW_BITS_SUMMARY_FILE, "rb") as f_eow_bits_summary:
-            self._eow_sb = mmap.mmap(f_eow_bits_summary.fileno(), 0, access=mmap.ACCESS_READ)
+            reversed_trie_start = int.from_bytes(data[60:64], byteorder="big")
+            reversed_select_start = int.from_bytes(data[64:68], byteorder="big")
+            reversed_select_superblock_start = int.from_bytes(
+                data[68:72], byteorder="big"
+            )
+            reversed_hc_start = int.from_bytes(data[72:76], byteorder="big")
+            reversed_hc_superblock_start = int.from_bytes(data[76:80], byteorder="big")
+            reversed_eow_start = int.from_bytes(data[80:84], byteorder="big")
+            reversed_eow_superblock_start = int.from_bytes(data[84:88], byteorder="big")
+            reversed_index_start = int.from_bytes(data[88:92], byteorder="big")
+            # reversed_index_start = index_value_start
 
-        with io.open(INDEX_BITS_FILE, "rb") as f_index_bits:
-            self._index_bits = mmap.mmap(f_index_bits.fileno(), 0, access=mmap.ACCESS_READ)
-            self.nr_bytes_in_index_block = self._index_bits[0]
-            self.nr_bytes_in_value_block = self._index_bits[1]
-            self._index_bits = self._index_bits[2:]
+            self.alphabet = data[alphabet_start:trie_start]
+            self._trie = data[trie_start:select_bits_start]
 
-        with io.open(SHORT_TEXT_BITS_FILE, "rb") as f_short_text:
-            self._short_text = mmap.mmap(f_short_text.fileno(), 0, access=mmap.ACCESS_READ)
+            self._s_bits = data[select_bits_start:select_superblock_start]
+            self._s_superblocks = data[select_superblock_start:hc_start]
 
-        with io.open(ALPHABET_FILE, "rb") as f_alphabet:
-            self.alphabet = mmap.mmap(f_alphabet.fileno(), 0, access=mmap.ACCESS_READ)
+            self._hc_bitarray = data[hc_start:hc_superblock_start]
+            self._hc_super_blocks = data[hc_superblock_start:eow_bytes_start]
 
-        # Check if reversed
-        if len(self.alphabet) > 0 and self.alphabet[0] == 0x8f:
-            self.reversed = True
+            self._eow_bits = data[eow_bytes_start:eow_superblock_start]
+            self._eow_sb = data[eow_superblock_start:index_value_start]
 
-    cpdef bint is_reversed(self):
+            self._index_bits = data[index_value_start:short_text_start]
+            self._index_values_length = data[index_values_length_start:short_text_start]
+
+            if reversed_trie_start > 0:
+                self._short_text = data[short_text_start:reversed_trie_start]
+            else:
+                self._short_text = data[short_text_start:]
+
+            self._reversed_trie = data[reversed_trie_start:reversed_select_start]
+            # select bits
+            self._reversed_s_bits = data[
+                reversed_select_start:reversed_select_superblock_start
+            ]
+            self._reversed_s_superblocks = data[
+                reversed_select_superblock_start:reversed_hc_start
+            ]
+            # hc bits
+            self._reversed_hc_bits = data[
+                reversed_hc_start:reversed_hc_superblock_start
+            ]
+            self._reversed_hc_super_blocks = data[
+                reversed_hc_superblock_start:reversed_eow_start
+            ]
+            # eow bits
+            self._reversed_eow_bits = data[
+                reversed_eow_start:reversed_eow_superblock_start
+            ]
+            self._reversed_eow_sb = data[reversed_eow_superblock_start:]
+            # index bits
+            # ATT: We are not using reversed index bits, but translating the index values
+            # back to normal index values
+            self._translate_index_bits = data[reversed_index_start:]
+
+            self._has_reversed_index = reversed_trie_start > 0 
+            # and reversed_select_start > reversed_trie_start
+
+            self._lookup_trie_list = self._trie
+            self._lookup_s_bits_list = self._s_bits
+            self._lookup_s_superblocks_list = self._s_superblocks
+            self._lookup_hc_bits_list = self._hc_bitarray
+            self._lookup_hc_super_blocks_list = self._hc_super_blocks
+            self._lookup_eow_bits_list = self._eow_bits
+            self._lookup_eow_sb_list = self._eow_sb
+            self._lookup_index_bits_list = self._index_bits
+            self._lookup_index_values_length_list = self._index_values_length
+
+    cpdef bint has_reversed_index(self):
         """Returns True if the index is reversed"""
-        return self.reversed
+        return self._has_reversed_index
     
+    cpdef bint do_reversed_lookup(self, bool reversed_lookup):
+        self._reversed_lookup = reversed_lookup and self._has_reversed_index
+        if self._reversed_lookup:
+            self._lookup_trie_list = self._reversed_trie
+            self._lookup_s_bits_list = self._reversed_s_bits
+            self._lookup_s_superblocks_list = self._reversed_s_superblocks
+            self._lookup_hc_bits_list = self._reversed_hc_bits
+            self._lookup_hc_super_blocks_list = self._reversed_hc_super_blocks
+            self._lookup_eow_bits_list = self._reversed_eow_bits
+            self._lookup_eow_sb_list = self._reversed_eow_sb
+        else:
+            self._lookup_trie_list = self._trie
+            self._lookup_s_bits_list = self._s_bits
+            self._lookup_s_superblocks_list = self._s_superblocks
+            self._lookup_hc_bits_list = self._hc_bitarray
+            self._lookup_hc_super_blocks_list = self._hc_super_blocks
+            self._lookup_eow_bits_list = self._eow_bits
+            self._lookup_eow_sb_list = self._eow_sb
+        return self._reversed_lookup
+
+
     cpdef bint set_check_key_exists(self, bint check_key_exists):
         """Returns True if the key exists in the index"""
         self.check_if_key_exists = check_key_exists
@@ -135,8 +269,7 @@ cdef class Mapping:
         cdef int i
 
         if superblock_start > 0:
-            # Use original mmap access for superblock data
-            superblock_bytes = self._s_superblocks[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]
+            superblock_bytes = self._lookup_s_superblocks_list[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]
             start_index = int.from_bytes(superblock_bytes, byteorder="big", signed=False) + 1
             start_byte = start_index // 8
             extra_bits = start_index % 8
@@ -148,33 +281,27 @@ cdef class Mapping:
         if start_sum == sum_ones_wanted:
             res_start_index = start_index - 1
 
-        # Main loop - exactly like original Python version
         while total_sum < sum_ones_wanted + 1:
-            # Get byte using original mmap access
-            byte_val = self._s_bits[start_byte]
-            
-            if not byte_val:
+            for byte in self._lookup_s_bits_list[start_byte : start_byte + 1]:
+                if not byte:
+                    start_byte += 1
+                    loop_index += 8
+                    continue
+
+                if extra_bits > 0:
+                    r_start = 7 - extra_bits
+                    extra_bits = 0
+                for i in range(r_start, -1, -1):
+                    if byte & (1 << i):
+                        total_sum += 1
+                        if total_sum == sum_ones_wanted and res_start_index == -1:
+                            res_start_index = loop_index
+                        if total_sum == sum_ones_wanted + 1 and res_end_index == -1:
+                            res_end_index = loop_index
+                            break
+                    loop_index += 1
+                r_start = 7
                 start_byte += 1
-                loop_index += 8
-                continue
-
-            if extra_bits > 0:
-                r_start = 7 - extra_bits
-                extra_bits = 0
-            
-            for i in range(r_start, -1, -1):
-                if byte_val & (1 << i):
-                    total_sum += 1
-                    if total_sum == sum_ones_wanted and res_start_index == -1:
-                        res_start_index = loop_index
-                    if total_sum == sum_ones_wanted + 1 and res_end_index == -1:
-                        res_end_index = loop_index
-                        break
-                loop_index += 1
-            
-            r_start = 7
-            start_byte += 1
-
         return [res_start_index, res_end_index]
 
     cpdef int calculate_hc(self, int end_request_index):
@@ -184,43 +311,30 @@ cdef class Mapping:
         cdef int bitsum = 0
         cdef int index = 0
         cdef int i, j
-        cdef int byte_val
-        cdef int start_block, end_block
+        cdef int start_block = 0
+        cdef int end_block = 0
+        cdef bytes superblock_bytes
 
-        if superblock_start == 0:
-            index = 0
-            end_block = self.bits_in_superblock // bits_in_byte + 1
-            for byte_idx in range(end_block):
-                if byte_idx >= len(self._hc_bitarray):
-                    break
-                byte_val = self._hc_bitarray[byte_idx]
-                if not byte_val:
-                    index += 8
-                    continue
-                for i in range(7, -1, -1):
-                    if byte_val & (1 << i):
-                        bitsum += 1
-                        if index == end_request_index:
-                            return bitsum
-                    index += 1
-        else:
-            # Get sum from superblock using safe mmap access
-            superblock_bytes = self._hc_super_blocks[(superblock_start - 1) * 4:(superblock_start - 1) * 4 + 4]
-            bitsum = int.from_bytes(superblock_bytes, byteorder="big", signed=False)
-
-        # Calculate remaining bits
-        start_block = superblock_start * self.bits_in_superblock // bits_in_byte
+        if superblock_start > 0:
+            start_block = superblock_start * self.bits_in_superblock // bits_in_byte
+            superblock_bytes = self._lookup_hc_super_blocks_list[
+                (superblock_start - 1) * 4 : (superblock_start - 1) * 4 + 4
+            ]
+            bitsum = int.from_bytes(
+                superblock_bytes,
+                byteorder="big",
+                signed=False,
+            )
+            index = superblock_start * self.bits_in_superblock
         end_block = start_block + self.bits_in_superblock // bits_in_byte + 1
-        index = superblock_start * self.bits_in_superblock
-
-        for i in range(start_block, min(end_block, len(self._hc_bitarray))):
-            byte_val = self._hc_bitarray[i]
-            if not byte_val:
+        # það er búið að reikna summu frá 0 til start_block -1
+        # þá vantar summuna frá start_block til end_request_index
+        for byte in self._lookup_hc_bits_list[start_block:end_block]:  # bytes:
+            if not byte:
                 index += 8
                 continue
-            
-            for j in range(7, -1, -1):
-                if byte_val & (1 << j):
+            for i in range(7, -1, -1):
+                if byte & (1 << i):
                     bitsum += 1
                     if index == end_request_index:
                         return bitsum
@@ -232,52 +346,51 @@ cdef class Mapping:
         """Check if node has child using safe mmap access"""
         cdef int byte_idx = index // 8
         cdef int bit_pos = 7 - (index % 8)
-        if byte_idx >= len(self._hc_bitarray):
+        if byte_idx >= len(self._lookup_hc_bits_list):
             return False
-        cdef int byte_val = self._hc_bitarray[byte_idx]
+        cdef int byte_val = self._lookup_hc_bits_list[byte_idx]
         return (byte_val & (1 << bit_pos)) > 0
 
     cpdef bytes get_trie_range(self, int start, int end):
         """Returns the byte range from trie"""
-        return self._trie[start:end]
+        return self._lookup_trie_list[start:end]
 
     cpdef int get_trie_index_of(self, int start, int end, unsigned char letter):
         """Search for letter in trie range using safe mmap access"""
-        cdef bytes trie_slice = self._trie[start:end]
+        cdef bytes trie_slice = self._lookup_trie_list[start:end]
         return trie_slice.find(letter)
 
     cpdef list get_index(self, int index_value):
         """Get index using safe mmap access"""
-        cdef int start_idx, end_idx, start_len, end_len
-        cdef int index_val, len_value
+        cdef int start_idx, end_idx
+        cdef int sh_index, sh_len
 
-        if index_value == 0:
-            start_idx = 0
-        else:
-            start_idx = index_value * (self.nr_bytes_in_index_block + self.nr_bytes_in_value_block)
-        
+        start_idx = index_value * self.nr_bytes_in_index_block
         end_idx = start_idx + self.nr_bytes_in_index_block
-        start_len = end_idx
-        end_len = start_len + self.nr_bytes_in_value_block
 
-        # Use safe mmap access
-        index_bytes = self._index_bits[start_idx:end_idx]
-        len_bytes = self._index_bits[start_len:end_len]
-        
-        index_val = int.from_bytes(index_bytes, byteorder="big", signed=False)
-        len_value = int.from_bytes(len_bytes, byteorder="big", signed=False)
-        
-        return [index_val, len_value]
+        sh_index = int.from_bytes(
+            self._lookup_index_bits_list[start_idx:end_idx],
+            byteorder="big",
+            signed=False,
+        )
+        sh_len = int.from_bytes(
+            self._lookup_index_values_length_list[
+                index_value * 2 : index_value * 2 + 2
+            ],
+            byteorder="big",
+            signed=False,
+        )
+        return [sh_index, sh_len]
 
     cpdef int is_end_of_word(self, int index):
         """Check end of word using safe mmap access"""
         cdef int start_byte = index // 8
         cdef int extra_bits = index % 8
         
-        if start_byte >= len(self._eow_bits):
+        if start_byte >= len(self._lookup_eow_bits_list):
             return 0
             
-        if self._eow_bits[start_byte : start_byte + 1][0] & (1 << (7 - extra_bits)):
+        if self._lookup_eow_bits_list[start_byte : start_byte + 1][0] & (1 << (7 - extra_bits)):
             return 1
         return 0
 
@@ -286,64 +399,85 @@ cdef class Mapping:
         """Get value bits sum using safe mmap access"""
         cdef int s_start = (index // 32 - 1) * 4
         cdef int s_end = s_start + 4
+        cdef bytes start_bytes, end_bytes
+        cdef bytes value_bits
+        cdef int start_index, end_index, extra_bits, i, j, byte_val
         
-        # Use safe mmap access for summary data
-        start_bytes = self._eow_sb[s_start:s_start + 4]
-        end_bytes = self._eow_sb[s_end:s_end + 4]
-        
-        cdef int start_index = int.from_bytes(start_bytes, byteorder="big", signed=False)
-        cdef int end_index = int.from_bytes(end_bytes, byteorder="big", signed=False)
+        s_start = (index // 32 - 1) * 4
+        s_end = s_start + 4
+        start_bytes = self._lookup_eow_sb_list[s_start:s_end]
+        start_index = int.from_bytes(start_bytes, byteorder="big", signed=False)
+
+        end_bytes = self._lookup_eow_sb_list[s_end : s_end + 4]
+        end_index = int.from_bytes(end_bytes, byteorder="big", signed=False)
 
         if end_index == start_index:
             return start_index
 
-        cdef int extra_bits = index - s_end * 8 + 1
-        cdef int i, j
-        cdef int byte_val
-
-        # Process value bits safely
-        value_bits = self._eow_bits[s_end:s_end + 4]
-        for i in range(len(value_bits)):
-            byte_val = value_bits[i]
-            if not byte_val and extra_bits > 8:
+        extra_bits = index - s_end * 8 + 1
+        value_bytes = self._lookup_eow_bits_list[s_end : s_end + 4]
+        for byte in value_bytes:
+            if not byte and extra_bits > 8:
                 extra_bits -= 8
                 continue
-            
-            for j in range(7, -1, -1):
+            for i in range(7, -1, -1):
                 if extra_bits > 0:
                     extra_bits -= 1
-                    if byte_val & (1 << j):
+                    if byte & (1 << i):
                         start_index += 1
                 else:
                     return start_index - 1
-        
         return start_index - 1
 
     cpdef list get_result(self, int value_index, bint reversed=False):
         """Returns result of the query"""
+        cdef int value_sum, index_value, text_len
+        cdef list index_data
+
+        value_sum = self.get_value_bits_sum(value_index)
+
+        if self._has_reversed_index and self._reversed_lookup:
+            value_sum = value_sum * self.nr_bytes_in_index_block
+            value_sum = int.from_bytes(
+                self._translate_index_bits[
+                    value_sum : value_sum + self.nr_bytes_in_index_block
+                ],
+                byteorder="big",
+                signed=False,
+            )
+
         if self.check_if_key_exists:
-            return ["1"]
-        
-        cdef int value_sum = self.get_value_bits_sum(value_index)
-        cdef list index_data = self.get_index(value_sum)
-        cdef int index_value = index_data[0]
-        cdef int text_len = index_data[1]
+            return [value_sum]
+
+        if self._has_reversed_index and self._reversed_lookup:
+            value_sum = value_sum * self.nr_bytes_in_index_block
+            value_sum = int.from_bytes(
+                self._translate_index_bits[
+                    value_sum : value_sum + self.nr_bytes_in_index_block
+                ],
+                byteorder="big",
+                signed=False,
+            )
+
+        index_data = self.get_index(value_sum)
+        index_value = index_data[0]
+        text_len = index_data[1]
         return self.get_short_text(index_value, text_len)
 
     cpdef list get_short_text(self, int index, int text_len):
         """Get short text using safe mmap access"""
         cdef list text_array = []
         cdef int i = 0
-        cdef bytearray unicodes = bytearray()
+        cdef bytes unicodes = b""
         cdef bytes res = b""
 
         res = self._short_text[index : index + text_len]
         while i < len(res):
             if res[i] == A.RES_SEPARATOR:
                 text_array.append(A.convert_bytes_to_str(unicodes))
-                unicodes = bytearray()
+                unicodes = b""
             else:
-                unicodes.append(res[i])
+                unicodes += bytes([res[i]])
             i += 1
         if len(unicodes) > 0:
             text_array.append(A.convert_bytes_to_str(unicodes))

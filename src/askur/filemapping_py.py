@@ -3,8 +3,8 @@ import os
 import mmap
 
 
-A_DEVELOPEMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
-if A_DEVELOPEMENT:
+A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPMENT", "0") == "1"
+if A_DEVELOPMENT:
     from alphabet import Alphabet as A
 else:
     from . import alphabet
@@ -25,6 +25,9 @@ class Mapping:
         self._eow_bits: bytes = b""
         self._eow_sb: bytes = b""
 
+        self._index_bits: bytes = b""
+        self._index_values_length: bytes = b""
+
         self.short_text_len: int = 0
         self.bits_in_superblock: int = 0
         self.collection: str = collection
@@ -41,26 +44,23 @@ class Mapping:
         self.alphabet_index_start: int = 0
 
         self.alphabet: bytes = b""
-        self._has_reversed_index: bool = False  # does the index have reversed entries?
-        self._reversed_lookup: bool = False  # are we looking up reversed entries?
         self.check_if_key_exists: bool = False  # are we only checking if key exists?
-        self._data: bytes = b""
+        self._reversed_lookup: bool = False  # are we looking up reversed entries?
+        self._has_reversed_index: bool = False  # does the index have reversed entries?
 
-        self.bits_in_superblock: int = 0
         self.nr_bytes_in_index_block: int = 0
 
         self._reversed_trie: bytes = b""
 
         self._reversed_s_bits: bytes = b""
         self._reversed_s_superblocks: bytes = b""
-
         self._reversed_hc_bits: bytes = b""
         self._reversed_hc_super_blocks: bytes = b""
 
         self._reversed_eow_bits: bytes = b""
         self._reversed_eow_sb: bytes = b""
 
-        self._reversed_index_bits: bytes = b""
+        # self._reversed_index_bits: bytes = b""
 
         self._short_text: bytes = b""
 
@@ -69,21 +69,19 @@ class Mapping:
 
         self._reversed_select_start: int = 0
         self._reversed_select_superblock_start: int = 0
-
         self._reversed_hc_start: int = 0
         self._reversed_hc_superblock_start: int = 0
 
         self._reversed_eow_start: int = 0
         self._reversed_eow_superblock_start: int = 0
 
-        self._reversed_index_start: int = 0
+        # self._reversed_index_start: int = 0
 
         # lookup tables in use for index lookups or reverse index lookups
         self._lookup_trie_list: bytes = b""
 
         self._lookup_s_bits_list: bytes = b""
         self._lookup_s_superblocks_list: bytes = b""
-
         self._lookup_hc_bits_list: bytes = b""
         self._lookup_hc_super_blocks_list: bytes = b""
 
@@ -91,9 +89,9 @@ class Mapping:
         self._lookup_eow_sb_list: bytes = b""
 
         self._lookup_index_bits_list: bytes = b""
+        self._lookup_index_values_length_list: bytes = b""
 
-        self._lookup_short_text_list: bytes = b""
-
+        # self._lookup_short_text_list: bytes = b""
         self._load_files()
 
     def _load_files(self):
@@ -118,9 +116,6 @@ class Mapping:
 
         with io.open(data_filename, "rb") as f_data:
             data = mmap.mmap(f_data.fileno(), 0, access=mmap.ACCESS_READ)
-
-            # bytes per info block = 4 bytes (fixed)
-            # bytes_per_info_block = int.from_bytes(data[0:4], byteorder="big")
             self.bits_in_superblock = int.from_bytes(data[4:8], byteorder="big")
             self.nr_bytes_in_index_block = int.from_bytes(data[8:12], byteorder="big")
 
@@ -138,7 +133,9 @@ class Mapping:
             eow_superblock_start = int.from_bytes(data[40:44], byteorder="big")
 
             index_value_start = int.from_bytes(data[44:48], byteorder="big")
-            short_text_start = int.from_bytes(data[48:52], byteorder="big")
+            index_values_length_start = int.from_bytes(data[48:52], byteorder="big")
+
+            short_text_start = int.from_bytes(data[52:56], byteorder="big")
 
             reversed_trie_start = int.from_bytes(data[60:64], byteorder="big")
             reversed_select_start = int.from_bytes(data[64:68], byteorder="big")
@@ -150,7 +147,6 @@ class Mapping:
             reversed_eow_start = int.from_bytes(data[80:84], byteorder="big")
             reversed_eow_superblock_start = int.from_bytes(data[84:88], byteorder="big")
             reversed_index_start = int.from_bytes(data[88:92], byteorder="big")
-            # reversed_index_start = index_value_start
 
             self.alphabet = data[alphabet_start:trie_start]
             self._trie = data[trie_start:select_bits_start]
@@ -164,7 +160,9 @@ class Mapping:
             self._eow_bits = data[eow_bytes_start:eow_superblock_start]
             self._eow_sb = data[eow_superblock_start:index_value_start]
 
-            self._index_bits = data[index_value_start:short_text_start]
+            self._index_bits = data[index_value_start:index_values_length_start]
+            self._index_values_length = data[index_values_length_start:short_text_start]
+
             if reversed_trie_start > 0:
                 self._short_text = data[short_text_start:reversed_trie_start]
             else:
@@ -206,6 +204,7 @@ class Mapping:
             self._lookup_eow_bits_list = self._eow_bits
             self._lookup_eow_sb_list = self._eow_sb
             self._lookup_index_bits_list = self._index_bits
+            self._lookup_index_values_length_list = self._index_values_length
 
     def has_reversed_index(self) -> bool:
         """Returns True if the index is reversed"""
@@ -235,7 +234,7 @@ class Mapping:
     def set_check_key_exists(self, check_key_exists: bool) -> bool:
         """Returns True if the key exists in the index"""
         self.check_if_key_exists = check_key_exists
-        return self.check_if_key_exists
+        return check_key_exists
 
     def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
@@ -356,21 +355,22 @@ class Mapping:
         start_idx: int = index_value * self.nr_bytes_in_index_block
         end_idx: int = start_idx + self.nr_bytes_in_index_block
 
-        index_val: int = int.from_bytes(
+        # short_text index:
+        sh_index: int = int.from_bytes(
             self._lookup_index_bits_list[start_idx:end_idx],
             byteorder="big",
             signed=False,
         )
-        end_value: int = int.from_bytes(
-            self._lookup_index_bits_list[
-                end_idx : end_idx + self.nr_bytes_in_index_block
+        # short_text length:
+        sh_len: int = int.from_bytes(
+            self._lookup_index_values_length_list[
+                index_value * 2 : index_value * 2 + 2
             ],
             byteorder="big",
             signed=False,
         )
-        len_value: int = end_value - index_val
 
-        return [index_val, len_value]
+        return [sh_index, sh_len]
 
     def is_end_of_word(self, index: int) -> int:
         """
@@ -423,7 +423,6 @@ class Mapping:
     def get_result(self, value_index: int) -> list[str]:
         """Returns result of the query"""
         value_sum: int = self.get_value_bits_sum(value_index)
-
         if self._has_reversed_index and self._reversed_lookup:
             value_sum = value_sum * self.nr_bytes_in_index_block
             value_sum = int.from_bytes(
@@ -433,25 +432,15 @@ class Mapping:
                 byteorder="big",
                 signed=False,
             )
-
-        # We know that the key exists at this point and the user
-        # is only interested to know if it does exist.
         if self.check_if_key_exists:
             return [value_sum]
         index_value, text_len = self.get_index(value_sum)
-        # print(f"Index value: {index_value}, text length: {text_len}")
         return self.get_short_text(index_value, text_len)
 
     def get_by_id(self, id: int) -> list[str]:
         # id is the value_sum from the method get_result()
         index_value, text_len = self.get_index(id)
         return self.get_short_text(index_value, text_len)
-
-    def get_short_text_index(self, id: int) -> list[int, int]:
-        """Returns the short text index and length"""
-        # value_sum: int = self.get_value_bits_sum(value_index)
-        index_value, text_len = self.get_index(id)
-        return [index_value, text_len]
 
     def get_short_text(self, index: int, text_len: int) -> list[str]:
         """Returns the short text"""

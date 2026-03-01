@@ -11,7 +11,7 @@ import argparse
 import math as m
 from dataclasses import dataclass
 
-A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPEMENT", "0") == "1"
+A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPMENT", "0") == "1"
 
 if A_DEVELOPMENT:
     import config
@@ -134,7 +134,7 @@ class Trie:
         self.frozen_folder: str = ""
 
         # The alphabet used in the trie.
-        self.alphabet = A(reversed)
+        self.alphabet = A()
 
         # Check for environment variable first, then fall back to config file
         data_folder: str | None = os.environ.get("ASKUR_DATA_FOLDER")
@@ -186,6 +186,7 @@ class Trie:
         io.open(self.select_bits_filename, "w").close()
         io.open(self.index_bits_filename, "w").close()
         io.open(self.short_text_bits_filename, "w").close()
+        io.open(self.short_text_bits_filename + ".length", "w").close()
         io.open(self.trie_file + ".alphabet", "w").close()
 
     def make_frozen_data(self, input_data: str) -> None:
@@ -284,7 +285,16 @@ class Trie:
 
         next_start.append(os.path.getsize(self.data_file))
         start_bytes[12] = int.to_bytes(next_start[-1], bytes_per_info, "big")
+        self.merge_files(self.data_file, self.short_text_bits_filename + ".length")
+
+        next_start.append(os.path.getsize(self.data_file))
+        start_bytes[13] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.short_text_bits_filename)
+
+        # length of short text
+        start_bytes[14] = int.to_bytes(
+            os.path.getsize(self.short_text_bits_filename), bytes_per_info, "big"
+        )
 
         with io.open(self.data_file, "rb+") as f:
             f.seek(0)
@@ -311,13 +321,16 @@ class Trie:
 
     def read_from_input(self, input_data: str) -> tuple[str, str]:
         """Read a file line by line."""
-        nr_cols: int = input_data[0].count(self.field_separator) + 1
+        nr_cols: int = 0
         line_nr: int = 0
 
         for line in input_data:
             line_nr += 1
             if not line.strip() or line.strip().startswith("#"):
                 continue
+            if nr_cols == 0:
+                nr_cols = line.count(self.field_separator) + 1
+
             word_key, word_value = self.split_line(line.strip())
             if nr_cols == 2 and word_value == "":
                 print(
@@ -398,13 +411,13 @@ class Trie:
                 f.write(chunk)
             f.close()
 
-    def write_hc_to_file(self, filename):
+    def write_hc_to_file(self, filename: str) -> None:
         """Write the head child array to a file."""
-        buffer = bytearray()  # Buffer to hold bytes before Writing to disk
-        i = 0
+        buffer: bytearray = bytearray()  # Buffer to hold bytes before Writing to disk
+        i: int = 0
 
-        extra_bits = len(self._hc) % 8
-        self._hc.extend([0 for _ in range(8 - extra_bits)])
+        nr_extra_bits: int = len(self._hc) % 8
+        self._hc.extend([0 for _ in range(8 - nr_extra_bits)])
 
         while i < len(self._hc):
             buffer.append(int("".join([str(c) for c in self._hc[i : i + 8]]), 2))
@@ -418,16 +431,16 @@ class Trie:
                 f.write(buffer)
                 f.close()
 
-    def write_select_to_file(self, filename):
+    def write_select_to_file(self, filename: str) -> None:
         """Write the select array to a file."""
 
         self._select.append(1)  # Pad with 1 to mark end of last char range in trie
-        buffer = bytearray()  # Buffer to hold bytes before Writing to disk
-        i = 0
+        buffer: bytearray = bytearray()  # Buffer to hold bytes before Writing to disk
+        i: int = 0
 
         # Total lengt of select has to be a multiple of 8
-        extra_bits = len(self._select) % 8
-        self._select.extend(0 for _ in range(8 - extra_bits))
+        nr_extra_bits: int = len(self._select) % 8
+        self._select.extend(0 for _ in range(8 - nr_extra_bits))
 
         while i < len(self._select):
             buffer.append(int("".join([str(c) for c in self._select[i : i + 8]]), 2))
@@ -446,8 +459,8 @@ class Trie:
         i: int = 0
 
         # Total lengt of is_eow has to be a multiple of 8
-        rest_bits: int = len(self._is_eow) % 8
-        self._is_eow.extend([0 for _ in range(8 - rest_bits)])
+        nr_rest_bits: int = len(self._is_eow) % 8
+        self._is_eow.extend([0 for _ in range(8 - nr_rest_bits)])
 
         while i < len(self._is_eow):
             buffer.append(int("".join([str(c) for c in self._is_eow[i : i + 8]]), 2))
@@ -467,7 +480,7 @@ class Trie:
 
         bitsum: int = 0
         i: int = 0
-        buffer: list(int) = []
+        buffer: list[int] = []
         bits_in_block: int = 32
         bytes_in_block: int = 4
         # TODO : calculate bits_in_block and bytes_in_block based on size of self._is_eow to save space/speed up search
@@ -488,31 +501,26 @@ class Trie:
                 for summa in buffer:
                     fb.write(summa.to_bytes(bytes_in_block, "big"))
 
-    def write_short_text_to_file(self, data_values) -> int:
+    def write_short_text_to_file(self, data_values: dict[str, int]) -> int:
         """Write the short text array to a file.
         Returns the index_byte length (block size) used to store the index values.
         """
         if len(data_values) == 1:
             return 1
-        # Hérna snúum við data_values svo að value verður key og key verður value
-        # Þetta er gert til að matcha staðsetningu self._index í Trie við data_values
-        # invert the dictionary:
-        data_values = {
+
+        # invert the dictionary to have index as key and short text as value.
+        # This is done to match the position of self._index in Trie with data_values
+        data_values: dict[int, bytearray] = {
             v: self.alphabet.convert_str_to_bytes(k) for k, v in data_values.items()
         }
 
         # total length of all short texts
-        total_short_len = sum(len(value) for value in data_values.values())
+        total_short_len: int = sum(len(value) for value in data_values.values())
 
         # byte_length is minimum number of bytes needed to represent total_short_len
-        byte_len = len(bin(total_short_len)[2:]) // 8 + (
+        byte_len: int = len(bin(total_short_len)[2:]) // 8 + (
             1 if len(bin(total_short_len)[2:]) % 8 else 0
         )
-
-        # Write the block sizes to the index bits file
-        # This is needed for reading the index bits file in the mapping module
-        # with io.open(self.index_bits_filename, "ab") as fb:
-        #     fb.write(bytes([byte_len]))
 
         short_texts: list[bytearray] = []
         sum_index: int = 0
@@ -520,7 +528,9 @@ class Trie:
         # short_text_index has same length and index reference as self._index
         # it points to the correct position of the resulting text value (the reusult)
         short_text_index: list[bytes] = []
-        indices = {}
+        indices: dict[str, bytes] = {}
+        short_text_values_length: list[int] = []
+
         for _, idxs in enumerate(self._index):
             multi_text = []
             for idx in idxs:
@@ -530,13 +540,15 @@ class Trie:
                         indices[str(idx)] = byte_value
                         short_text_index.append(byte_value)
                         short_texts.append(data_values[idx])
+                        short_text_values_length.append(len(data_values[idx]))
                         sum_index += len(data_values[idx])
                     else:
+                        short_text_values_length.append(len(data_values[idx]))
                         short_text_index.append(indices[str(idx)])
                 else:
                     multi_text.append(data_values[idx])
             if len(multi_text) > 1:
-                tmp_txt: bytes = []
+                tmp_txt: bytearray = bytearray()
                 for mtx in multi_text:
                     if len(tmp_txt) == 0:
                         tmp_txt = mtx[:]
@@ -551,10 +563,11 @@ class Trie:
                     indices[idxs_str] = byte_value
                     short_text_index.append(byte_value)
                     short_texts.append(tmp_txt)
+                    short_text_values_length.append(len(tmp_txt))
                     sum_index += len(tmp_txt)
                 else:
                     short_text_index.append(indices[idxs_str])
-
+                    short_text_values_length.append(len(tmp_txt))
             if len(short_texts) >= 10240:
                 with io.open(self.short_text_bits_filename, "ab") as fb:
                     for item in short_texts:
@@ -572,28 +585,17 @@ class Trie:
         short_text_index.append(byte_value)
         with io.open(self.index_bits_filename, "ab") as fb:
             fb.write(b"".join(short_text_index))
-
         if len(short_texts) > 0:
             with io.open(self.short_text_bits_filename, "ab") as fb:
                 for item in short_texts:
                     fb.write(item)
-        return byte_len
 
-    def bit_bytes_to_bits(self, s_bytes: str) -> bytearray:
-        """Convert ones and zeros from select and range series to bytes.
-        s_bytes contain only 0 and 1, but are stored as bytes on the disk.
-        We are converting the ones and zeros to bytes to compress their size.
-        example '000000010000001001000001' -> bytearray(b'\x01\x02\x41')
-        Thus reducing the size by a factor of 8.
-        """
-        buffer = bytearray()
-        i = 0
-        if len(s_bytes) % 8 != 0:
-            s_bytes = s_bytes + "0" * (8 - len(s_bytes) % 8)
-        while i < len(s_bytes):
-            buffer.append(int(s_bytes[i : i + 8].ljust(8, "0"), 2))
-            i += 8
-        return buffer
+        if len(short_text_values_length) > 0:
+            with io.open(self.short_text_bits_filename + ".length", "ab") as fb:
+                for item in short_text_values_length:
+                    fb.write(item.to_bytes(2, "big"))
+
+        return byte_len
 
     def hc_to_superblock(self):
         """Writing to hc-superblock file"""
@@ -634,7 +636,6 @@ class Trie:
         bitsum: int = 0
         nr_bytes: int = 4
         buffer = bytearray()
-        # buffer.append(block_size)
         for i, val in enumerate(self._select):
             bitsum += val
             if bitsum == block_size:
@@ -660,15 +661,13 @@ class Trie:
         WD.print_label(" Create index...")
         self.super_block_size = 0
         index_byte_len: int = 0
+        short_text_len: int = 0
 
         with io.open(self.data_file, "rb") as f_data:
             vals = f_data.read(1024)  # read first 1024 bytes
             self.super_block_size = int.from_bytes(vals[4:8], "big")
             index_byte_len = int.from_bytes(vals[8:12], "big")
-            short_text_start: int = int.from_bytes(vals[48:52], "big")
-            short_text_len: int = len(
-                vals[short_text_start:]
-            )  # just to see if there is any short text
+            short_text_len = int.from_bytes(vals[52:56], "big")
 
         from search import Search
 
@@ -677,7 +676,7 @@ class Trie:
         # All entries in the trie
         for items in search.exists("*"):
             for key, value in items.items():
-                self._add(self.alphabet.convert_str_to_bytes(key[::-1]), value)
+                self._add(self.alphabet.convert_str_to_bytes(key[::-1]), int(value))
 
         self.level_order_tree([self.root], self.alphabet.inv_alphabet)
 
@@ -742,7 +741,6 @@ class Trie:
                 vals = start_bytes[n]
                 f.write(vals)
 
-        # clean up temporary files
         self.remove_build_files()
 
     def merge_files(self, master_file: str, temp_file: str) -> None:
@@ -767,6 +765,7 @@ class Trie:
         os.remove(self.index_bits_filename)
         os.remove(self.short_text_bits_filename)
         os.remove(self.trie_file + ".alphabet")
+        os.remove(self.short_text_bits_filename + ".length")
 
 
 def main():
@@ -784,7 +783,7 @@ def main():
     if txt is not None and args.collection is not None:
         trie = Trie(
             collection_name=args.collection,
-            reversed=args.reversed,
+            reversed=False,
             field_separator=field_separator,
         )
         trie.make_frozen_data(txt.readlines())
