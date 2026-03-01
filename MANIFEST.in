@@ -8,16 +8,29 @@ recursive-include src/askur *.py
 recursive-include src/askur *.pyx
 recursive-include src/askur *.conf
 
-# Include data files if they exist
-recursive-include data *
+# Include data files if they exist (but not everything)
+recursive-include data *.bin
+recursive-include data *.alphabet
+recursive-include data trie
 
-# Include tests
-recursive-include tests *.py
-
-# Exclude compiled files and cache
+# Exclude unwanted files
 global-exclude *.pyc
 global-exclude *.pyo
 global-exclude *.so
 global-exclude __pycache__
 global-exclude .DS_Store
 global-exclude *.egg-info
+global-exclude .git*
+global-exclude .venv*
+global-exclude testing.py
+global-exclude test_*.py
+global-exclude *_test.py
+global-exclude tests/*
+global-exclude wheelhouse/*
+global-exclude build/*
+global-exclude dist/*
+global-exclude fil-result/*
+global-exclude *.cpp
+exclude setup.py.bak
+exclude SO.txt
+exclude developement.md

@@ -1,7 +1,14 @@
 .vscode/
 __pycache__/
+.ruff_cache/
+*.egg-info/
+
 data/
 .venv/
+.env/
+venv/
+dist/
+wheelhouse/
 *.csv
 *.zip
 *.txt
@@ -10,9 +17,12 @@ data/
 *.c
 *.o
 *.html
+*.bak
 frozen_data/
 input_files/
 fil-result/
+tests/
+
 
 trie.conf
 
