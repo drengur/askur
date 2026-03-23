@@ -23,7 +23,7 @@ else:
     from . import watchdog
 
 
-WD: watchdog.Watchdog | None = watchdog.Watchdog(threshold=5, interval=10)
+WD: watchdog.Watchdog | None = watchdog.Watchdog()
 A: alphabet.Alphabet | None = alphabet.Alphabet
 
 
@@ -54,7 +54,7 @@ ARG_PARSER.add_argument(
 
 @dataclass(slots=True)
 class Node:
-    leaf_indices: list[int] = None
+    leaf_indices: tuple[int] = None
     letters: dict[int, "Node"] = None
     single_index: int = None
 
@@ -67,14 +67,15 @@ class Node:
         # Is this node an end/leaf node? (end of word)
         return self.leaf_indices is not None or self.single_index is not None
 
-    def get_child(self, key):
+    def get_child(self, key: int) -> "Node":
+        """Get the child node for a given key. If the child node does not exist, create it."""
         if self.letters is None:
             self.letters = {}
         if key not in self.letters:
             self.letters[key] = Node()
         return self.letters[key]
 
-    def add_index(self, idx) -> None:
+    def add_index(self, idx: int) -> None:
         """Add an index to the end/leaf node.
         Leaf nodes can have multiple indices.
         Using single_index for single index to save memory.
@@ -88,16 +89,16 @@ class Node:
         if self.single_index is not None:
             if self.single_index == idx:
                 return
-            self.leaf_indices = [self.single_index, idx]
+            self.leaf_indices = (self.single_index, idx)
             self.single_index = None
             return
         if idx not in self.leaf_indices:
-            self.leaf_indices.append(idx)
+            self.leaf_indices = (*self.leaf_indices, idx)
 
     def get_indices(self) -> list[int]:
         """Get the indices of the end/leaf node."""
         if self.leaf_indices is not None:
-            return self.leaf_indices
+            return list(self.leaf_indices)
         if self.single_index is not None:
             return [self.single_index]
         return []
@@ -173,9 +174,6 @@ class Trie:
 
         self.data_file = os.path.join(self.frozen_folder, "data.bin")
 
-        # the root node of the trie
-        self.root = Node()
-
         io.open(self.s_sb_file, "w").close()
         io.open(self.hc_sb_file, "w").close()
         io.open(self.eow_sb, "w").close()
@@ -190,21 +188,28 @@ class Trie:
         io.open(self.trie_file + ".alphabet", "w").close()
 
     def make_frozen_data(self, input_data: str) -> None:
-        """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays."""
+        """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays from the input data.
+        Args:
+            input_data: The input data as a string.
+        Returns: None
+        """
+        data_values_gen: tuple[bytes] = self.make_trie(input_data)
+        bytes_per_indexblock: int = self.write_frozen_data(data_values_gen)
+        self.merge_data_files(bytes_per_indexblock)
+
+    def make_trie(self, input_data: str) -> tuple[bytes]:
+        """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays.
+        Returns a generator that yields the data values in the same order as the indices in the trie.
+        """
 
         io.open(self.data_file, "w").close()
 
-        nr_lines_in_file: int = len(input_data)
         data_values: dict[str, int] = {}
         index: int = -1
-        line_nr: int = 0
         key: bytearray()
         next_index: int = -1
+        root = Node()
         for word_key, word_value in self.read_from_input(input_data):
-            line_nr += 1
-            if line_nr % 1000 == 0:
-                WD.print_label(f"  {line_nr / nr_lines_in_file * 100:.2f}%")
-
             if word_value not in data_values:
                 next_index += 1
                 data_values[word_value] = next_index
@@ -212,12 +217,20 @@ class Trie:
             else:
                 index = data_values[word_value]
             key = self.alphabet.convert_str_to_bytes(word_key)
-            self._add(key, index)
+            self._add(key, index, root)
 
         WD.clear_label()
         WD.print_label(" Write to disk...")
-        self.level_order_tree([self.root], self.alphabet.inv_alphabet)
+        self.level_order_tree([root])
 
+        # return tuple-generator(data_values) to save memory, instead of creating a list of all data values in memory
+        return (self.alphabet.convert_str_to_bytes(k) for k, _ in data_values.items())
+
+    def write_frozen_data(self, data_values_gen: tuple[bytes, None, None]) -> None:
+        """Write the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays to disk.
+        Args:            data_values_gen: A generator that yields the data values in the same order as the indices in the trie.
+        Returns: None
+        """
         self.write_tree_to_file()
 
         self.write_select_to_file(self.select_bits_filename)
@@ -229,19 +242,25 @@ class Trie:
         self.write_eow_values_to_file(self.value_bits_filename)
         self.write_eow_sums_to_file(self.eow_sb)
 
-        index_byte_len = self.write_short_text_to_file(data_values)
+        bytes_per_indexblock: int = self.write_short_text_to_file(data_values_gen)
+        return bytes_per_indexblock
+
+    def merge_data_files(self, bytes_per_indexblock: int) -> None:
+        """
+        Merge the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT files into a single data file.
+        The first 4 bytes of the data file will contain the number of bytes used for the index block (short text index).
+        The next 4 bytes will contain the super block size used for the select superblock and hc superblock.
+        The following 4 bytes will contain the number of bytes used for the index block (short text index).
+        """
 
         with io.open(self.trie_file + ".alphabet", "wb") as f:
             f.write(self.alphabet.get_used)
         WD.clear_label()
 
         bytes_per_info: int = 4
-        superblock_size: int = self.super_block_size
-        bytes_per_indexblock: int = index_byte_len
-
         start_bytes = [int.to_bytes(0, bytes_per_info, "big") for _ in range(30)]
         start_bytes[0] = int.to_bytes(bytes_per_info, bytes_per_info, "big")
-        start_bytes[1] = int.to_bytes(superblock_size, bytes_per_info, "big")
+        start_bytes[1] = int.to_bytes(self.super_block_size, bytes_per_info, "big")
         start_bytes[2] = int.to_bytes(bytes_per_indexblock, bytes_per_info, "big")
 
         with io.open(self.data_file, "ab") as f:
@@ -323,36 +342,46 @@ class Trie:
         """Read a file line by line."""
         nr_cols: int = 0
         line_nr: int = 0
+        line_count: int = 0
+        if input_data != sys.stdin:
+            with io.open(input_data.name, "r", encoding="utf-8") as f:
+                line_count = sum(1 for _ in f)
 
-        for line in input_data:
-            line_nr += 1
-            if not line.strip() or line.strip().startswith("#"):
-                continue
-            if nr_cols == 0:
-                nr_cols = line.count(self.field_separator) + 1
+        with open(input_data.name, "r", encoding="utf-8") if input_data != sys.stdin else sys.stdin as f:
+            for line in f:
+                line_nr += 1
+                if not line.strip() or line.strip().startswith("#"):
+                    continue
+                if nr_cols == 0:
+                    nr_cols = line.count(self.field_separator) + 1
 
-            word_key, word_value = self.split_line(line.strip())
-            if nr_cols == 2 and word_value == "":
-                print(
-                    f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}, line {line_nr}\n  Exiting\n{'*' * 50}"
-                )
-                sys.exit(1)
-            if nr_cols == 1 and word_value != "":
-                print(
-                    f"\n{'*' * 50}\n  Unexpected word value for '{word_key}': {word_value}, line {line_nr}\n  Expected one column, got two.\n  Exiting \n{'*' * 50}"
-                )
-                sys.exit(1)
-            if word_key == "":
-                print(
-                    f"\n{'*' * 50}\n  Missing key in line {line_nr}\n  Exiting\n{'*' * 50}"
-                )
-                sys.exit(1)
+                word_key, word_value = self.split_line(line.strip())
+                if nr_cols == 2 and word_value == "":
+                    print(
+                        f"\n{'*' * 50}\n  Missing word value for {word_key}: {word_value}, line {line_nr}\n  Exiting\n{'*' * 50}"
+                    )
+                    sys.exit(1)
+                if nr_cols == 1 and word_value != "":
+                    print(
+                        f"\n{'*' * 50}\n  Unexpected word value for '{word_key}': {word_value}, line {line_nr}\n  Expected one column, got two.\n  Exiting \n{'*' * 50}"
+                    )
+                    sys.exit(1)
+                if word_key == "":
+                    print(
+                        f"\n{'*' * 50}\n  Missing key in line {line_nr}\n  Exiting\n{'*' * 50}"
+                    )
+                    sys.exit(1)
+                if line_count > 0 and line_nr % 1000 == 0:
+                    WD.print_label(
+                        f"  {line_nr / line_count * 100:.2f}% of lines processed"
+                    )
 
-            yield word_key, word_value or "1"
+                yield word_key, word_value or "1"
 
-    def _add(self, word: bytearray, index_id: int) -> None:
+
+    def _add(self, word: bytearray, index_id: int, root: Node) -> None:
         """Add a word to the trie."""
-        node: Node = self.root
+        node: Node = root
         for ch in word:
             node = node.get_child(self.alphabet.get_alphabet_index(ch))
         node.add_index(index_id)
@@ -369,30 +398,30 @@ class Trie:
             return node.letters.keys()
         return sorted(node.letters.keys())
 
-    def level_order_tree(self, nodes: list[Node], inv_alphabet: dict[int, int]) -> None:
+    def level_order_tree(self, root: list[Node]) -> None:
         """Level out trie.
         Traverse the trie in level order and write to the _trie, _hc,
         _select, _is_eow and _index arrays.
         """
-        if len(nodes) == 0:
-            return
-        first: int = 1
+        stack: Node = root
         child_nodes: list[Node] = []
-        for node in nodes:
-            first = 1
-            for w_key in self.sorted_trie_range(node):
-                self._trie.append(inv_alphabet.get(w_key))
-                self._select.append(first)
-                first = 0
-                self._hc.append(1 if node.letters[w_key].has_children else 0)
-                if node.letters[w_key].end:
-                    self._is_eow.append(1)
-                    self._index.append(node.letters[w_key].get_indices())
-                else:
-                    self._is_eow.append(0)
-                child_nodes.append(node.letters[w_key])
-
-        self.level_order_tree(child_nodes, inv_alphabet)
+        first: int = 1
+        while stack:
+            for node in stack:
+                first = 1
+                for w_key in self.sorted_trie_range(node):
+                    self._trie.append(self.alphabet.inv_alphabet.get(w_key))
+                    self._select.append(first)
+                    first = 0
+                    self._hc.append(1 if node.letters[w_key].has_children else 0)
+                    if node.letters[w_key].end:
+                        self._is_eow.append(1)
+                        self._index.append(node.letters[w_key].get_indices())
+                    else:
+                        self._is_eow.append(0)
+                    child_nodes.append(node.letters[w_key])
+            stack = child_nodes[:]
+            child_nodes.clear()
 
     def generate_data(self, big_string: bytearray) -> bytearray:
         """Generate data from a big string in chunks to minimize memory usage.
@@ -501,21 +530,19 @@ class Trie:
                 for summa in buffer:
                     fb.write(summa.to_bytes(bytes_in_block, "big"))
 
-    def write_short_text_to_file(self, data_values: dict[str, int]) -> int:
+    def write_short_text_to_file(self, data_values: tuple[bytes]) -> int:
         """Write the short text array to a file.
         Returns the index_byte length (block size) used to store the index values.
         """
+        # from generator to tuple. to be able to do index search
+        # and do calculations on the data_values
+        data_values = tuple(data_values)
+
         if len(data_values) == 1:
             return 1
 
-        # invert the dictionary to have index as key and short text as value.
-        # This is done to match the position of self._index in Trie with data_values
-        data_values: dict[int, bytearray] = {
-            v: self.alphabet.convert_str_to_bytes(k) for k, v in data_values.items()
-        }
-
         # total length of all short texts
-        total_short_len: int = sum(len(value) for value in data_values.values())
+        total_short_len: int = sum(len(value) for value in data_values)
 
         # byte_length is minimum number of bytes needed to represent total_short_len
         byte_len: int = len(bin(total_short_len)[2:]) // 8 + (
@@ -578,6 +605,12 @@ class Trie:
                 with io.open(self.index_bits_filename, "ab") as fb:
                     fb.write(b"".join(short_text_index))
                 short_text_index.clear()
+            
+            if len(short_text_values_length) >= 10240:
+                with io.open(self.short_text_bits_filename + ".length", "ab") as fb:
+                    for item in short_text_values_length:
+                        fb.write(item.to_bytes(2, "big"))
+                short_text_values_length.clear()
 
         # don't forget to append the last sum_index,
         # othewise the last item in short text will have length of zero
@@ -662,6 +695,7 @@ class Trie:
         self.super_block_size = 0
         index_byte_len: int = 0
         short_text_len: int = 0
+        root = Node()
 
         with io.open(self.data_file, "rb") as f_data:
             vals = f_data.read(1024)  # read first 1024 bytes
@@ -676,9 +710,11 @@ class Trie:
         # All entries in the trie
         for items in search.exists("*"):
             for key, value in items.items():
-                self._add(self.alphabet.convert_str_to_bytes(key[::-1]), int(value))
+                self._add(
+                    self.alphabet.convert_str_to_bytes(key[::-1]), int(value), root
+                )
 
-        self.level_order_tree([self.root], self.alphabet.inv_alphabet)
+        self.level_order_tree([root])
 
         # Translate self._index to short text indices used in the original trie
         if short_text_len > 0:
@@ -786,9 +822,7 @@ def main():
             reversed=False,
             field_separator=field_separator,
         )
-        trie.make_frozen_data(txt.readlines())
-        if txt != sys.stdin:
-            txt.close()
+        trie.make_frozen_data(txt)
 
     if args.reversed and args.collection:
         trie = Trie(

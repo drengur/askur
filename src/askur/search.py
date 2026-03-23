@@ -4,17 +4,16 @@ import argparse
 
 
 A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPMENT", "0") == "1"
-UNDERSCORE = 95  # ASCII code for '_'
-WILDCARD = 42  # ASCII code for '*'
+UNDERSCORE = 95
+WILDCARD = 42
 
 if A_DEVELOPMENT:
     import config
     from alphabet import Alphabet
-
     try:
-        from filemapping import Mapping
+        from filemapping_pyx import Mapping
     except ImportError:
-        from filemapping_py import Mapping
+        from filemapping import Mapping
 
     A = Alphabet()
 else:
@@ -24,9 +23,9 @@ else:
     A = Alphabet()
 
     try:
-        from .filemapping_py import Mapping
+        from .filemapping_pyx import Mapping
     except ImportError:
-        from .filemapping_py import Mapping
+        from .filemapping import Mapping
 
 
 arg_parser = argparse.ArgumentParser(
@@ -405,7 +404,7 @@ class Search:
             else:
                 next_query2.append(query[0][:][0:start])
 
-            if next_query2[0][-1] == 42 and len(next_query2[0]) == 2:
+            if next_query2[0][-1] == WILDCARD and len(next_query2[0]) == 2:
                 yield from self._search(next_query2, s_index)
             if nr_hc > 0:
                 yield from self._case_insensitive_search(
@@ -436,7 +435,7 @@ class Search:
             if n < len(query[0]) - 1:
                 nr_hc = self.mmap.calculate_hc(s_start + chr_index)
                 if nr_hc == 0:
-                    if n == len(query[0]) - 2 and query[0][-1] == 42:
+                    if n == len(query[0]) - 2 and query[0][-1] == WILDCARD:
                         if query[1] is None and query[2] is None:
                             break
                     # We can return here without result, because we have nothing more to search for
