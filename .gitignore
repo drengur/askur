@@ -9,6 +9,7 @@ data/
 venv/
 dist/
 wheelhouse/
+drasl/
 *.csv
 *.zip
 *.txt

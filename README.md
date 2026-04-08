@@ -38,7 +38,10 @@ pip install -e ".[dev]"
 ```bash
 # Input format: "word;value\n" 
 echo -e "hello;greeting\nworld;earth\nhello*;wildcard" > data.txt
-python -m askur.make_lookup -f data.txt -C my_collection
+uv run askur.build -f data.txt -C my_collection
+# reading from stdin:
+cat textfile | uv run askur.build -C my_collection
+
 ```
 
 ### Searching

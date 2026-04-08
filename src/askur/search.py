@@ -1,31 +1,17 @@
 #!/usr/bin/env python3
+from askur.build import CONFIG
 import os
 import argparse
 
+from askur.filemapping import Mapping  
+from askur.config import Config
+from askur.alphabet import Alphabet
 
-A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPMENT", "0") == "1"
+Config()  # Initialize the global CONFIG variable
+A = Alphabet()
+
 UNDERSCORE = 95
 WILDCARD = 42
-
-if A_DEVELOPMENT:
-    import config
-    from alphabet import Alphabet
-    try:
-        from filemapping_pyx import Mapping
-    except ImportError:
-        from filemapping import Mapping
-
-    A = Alphabet()
-else:
-    from . import config
-    from .alphabet import Alphabet
-
-    A = Alphabet()
-
-    try:
-        from .filemapping_pyx import Mapping
-    except ImportError:
-        from .filemapping import Mapping
 
 
 arg_parser = argparse.ArgumentParser(

@@ -13,7 +13,7 @@ echo "✅ Build complete! Wheels are in ./wheelhouse/"
 ls -la wheelhouse/
 
 echo "🧪 Testing installation..."
-uv run pip install wheelhouse/*.whl --force-reinstall
+uv run pip install wheelhouse/*.whl --reinstall
 
 echo "🚀 Testing import..."
 uv run python -c "import askur; print('✅ Import successful!')"

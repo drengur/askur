@@ -1,15 +1,8 @@
 import io
 import os
 import mmap
-
-
-A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPMENT", "0") == "1"
-if A_DEVELOPMENT:
-    from alphabet import Alphabet as A
-else:
-    from . import alphabet
-
-    A = alphabet.Alphabet
+from askur.alphabet import Alphabet
+A = Alphabet()
 
 
 class Mapping:

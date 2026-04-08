@@ -10,18 +10,14 @@ import io
 import argparse
 import math as m
 from dataclasses import dataclass
+from askur.config import Config
+from askur import alphabet
+from askur import watchdog
 
-A_DEVELOPMENT = os.getenv("ASKUR_DEVELOPMENT", "0") == "1"
-
-if A_DEVELOPMENT:
-    import config
-    import alphabet
-    import watchdog
-else:
-    from . import config
-    from . import alphabet
-    from . import watchdog
-
+# initialization of global variables
+# Config is initialized at the start of the build process and contains the configuration 
+# for the build process, such as the alphabet and data folder.
+CONFIG: Config = Config()
 
 WD: watchdog.Watchdog | None = watchdog.Watchdog()
 A: alphabet.Alphabet | None = alphabet.Alphabet

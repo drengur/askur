@@ -89,6 +89,7 @@ cdef class Mapping:
     cdef public bytes _lookup_eow_sb_list
 
     cdef public bytes _lookup_index_bits_list
+    cdef public bytes _lookup_index_values_length_list
 
 
     def __init__(self, collection: str) -> None:

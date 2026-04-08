@@ -5,15 +5,71 @@ to your desired path before importing this module.
 """
 
 import os
+from dataclasses import dataclass
 from pathlib import Path
 
-os.environ.setdefault("ASKUR_ALPHABET", "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -")
 
-if os.name == "nt":
-    base_dir = os.getenv("LOCALAPPDATA", str(Path.home() / "AppData" / "Local"))
-    data_dir = os.path.join(base_dir, "askur", "data")
-    os.environ.setdefault("ASKUR_DATA_FOLDER", data_dir)
-else:
-    data_dir = os.path.join(str(Path.home()), ".local", "share", "askur", "data")
-    os.environ.setdefault("ASKUR_DATA_FOLDER", data_dir)
+@dataclass
+class Config:
+    alphabet: str = os.getenv("ASKUR_ALPHABET", None)
+    data_folder: str = os.getenv("ASKUR_DATA_FOLDER", None)
+    config_env_file: str = None
 
+    def __post_init__(self):
+        if self.data_folder and self.alphabet:
+            return
+        self.data_folder, self.config_env_file = self.get_default_folders()
+        self.load_from_env_file()
+
+    def __str__(self):
+        return f"alphabet={self.alphabet},\n data_folder={self.data_folder}),\n config_env_file={self.config_env_file})"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def get_default_alphabet(self) -> str:
+        return "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -"
+
+    def get_default_folders(self) -> list[str]:
+        if os.name == "nt":
+            base_dir: str = os.getenv(
+                "LOCALAPPDATA", str(Path.home() / "AppData" / "Local")
+            )
+            data_dir: str = os.path.join(base_dir, "askur", "data")
+            config_env_file: str = os.path.join(base_dir, "askur", "config.env")
+            return data_dir, config_env_file
+        else:
+            data_dir: str = os.path.join(
+                str(Path.home()), ".local", "share", "askur", "data"
+            )
+            config_env_file: str = os.path.join(
+                str(Path.home()), ".config", "askur", "config.env"
+            )
+            return data_dir, config_env_file
+
+    def pre_create_config_file(self, path: str) -> None:
+        if os.path.exists(path):
+            return
+
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            f.write(f"ASKUR_ALPHABET={self.get_default_alphabet()}\n")
+            f.write(f"ASKUR_DATA_FOLDER={self.get_default_folders()[0]}\n")
+
+    def load_from_env_file(self) -> None:
+        if self.config_env_file is None:
+            return
+
+        if not os.path.exists(self.config_env_file):
+            self.pre_create_config_file(self.config_env_file)
+
+        with open(self.config_env_file, "r") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                key_value = line.split("=", 1)
+                if len(key_value) != 2:
+                    continue
+                key, value = key_value
+                os.environ.setdefault(key, value)
