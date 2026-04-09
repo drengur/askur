@@ -59,7 +59,11 @@ class Config:
     def load_from_env_file(self) -> None:
         if self.config_env_file is None:
             return
-
+        line:str = ""
+        key_value:list[str] = []
+        key:str = ""
+        value:str = ""
+        
         if not os.path.exists(self.config_env_file):
             self.pre_create_config_file(self.config_env_file)
 
@@ -73,3 +77,8 @@ class Config:
                     continue
                 key, value = key_value
                 os.environ.setdefault(key, value)
+
+        if not os.environ.get("ASKUR_ALPHABET"):
+            os.environ["ASKUR_ALPHABET"] = self.get_default_alphabet()
+        if not os.environ.get("ASKUR_DATA_FOLDER"):
+            os.environ["ASKUR_DATA_FOLDER"] = self.get_default_folders()[0]

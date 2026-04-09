@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-from askur.build import CONFIG
-import os
 import argparse
 
-from askur.filemapping import Mapping  
+from askur.filemapping import Mapping
 from askur.config import Config
 from askur.alphabet import Alphabet
 
@@ -641,4 +639,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

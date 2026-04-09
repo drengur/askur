@@ -2,6 +2,8 @@ import io
 import os
 import mmap
 from askur.alphabet import Alphabet
+from askur.config import Config
+Config()  # initialize config environment variables
 A = Alphabet()
 
 
@@ -331,8 +333,7 @@ class Mapping:
         return byte & (1 << (7 - index % 8)) > 0
 
     def get_trie_range(self, start: int, end: int) -> list[int]:
-        """Returns the letter (int of letter) in the given range or the range itself"""
-        # return self._trie[start:end]
+        """Returns the range of letters (bytes) in the mmaped trie """
         return self._lookup_trie_list[start:end]
 
     def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
