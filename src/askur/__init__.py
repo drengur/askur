@@ -39,8 +39,16 @@ def print_collections():
     print(f"Collections in {data_folder}:")
     print(f"{'Collection':<20} {'Size':<10} {'Created':<20}")
     print("-" * 50)
+    total_size = 0
     for coll in colls:
+        size_str = coll["size"]
+        if "MB" in size_str:
+            total_size += float(size_str.replace(" MB", "")) * 1_000_000
+        elif "KB" in size_str:
+            total_size += float(size_str.replace(" KB", "")) * 1_000
         print(f"{coll['name']:<20} {coll['size']:<10} {coll['created']:<20}")
+    print("-" * 50)
+    print(f"{'Total':<20} {total_size / 1_000_000:.2f} MB")
 
 
 def build_collection(
