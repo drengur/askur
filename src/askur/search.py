@@ -68,7 +68,7 @@ class Search:
         self.mmap.set_check_key_exists(value)
 
     def _add_result(self, value) -> dict[str, list[str] | int] | None:
-        if self._limit > 0 and self._nr_results >= self._limit:
+        if self.search_completed():
             # Reset the flag for checking key existence for future searches
             self.check_if_key_exists = False
             return None
@@ -181,6 +181,12 @@ class Search:
                     continue
                 new_word[n] = i_letter
                 yield from self._search([new_word, None, None], s_index=1)
+
+        # remove the letter at position n
+        for n in range(len(query[0])):
+            new_word = query[0][:]
+            del new_word[n]
+            yield from self._search([new_word, None, None], s_index=1)
 
     def _wildcard_search(self, s_index, query, original_start_part=None) -> None:
         """Search for a word in the trie with wildcards (*) in the query."""
@@ -476,7 +482,7 @@ class Search:
 
     def fuzzy_search(self, query, result_format="dict"):
         """Fuzzy search for a word in the trie.
-        This method uses Levenshtein distance to find similar words.
+        This method uses Levenshtein distance of 1 to find similar words.
         """
         self.levenshtein = True
         return self.search(query)
@@ -487,7 +493,7 @@ class Search:
         Check if a word exists in the collection.
         This method does not return the value associated with the word,
         it only checks if the word exists.
-        returns list of words.
+        returns list of words with its index value.
         """
         self.check_if_key_exists = True
         return self.search(query)
@@ -498,7 +504,6 @@ class Search:
         return res
 
     def search(self, query) -> str:
-
         modified_query = self._prepare_query(query)
         if self.levenshtein:
             """Using Levenshtein distance to find similar words."""
@@ -516,7 +521,6 @@ class Search:
         elif self.case_insensitive and modified_query[0] is not None:
             """Using case insensitive search."""
             yield from self._case_insensitive_search(modified_query, 1)
-            self.case_insensitive = False
         elif modified_query[0] is None:
             """Using wildcards in start of query:"""
             yield from self._wildcard_search(1, modified_query)

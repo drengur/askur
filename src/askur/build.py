@@ -15,7 +15,7 @@ from askur import alphabet
 from askur import watchdog
 
 # initialization of global variables
-# Config is initialized at the start of the build process and contains the configuration 
+# Config is initialized at the start of the build process and contains the configuration
 # for the build process, such as the alphabet and data folder.
 CONFIG: Config = Config()
 
@@ -339,11 +339,16 @@ class Trie:
         nr_cols: int = 0
         line_nr: int = 0
         line_count: int = 0
+
         if input_data != sys.stdin:
             with io.open(input_data.name, "r", encoding="utf-8") as f:
                 line_count = sum(1 for _ in f)
 
-        with open(input_data.name, "r", encoding="utf-8") if input_data != sys.stdin else sys.stdin as f:
+        with (
+            io.open(input_data.name, "r", encoding="utf-8")
+            if input_data != sys.stdin
+            else sys.stdin as f
+        ):
             for line in f:
                 line_nr += 1
                 if not line.strip() or line.strip().startswith("#"):
@@ -373,7 +378,6 @@ class Trie:
                     )
 
                 yield word_key, word_value or "1"
-
 
     def _add(self, word: bytearray, index_id: int, root: Node) -> None:
         """Add a word to the trie."""
@@ -601,7 +605,7 @@ class Trie:
                 with io.open(self.index_bits_filename, "ab") as fb:
                     fb.write(b"".join(short_text_index))
                 short_text_index.clear()
-            
+
             if len(short_text_values_length) >= 10240:
                 with io.open(self.short_text_bits_filename + ".length", "ab") as fb:
                     for item in short_text_values_length:
@@ -699,7 +703,7 @@ class Trie:
             index_byte_len = int.from_bytes(vals[8:12], "big")
             short_text_len = int.from_bytes(vals[52:56], "big")
 
-        from search import Search
+        from askur.search import Search
 
         search: Search = Search(collection=self.collection_name)
 

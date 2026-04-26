@@ -20,6 +20,7 @@ class Config:
             return
         self.data_folder, self.config_env_file = self.get_default_folders()
         self.load_from_env_file()
+        self.alphabet = os.getenv("ASKUR_ALPHABET", self.get_default_alphabet())
 
     def __str__(self):
         return f"alphabet={self.alphabet},\n data_folder={self.data_folder}),\n config_env_file={self.config_env_file})"
