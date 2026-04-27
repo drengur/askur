@@ -402,7 +402,6 @@ class Search:
                 )
 
     def _search(self, query: list, s_index: int) -> None:
-
         chr_index: int = -1
         if self.search_completed():
             return
@@ -505,6 +504,8 @@ class Search:
 
     def search(self, query) -> str:
         modified_query = self._prepare_query(query)
+        self._nr_results = 0  # Reset the number of results for each search
+
         if self.levenshtein:
             """Using Levenshtein distance to find similar words."""
             if (

@@ -45,6 +45,7 @@ Repository = "https://github.com/drengur/askur"
 
 [project.scripts]
 askur-search = "askur.search:main"
+askur-lookup = "askur.__init__:lookup"
 askur-build = "askur.build:main"
 askur-remove = "askur.__init__:remove_collection"
 askur-print_collections = "askur.__init__:print_collections"

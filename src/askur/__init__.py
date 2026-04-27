@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 from askur.config import Config
 
 Config()  # initialize config environment variables
@@ -77,20 +78,77 @@ def build_collection(
     print(f"Built reversed collection '{collection_name}' from '{input_file}'")
 
 
-def remove_collection(collection_name: str=None) -> None:
+def lookup(
+    collection_name: str = None,
+    query: str = None,
+    limit: int = 0,
+    case_insensitive: bool = False,
+) -> list[str]:
+    if collection_name is None or query is None:
+        parser = argparse.ArgumentParser(description="Lookup in an Askur collection")
+        parser.add_argument(
+            "-c", "--collection_name", type=str, help="Name of the collection"
+        )
+        parser.add_argument("-q", "--query", type=str, help="Query string to lookup")
+
+        parser.add_argument(
+            "-l",
+            "--limit",
+            type=int,
+            default=0,
+            help="Maximum number of results to return",
+        )
+        parser.add_argument(
+            "-i",
+            "--case_insensitive",
+            action="store_true",
+            help="Enable case-insensitive search",
+        )
+        args = parser.parse_args()
+
+        collection_name = args.collection_name
+        query = args.query
+        limit = args.limit
+        case_insensitive = True if args.case_insensitive else False
+
+    import askur.search as search_module
+
+    S = search_module.Search(
+        collection=collection_name,
+        limit=limit,
+        case_insensitive=case_insensitive,
+        use_levenshtein=False,
+    )
+    for item in S.lookup(query):
+        print(item)
+
+
+def remove_collection(collection_name: str = None) -> None:
     if collection_name is None:
         if len(sys.argv) < 2:
             print("Please provide a collection name to remove.")
             return
         collection_name = sys.argv[1]
     data_folder = os.environ["ASKUR_DATA_FOLDER"]
-    file_name = os.path.join(data_folder, collection_name,"data.bin")
+    file_name = os.path.join(data_folder, collection_name, "data.bin")
     if os.path.exists(file_name):
         os.remove(file_name)
         os.rmdir(os.path.join(data_folder, collection_name))
         print(f"Deleted collection '{collection_name}'")
     else:
         print(f"Collection '{collection_name}' does not exist")
+
+
+def rename_collection(old_name: str, new_name: str) -> None:
+    data_folder = os.environ["ASKUR_DATA_FOLDER"]
+    old_path = os.path.join(data_folder, old_name)
+    new_path = os.path.join(data_folder, new_name)
+    if os.path.exists(old_path) and not os.path.exists(new_path):
+        os.rename(old_path, new_path)
+        print(f"Renamed collection '{old_name}' to '{new_name}'")
+    else:
+        print(f"Collection '{old_name}' does not exist or '{new_name}' already exists")
+
 
 def print_configuration() -> None:
     config = Config()
