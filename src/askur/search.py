@@ -241,7 +241,7 @@ class Search:
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
                 if len(query) > 3:
-                    word = self._query_to_string(query[3] + next_start_part)
+                    word = self._query_to_string((query[3] or []) + next_start_part)
                 else:
                     word = self._query_to_string(next_start_part)
 
