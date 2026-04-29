@@ -61,6 +61,9 @@ class Search:
 
     @property
     def check_if_key_exists(self):
+        """Check if the search is in 'exists' mode,
+        where we only check if the key (the word) exists without returning the value.
+        """
         return self.mmap.check_if_key_exists
 
     @check_if_key_exists.setter
@@ -99,10 +102,12 @@ class Search:
 
     @property
     def collection_name(self) -> str:
+        """Return the name of the collection being searched."""
         return self._collection_name
 
     @property
     def limit(self) -> int:
+        """Return the maximum number of results to return. 0 means no limit."""
         return self._limit
 
     @limit.setter
@@ -111,6 +116,7 @@ class Search:
 
     @property
     def levenshtein(self) -> bool:
+        """Return whether to use Levenshtein distance (of one) for the search."""
         return self._levenshtein
 
     @levenshtein.setter
@@ -120,7 +126,7 @@ class Search:
 
     @property
     def reversed(self) -> bool:
-        """return  whether to search in reversed order."""
+        """Return whether to search in reversed order."""
         return self._reversed and self.mmap.has_reversed_index()
 
     @reversed.setter
@@ -131,22 +137,24 @@ class Search:
 
     @property
     def case_insensitive(self) -> bool:
+        """Return whether to use case insensitive search."""
         return self._case_insensitive
 
     @case_insensitive.setter
     def case_insensitive(self, value: bool):
+        """Set whether to use case insensitive search."""
         self._case_insensitive = value
 
     def levenshtein_find(self, query: list) -> None:
         """Method to find similar words
         Levenshtein distance of 1 is used to find similar words
+        Case folding is applied to find similar words in case insensitive search
 
         WORD can be transformed into another word by:
         - add a letter
         - remove a letter
         - replace a letter
         """
-
         if (
             query[0] is None
             or UNDERSCORE in query[0]  # "_" wildcard
@@ -215,8 +223,8 @@ class Search:
             # pattern_to_match = [end_part] þegar verið er að athuga hvort að orðið endi á vissan hátt.
             end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
 
-            # það sem er að gerast er að byrjunarhlutinn er að stækka án þess að tekið sé í burtu
-            # sjálf byrjunin, sem á ekki að matcha við
+            # Remove the original start part from the next start part 
+            # to get the pattern to match for the middle parts
             if not original_start_part:
                 original_start_part = next_start_part[:-1][:]
 
@@ -232,13 +240,16 @@ class Search:
             # Check if we can match any of the patterns in word_parts sequentially
             if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
                 result = self.mmap.get_result(s_start + idx)
-                word = self._query_to_string(next_start_part)
                 if len(query) > 3:
-                    word = self._query_to_string(query[3]) + word
+                    word = self._query_to_string(query[3] + next_start_part)
+                else:
+                    word = self._query_to_string(next_start_part)
+
                 res = self._add_result({word: result})
                 if res:
                     yield res
                 else:
+                    # search is completed, so we can return without yielding more results
                     return
 
             # If we have a match, continue searching
@@ -339,16 +350,27 @@ class Search:
         This method handles case insensitive search by checking both upper and lower case letters.
         """
         if start >= len(query[0]):
+            # We have reached the end of the query, so we can return without yielding more results
             return
+
+        start_is_in_mb = False  # check if the start index is in a multibyte character, because then we should not apply case folding to it
+        has_mb: list[int] = [i for i in query[0] if i <= 4 and i > 1]
+        for item in has_mb or []:
+            mb_start = query[0].index(item)
+            mb_end = mb_start + item + 1
+            if start >= mb_start and start < mb_end:
+                start_is_in_mb = True
 
         if len(query) == 3:
             query.append([])
+
         chr_range = []
         next_query = [[], query[1], query[2], query[3]]
         s_start, s_end = self.mmap.calculate_select(s_index)
         range = self.mmap.get_trie_range(s_start, s_end)
         i_letter = query[0][start]
-        i_fold_letter = self.case_folding(i_letter)
+        i_fold_letter = i_letter if start_is_in_mb else self.case_folding(i_letter)
+
         if range.find(i_letter) >= 0:
             chr_range.append(i_letter)
         if i_letter != i_fold_letter and range.find(i_fold_letter) >= 0:
@@ -381,22 +403,22 @@ class Search:
 
             if self.search_completed():
                 return
-            s_index_next = nr_hc + 1
 
-            next_query[0] = query[0][:]
-            next_query[0][start] = ic_letter
+            if query[0][-1] == WILDCARD and len(query[0][start:]) == 2:
+                wild_query = [None, query[1], query[2]]
+                wild_query[0] = query[0][:][start:]
+                wild_query[0][0] = ic_letter
+                if len(query) > 3:
+                    wild_query.append(query[3] + query[0][:][0:start])
+                else:
+                    wild_query.append(query[0][:][0:start])
+                yield from self._search(wild_query, s_index)
 
-            next_query2 = [None, query[1], query[2]]
-            next_query2[0] = query[0][:][start:]
-            next_query2[0][0] = ic_letter
-            if len(query) > 3:
-                next_query2.append(query[3] + query[0][:][0:start])
-            else:
-                next_query2.append(query[0][:][0:start])
-
-            if next_query2[0][-1] == WILDCARD and len(next_query2[0]) == 2:
-                yield from self._search(next_query2, s_index)
             if nr_hc > 0:
+                s_index_next = nr_hc + 1
+                next_query[0] = query[0][:]
+                next_query[0][start] = ic_letter
+
                 yield from self._case_insensitive_search(
                     next_query, s_index_next, start + 1
                 )
@@ -417,7 +439,7 @@ class Search:
                 i_letter *= -1
             s_start, s_end = self.mmap.calculate_select(s_index)
             chr_index = self.mmap.get_trie_index_of(s_start, s_end, i_letter)
-            # No such letter in the trie interval, so we can return
+            # No such letter in the trie range, so we can return
             if chr_index == -1:
                 return
 
@@ -432,7 +454,7 @@ class Search:
 
                 # if we are at the end of the query and the last letter is a wildcard
                 # and we have perhaps a complete word at this point, even if there are no more letters
-                # in the query, we can still get a possible result
+                # in the query, we can still find a possible result
                 if (
                     n == len(query[0]) - 2
                     and query[0][-1] == WILDCARD
@@ -451,6 +473,7 @@ class Search:
                         if res is not None:
                             yield res
                         else:
+                            # search is completed, so we can return without yielding more results
                             return
                 s_index = nr_hc + 1
         end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
@@ -466,17 +489,18 @@ class Search:
             if res is not None:
                 yield res
             else:
-                return
+                return  # search is completed, so we can return without yielding more results
 
     def _query_to_string(self, query) -> str:
         """Convert a query list of integers (ASCII values) back to text."""
         if query is None:
             return ""
         if len(query) > 1 and query[-1] == WILDCARD:
+            # Remove the wildcard from the end of the query, because it is not part of the word
             query = query[:-1][:]
-        for i, val in enumerate(query):
-            if val < 0:
-                query[i] *= -1
+        
+        # Convert negative (escaped) ASCII values back to their original characters
+        query = [val if val >= 0 else -val for val in query]
         return A.convert_bytes_to_str(query)
 
     def fuzzy_search(self, query, result_format="dict"):
@@ -516,7 +540,6 @@ class Search:
             ):
                 print("Invalid query for fuzzy search.")
                 return
-
             yield from self.levenshtein_find(modified_query)
             self.levenshtein = False
         elif self.case_insensitive and modified_query[0] is not None:
@@ -556,8 +579,7 @@ class Search:
         for c in query:
             if ord(c) > 255:
                 multi_bytes = A.convert_str_to_bytes(c)
-                for b in multi_bytes:
-                    res.append(int(b))
+                res.extend(multi_bytes)
             else:
                 if c == "\\" and not esc:
                     esc = True
@@ -603,7 +625,6 @@ class Search:
                 middle_part.append(sublist)
             else:
                 middle_part = None
-
             return [starts_with, middle_part, ends_with]
 
         if res == []:
