@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import argparse
 
+from typing import Iterator
 from askur.filemapping import Mapping
 from askur.config import Config
 from askur.alphabet import Alphabet
@@ -10,35 +10,6 @@ A = Alphabet()
 
 UNDERSCORE = 95
 WILDCARD = 42
-
-
-arg_parser = argparse.ArgumentParser(
-    description="Search for a key in a collection of key-value pairs stored in a LOUDS trie."
-)
-arg_parser.add_argument("-c", type=str, help="The collection to search in.")
-arg_parser.add_argument(
-    "-w",
-    type=str,
-    help="The word to search for. Use * for wildcard, _ for any char.",
-)
-arg_parser.add_argument("-l", type=int, help="Limit number of results.", default=0)
-arg_parser.add_argument(
-    "-z",
-    action="store_true",
-    help="Use fuzzy-search (levenshtein distance 1) to find similar words.",
-)
-arg_parser.add_argument(
-    "-i",
-    "--insensitive",
-    action="store_true",
-    help="Use case insensitive search.",
-)
-arg_parser.add_argument(
-    "-e",
-    "--exists",
-    action="store_true",
-    help="Check if the word exists in the collection.",
-)
 
 
 class Search:
@@ -58,9 +29,14 @@ class Search:
         self._collection_name = collection
         self._nr_results = 0
         self._reversed = False
+        
+        assert self.limit >= 0, "Limit must be a non-negative integer."
+        assert isinstance(self._case_insensitive, bool), "case_insensitive must be a boolean."
+        assert isinstance(self._levenshtein, bool), "use_levenshtein must be a boolean."
+        assert self._collection_name, "Collection name must be provided."
 
     @property
-    def check_if_key_exists(self):
+    def check_if_key_exists(self) -> bool:
         """Check if the search is in 'exists' mode,
         where we only check if the key (the word) exists without returning the value.
         """
@@ -113,6 +89,7 @@ class Search:
     @limit.setter
     def limit(self, value: int):
         self._limit = value
+        assert self._limit >= 0, "Limit must be a non-negative integer."
 
     @property
     def levenshtein(self) -> bool:
@@ -191,12 +168,14 @@ class Search:
                 yield from self._search([new_word, None, None], s_index=1)
 
         # remove the letter at position n
-        for n in range(len(query[0])):
+        for n in range(len(query[0])) if len(query[0]) > 1 else []:
             new_word = query[0][:]
             del new_word[n]
             yield from self._search([new_word, None, None], s_index=1)
 
-    def _wildcard_search(self, s_index, query, original_start_part=None) -> None:
+    def _wildcard_search(
+        self, s_index, query, original_start_part=None
+    ) -> Iterator[dict[str, list[str]]]:
         """Search for a word in the trie with wildcards (*) in the query."""
         if self.search_completed():
             return
@@ -223,7 +202,7 @@ class Search:
             # pattern_to_match = [end_part] þegar verið er að athuga hvort að orðið endi á vissan hátt.
             end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
 
-            # Remove the original start part from the next start part 
+            # Remove the original start part from the next start part
             # to get the pattern to match for the middle parts
             if not original_start_part:
                 original_start_part = next_start_part[:-1][:]
@@ -325,7 +304,9 @@ class Search:
         # Only returns True if ALL patterns were found in order
         return True
 
-    def _underscore_search(self, s_index, query, start) -> None:
+    def _underscore_search(
+        self, s_index, query, start
+    ) -> Iterator[dict[str, list[str]]]:
         """
         Search for a word in the trie from a given index.
         This method handles the underscore wildcard "_" which matches any single character.
@@ -344,7 +325,9 @@ class Search:
             next_query[0] = [i_letter] + query[0][start + 1 :][:]
             yield from self._search(next_query, s_index)
 
-    def _case_insensitive_search(self, query, s_index, start=0) -> None:
+    def _case_insensitive_search(
+        self, query, s_index, start=0
+    ) -> Iterator[dict[str, list[str]]]:
         """
         Search for a word in the trie from a given index.
         This method handles case insensitive search by checking both upper and lower case letters.
@@ -423,7 +406,9 @@ class Search:
                     next_query, s_index_next, start + 1
                 )
 
-    def _search(self, query: list, s_index: int) -> None:
+    def _search(
+        self, query: list, s_index: int
+    ) -> Iterator[dict[str, list[str]] | dict[str, int]]:
         chr_index: int = -1
         if self.search_completed():
             return
@@ -476,6 +461,9 @@ class Search:
                             # search is completed, so we can return without yielding more results
                             return
                 s_index = nr_hc + 1
+        if s_start is None or chr_index == -1:
+            return
+
         end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
 
         if end_of_word == 1:
@@ -498,19 +486,24 @@ class Search:
         if len(query) > 1 and query[-1] == WILDCARD:
             # Remove the wildcard from the end of the query, because it is not part of the word
             query = query[:-1][:]
-        
+
         # Convert negative (escaped) ASCII values back to their original characters
         query = [val if val >= 0 else -val for val in query]
         return A.convert_bytes_to_str(query)
 
-    def fuzzy_search(self, query, result_format="dict"):
+    def fuzzy_search(
+        self, query, result_format="dict"
+    ) -> Iterator[dict[str, list[str]] | dict[str, int]]:
         """Fuzzy search for a word in the trie.
         This method uses Levenshtein distance of 1 to find similar words.
         """
         self.levenshtein = True
-        return self.search(query)
+        try:
+            yield from self.search(query)
+        finally:
+            self.levenshtein = False
 
-    def exists(self, query) -> list[str]:
+    def exists(self, query) -> Iterator[dict[str, int]]:
         """
         For faster search results.
         Check if a word exists in the collection.
@@ -519,14 +512,18 @@ class Search:
         returns list of words with its index value.
         """
         self.check_if_key_exists = True
-        return self.search(query)
+        try:
+            yield from self.search(query)
+        finally:
+            self.check_if_key_exists = False
 
-    def get_by_id(self, id) -> str:
+    def get_by_id(self, id) -> list[int]:
         # Implement the method to get a word by its ID
-        res = self.mmap.get_by_id(id)
-        return res
+        if type(id) is not int or id < 0:
+            raise ValueError("ID must be a non-negative integer.")
+        return self.mmap.get_by_id(id)
 
-    def search(self, query) -> str:
+    def search(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
         modified_query = self._prepare_query(query)
         self._nr_results = 0  # Reset the number of results for each search
 
@@ -552,7 +549,7 @@ class Search:
             """Using no wildcards in start of query:"""
             yield from self._search(modified_query, 1)
 
-    def lookup(self, query) -> str:
+    def lookup(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
         return self.search(query)
 
     def _prepare_query(self, query):
@@ -634,32 +631,63 @@ class Search:
 
 def main():
     """Main entry point for the askur-search CLI command."""
-    args = arg_parser.parse_args()
-    COLLECTION = args.c
-    QUERY = args.w
-    LIMIT = args.l if args.l > 0 else 0
-    FUZZY_SEARCH = args.z
-    CASE_INSENSITIVE = args.insensitive
-    EXISTS = args.exists
+    import argparse
 
-    assert COLLECTION is not None, "Collection 'c' is required."
-    assert QUERY is not None, "query/word 'w' is required."
+    arg_parser = argparse.ArgumentParser(
+        description="Search for a key in a collection of key-value pairs stored in a LOUDS trie."
+    )
+    arg_parser.add_argument("-c", type=str, help="The collection to search in.")
+    arg_parser.add_argument(
+        "-q",
+        type=str,
+        help="The word (query) to search for. Use * for wildcard, _ for any char.",
+    )
+    arg_parser.add_argument("-l", type=int, help="Limit number of results.", default=0)
+    arg_parser.add_argument(
+        "-z",
+        action="store_true",
+        help="Use fuzzy-search (levenshtein distance 1) to find similar words.",
+    )
+    arg_parser.add_argument(
+        "-i",
+        "--insensitive",
+        action="store_true",
+        help="Use case insensitive search.",
+    )
+    arg_parser.add_argument(
+        "-e",
+        "--exists",
+        action="store_true",
+        help="Check if the word exists in the collection.",
+    )
+
+    args = arg_parser.parse_args()
+
+    collection = args.c
+    query = args.q
+    limit = args.l if args.l > 0 else 0
+    fuzzy_search = args.z
+    case_insensitive = args.insensitive
+    exists = args.exists
+
+    assert collection is not None, "Collection 'c' is required."
+    assert query is not None, "query/word 'q' is required."
 
     S = Search(
-        collection=COLLECTION,
-        limit=LIMIT,
-        case_insensitive=CASE_INSENSITIVE,
-        use_levenshtein=FUZZY_SEARCH,
+        collection=collection,
+        limit=limit,
+        case_insensitive=case_insensitive,
+        use_levenshtein=fuzzy_search,
     )
-    if EXISTS:
-        for items in S.exists(QUERY):
+    if exists:
+        for items in S.exists(query):
             print(items)
         return
-    if FUZZY_SEARCH:
-        for items in S.fuzzy_search(QUERY):
+    if fuzzy_search:
+        for items in S.fuzzy_search(query):
             print(items)
         return
-    for items in S.lookup(QUERY):
+    for items in S.lookup(query):
         print(items)
 
 

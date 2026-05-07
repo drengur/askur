@@ -417,14 +417,14 @@ cdef class Mapping:
 
         extra_bits = index - s_end * 8 + 1
         value_bytes = self._lookup_eow_bits_list[s_end : s_end + 4]
-        for byte in value_bytes:
-            if not byte and extra_bits > 8:
+        for value in value_bytes:
+            if not value and extra_bits > 8:
                 extra_bits -= 8
                 continue
             for i in range(7, -1, -1):
                 if extra_bits > 0:
                     extra_bits -= 1
-                    if byte & (1 << i):
+                    if value & (1 << i):
                         start_index += 1
                 else:
                     return start_index - 1

@@ -4,7 +4,7 @@ version = "0.1.1"
 description = "Memory mapped binary tree for fast key-value lookup"
 readme = "README.md"
 authors = [
-    { name = "drengur", email = "samuel.thorisson@gmail.com" }
+    { name = "Samúel Þórisson", email = "samuel.thorisson@gmail.com" }
 ]
 
 requires-python = ">=3.10"
@@ -19,6 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Operating System :: Unix",
     "Operating System :: POSIX",
     "Operating System :: Microsoft :: Windows",
@@ -45,12 +46,12 @@ Repository = "https://github.com/drengur/askur"
 
 [project.scripts]
 askur-search = "askur.search:main"
-askur-lookup = "askur.__init__:lookup"
+askur-get_id = "askur.__init__:get_id"
 askur-build = "askur.build:main"
 askur-remove = "askur.__init__:remove_collection"
-askur-print_collections = "askur.__init__:print_collections"
+askur-rename = "askur.__init__:rename_collection"
 askur-list_collections = "askur.__init__:list_collections"
-askur-print_config = "askur.__init__:print_configuration"
+askur-list_config = "askur.__init__:list_configuration"
 
 
 [build-system]
@@ -73,7 +74,7 @@ askur = [ "tests/*","drasl/*" ]
 # CIBuildWheel configuration
 [tool.cibuildwheel]
 # Build for specific Python versions
-build = ["cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+build = ["cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*", "cp315-*"]
 
 # Skip 32-bit builds and musllinux for now (can be enabled later)
 skip = ["*-win32", "*-manylinux_i686", "*-musllinux*"]

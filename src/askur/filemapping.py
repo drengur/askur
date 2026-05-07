@@ -3,6 +3,7 @@ import os
 import mmap
 from askur.alphabet import Alphabet
 from askur.config import Config
+
 Config()  # initialize config environment variables
 A = Alphabet()
 
@@ -55,8 +56,6 @@ class Mapping:
         self._reversed_eow_bits: bytes = b""
         self._reversed_eow_sb: bytes = b""
 
-        # self._reversed_index_bits: bytes = b""
-
         self._short_text: bytes = b""
 
         # pointers to the starts of the reversed sections
@@ -69,8 +68,6 @@ class Mapping:
 
         self._reversed_eow_start: int = 0
         self._reversed_eow_superblock_start: int = 0
-
-        # self._reversed_index_start: int = 0
 
         # lookup tables in use for index lookups or reverse index lookups
         self._lookup_trie_list: bytes = b""
@@ -92,20 +89,23 @@ class Mapping:
     def _load_files(self):
         # Check for environment variable first, then fall back to config file
         data_folder = os.environ.get("ASKUR_DATA_FOLDER")
-        assert data_folder is not None, (
-            "DATA_FOLDER environment variable is not set. Please update config.py."
-        )
+        if data_folder is None:
+            print(
+                "DATA_FOLDER environment variable is not set. Please update config.py."
+            )
+            import sys
+
+            sys.exit(1)
 
         frozen_folder = os.path.join(data_folder, self.collection)
+
         if not os.path.exists(frozen_folder):
-            available_collections = [
-                name
-                for name in os.listdir(data_folder)
-                if os.path.isdir(os.path.join(data_folder, name))
-            ]
-            assert False, (
-                f"{self.collection} collection does not exist!\n Existing collections are: {available_collections}"
-            )
+            import sys
+            from askur.__init__ import list_collections
+
+            print(f"\n  '{self.collection}' collection does not exist!")
+            list_collections()
+            sys.exit(1)
 
         data_filename = os.path.join(frozen_folder, "data.bin")
 
@@ -263,12 +263,12 @@ class Mapping:
         if start_sum == sum_ones_wanted:
             res_start_index = start_index - 1
 
-        byte: int = 0
+        value: int = 0
         i: int = 0
 
         while total_sum < sum_ones_wanted + 1:
-            for byte in self._lookup_s_bits_list[start_byte : start_byte + 1]:
-                if not byte:
+            for value in self._lookup_s_bits_list[start_byte : start_byte + 1]:
+                if not value:
                     start_byte += 1
                     loop_index += 8
                     continue
@@ -277,7 +277,7 @@ class Mapping:
                     r_start = 7 - extra_bits
                     extra_bits = 0
                 for i in range(r_start, -1, -1):
-                    if byte & (1 << i):
+                    if value & (1 << i):
                         total_sum += 1
                         if total_sum == sum_ones_wanted and res_start_index is None:
                             res_start_index = loop_index
@@ -311,12 +311,12 @@ class Mapping:
         end_block: int = start_block + self.bits_in_superblock // bits_in_byte + 1
         # það er búið að reikna summu frá 0 til start_block -1
         # þá vantar summuna frá start_block til end_request_index
-        for byte in self._lookup_hc_bits_list[start_block:end_block]:  # bytes:
-            if not byte:
+        for value in self._lookup_hc_bits_list[start_block:end_block]:
+            if not value:
                 index += 8
                 continue
             for i in range(7, -1, -1):
-                if byte & (1 << i):
+                if value & (1 << i):
                     bitsum += 1
                     if index == end_request_index:
                         return bitsum
@@ -325,15 +325,15 @@ class Mapping:
 
     def has_child(self, index: int) -> bool:
         """Returns True if node has child = '1'"""
-        byte: int = (
+        value: int = (
             self._lookup_hc_bits_list[0]
             if index < 9
             else self._lookup_hc_bits_list[index // 8]
         )
-        return byte & (1 << (7 - index % 8)) > 0
+        return value & (1 << (7 - index % 8)) > 0
 
     def get_trie_range(self, start: int, end: int) -> list[int]:
-        """Returns the range of letters (bytes) in the mmaped trie """
+        """Returns the range of letters (bytes) in the mmaped trie"""
         return self._lookup_trie_list[start:end]
 
     def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
@@ -401,14 +401,14 @@ class Mapping:
 
         extra_bits: int = index - s_end * 8 + 1
         value_bytes: bytes = self._lookup_eow_bits_list[s_end : s_end + 4]
-        for byte in value_bytes:
-            if not byte and extra_bits > 8:
+        for value in value_bytes:
+            if not value and extra_bits > 8:
                 extra_bits -= 8
                 continue
             for i in range(7, -1, -1):
                 if extra_bits > 0:
                     extra_bits -= 1
-                    if byte & (1 << i):
+                    if value & (1 << i):
                         start_index += 1
                 else:
                     return start_index - 1
@@ -428,6 +428,7 @@ class Mapping:
             )
         if self.check_if_key_exists:
             return [value_sum]
+
         index_value, text_len = self.get_index(value_sum)
         return self.get_short_text(index_value, text_len)
 
@@ -439,15 +440,15 @@ class Mapping:
     def get_short_text(self, index: int, text_len: int) -> list[str]:
         """Returns the short text"""
         res: bytes = self._short_text[index : index + text_len]
-        unicodes: bytearray = bytearray()
+        unicodes: bytes = b""
         text_array: list[str] = []
         i: int = 0
         while i < len(res):
             if res[i] == A.RES_SEPARATOR:
                 text_array.append(A.convert_bytes_to_str(unicodes))
-                unicodes = bytearray()
+                unicodes = b""
             else:
-                unicodes.append(res[i])
+                unicodes += bytes([res[i]])
             i += 1
         if len(unicodes) > 0:
             text_array.append(A.convert_bytes_to_str(unicodes))

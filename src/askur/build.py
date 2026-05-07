@@ -7,7 +7,6 @@ from input file
 import os
 import sys
 import io
-import argparse
 import math as m
 from dataclasses import dataclass
 from askur.config import Config
@@ -19,33 +18,8 @@ from askur import watchdog
 # for the build process, such as the alphabet and data folder.
 CONFIG: Config = Config()
 
-WD: watchdog.Watchdog | None = watchdog.Watchdog()
+WD = watchdog.Watchdog()  # Watchdog to monitor system memory usage during build process
 A: alphabet.Alphabet | None = alphabet.Alphabet
-
-
-ARG_PARSER = argparse.ArgumentParser(description="Make lookup tables for the trie.")
-
-ARG_PARSER.add_argument(
-    "--collection", "-C", type=str, help="The name of the collection to create."
-)
-ARG_PARSER.add_argument(
-    "--file",
-    "-f",
-    type=argparse.FileType("r", encoding="utf-8"),
-    nargs="?",
-    help="Input file (default: stdin).",
-    default=sys.stdin,
-)
-ARG_PARSER.add_argument(
-    "--reversed", "-R", action="store_true", help="Make reversed index"
-)
-ARG_PARSER.add_argument(
-    "--field-separator",
-    "-F",
-    type=str,
-    default=";",
-    help="Field separator (default: ';')",
-)
 
 
 @dataclass(slots=True)
@@ -142,6 +116,9 @@ class Trie:
         if collection_name == "":
             print("Collection name is not set.")
             sys.exit(1)
+        if len(collection_name.split(" ")) > 1:
+            print("Collection name can not contain spaces.")
+            sys.exit(1)
 
         self.frozen_folder: str = os.path.join(data_folder, self.collection_name)
         if not os.path.exists(self.frozen_folder):
@@ -183,26 +160,32 @@ class Trie:
         io.open(self.short_text_bits_filename + ".length", "w").close()
         io.open(self.trie_file + ".alphabet", "w").close()
 
-    def make_frozen_data(self, input_data: str) -> None:
+    def make_frozen_data(self, input_data: str, statusbar=False) -> None:
         """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays from the input data.
         Args:
             input_data: The input data as a string.
         Returns: None
         """
-        data_values_gen: tuple[bytes] = self.make_trie(input_data)
-        bytes_per_indexblock: int = self.write_frozen_data(data_values_gen)
-        self.merge_data_files(bytes_per_indexblock)
+        try:
+            WD.start(statusbar)  # Start the watchdog to monitor system memory usage during the build process
+            data_values_gen: tuple[bytes] = self.make_trie(input_data)
+            bytes_per_indexblock: int = self.write_frozen_data(data_values_gen)
+            self.merge_data_files(bytes_per_indexblock)
+        except (KeyboardInterrupt, SystemExit) as e:
+            print("Build process interrupted. Exiting gracefully.")
+        except Exception as e:
+            print(f"An error occurred during the build process: {e}")
+        finally:
+            WD.stop()
 
     def make_trie(self, input_data: str) -> tuple[bytes]:
-        """Make the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays.
-        Returns a generator that yields the data values in the same order as the indices in the trie.
-        """
+        """Returns a generator that yields the data values in the same order as the indices in the trie."""
 
         io.open(self.data_file, "w").close()
 
         data_values: dict[str, int] = {}
         index: int = -1
-        key: bytearray()
+        key: bytes = None
         next_index: int = -1
         root = Node()
         for word_key, word_value in self.read_from_input(input_data):
@@ -216,7 +199,7 @@ class Trie:
             self._add(key, index, root)
 
         WD.clear_label()
-        WD.print_label(" Write to disk...")
+        WD.print_label(" Writing to disk...")
         self.level_order_tree([root])
 
         # return tuple-generator(data_values) to save memory, instead of creating a list of all data values in memory
@@ -343,7 +326,6 @@ class Trie:
         if input_data != sys.stdin:
             with io.open(input_data.name, "r", encoding="utf-8") as f:
                 line_count = sum(1 for _ in f)
-
         with (
             io.open(input_data.name, "r", encoding="utf-8")
             if input_data != sys.stdin
@@ -374,7 +356,7 @@ class Trie:
                     sys.exit(1)
                 if line_count > 0 and line_nr % 1000 == 0:
                     WD.print_label(
-                        f"  {line_nr / line_count * 100:.2f}% of lines processed"
+                        f"  {line_nr / line_count * 100:.1f}% of lines processed"
                     )
 
                 yield word_key, word_value or "1"
@@ -689,9 +671,21 @@ class Trie:
                 f.write(buffer)
         return block_size
 
-    def make_reversed(self) -> None:
+    def make_reversed(self, statusbar=False) -> None:
         """Make a reversed trie from the original data."""
-        WD.print_label(" Create index...")
+        try:
+            WD.start(statusbar)
+            WD.print_label(" Building reversed index...")
+            self._make_reversed()
+        except Exception as e:
+            print(f"An error occurred during the build process: {e}")
+        finally:
+            WD.stop()
+
+
+    def _make_reversed(self) -> None:
+        """Make a reversed trie from the original data."""
+
         self.super_block_size = 0
         index_byte_len: int = 0
         short_text_len: int = 0
@@ -725,7 +719,6 @@ class Trie:
                     )
                 )
 
-        WD.clear_label()
         self.write_tree_to_file()
 
         self.write_select_to_file(self.select_bits_filename)
@@ -736,7 +729,6 @@ class Trie:
 
         self.write_hc_to_file(self.hc_bits_filename)
         self.hc_to_superblock()
-        WD.clear_label()
 
         start_bytes: list[bytes] = []
         bytes_per_info: int = 4
@@ -778,6 +770,7 @@ class Trie:
                 f.write(vals)
 
         self.remove_build_files()
+        WD.stop()
 
     def merge_files(self, master_file: str, temp_file: str) -> None:
         """Merge two files into one."""
@@ -811,8 +804,34 @@ def main():
     Creates LOUDS trie from the input text and write the trie and associated
     lookup tables to disk in the specified collection folder.
     """
+    import gc
+    import argparse
 
-    args = ARG_PARSER.parse_args()
+    arg_parser = argparse.ArgumentParser(description="Make lookup tables for the trie.")
+
+    arg_parser.add_argument(
+        "--collection", "-C", type=str, help="The name of the collection to create."
+    )
+    arg_parser.add_argument(
+        "--file",
+        "-f",
+        type=argparse.FileType("r", encoding="utf-8"),
+        nargs="?",
+        help="Input file (default: stdin).",
+        default=sys.stdin,
+    )
+    arg_parser.add_argument(
+        "--reversed", "-R", action="store_true", help="Make reversed index"
+    )
+    arg_parser.add_argument(
+        "--field-separator",
+        "-F",
+        type=str,
+        default=";",
+        help="Field separator (default: ';')",
+    )
+
+    args = arg_parser.parse_args()
     txt = args.file
     field_separator = args.field_separator or ";"
 
@@ -822,7 +841,7 @@ def main():
             reversed=False,
             field_separator=field_separator,
         )
-        trie.make_frozen_data(txt)
+        trie.make_frozen_data(txt, statusbar=True)
 
     if args.reversed and args.collection:
         trie = Trie(
@@ -831,9 +850,10 @@ def main():
             field_separator=field_separator,
         )
         trie.make_reversed()
+    gc.collect()  # Force garbage collection to free up memory after build process
 
-    if args.collection is None or (txt is None and not args.revesed):
-        ARG_PARSER.print_help()
+    if args.collection is None or (txt is None and not args.reversed):
+        arg_parser.print_help()
 
 
 if __name__ == "__main__":
