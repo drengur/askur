@@ -53,7 +53,7 @@ class Config:
             return
 
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(f"ASKUR_ALPHABET={self.get_default_alphabet()}\n")
             f.write(f"ASKUR_DATA_FOLDER={self.get_default_folders()[0]}\n")
 
@@ -68,7 +68,7 @@ class Config:
         if not os.path.exists(self.config_env_file):
             self.pre_create_config_file(self.config_env_file)
 
-        with open(self.config_env_file, "r") as f:
+        with open(self.config_env_file, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith("#"):

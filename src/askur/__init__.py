@@ -10,7 +10,7 @@ def collections(sort_by: str = "name") -> list[dict]:
     import datetime as dt
 
     colls = []
-    data_folder = os.environ["ASKUR_DATA_FOLDER"]
+    data_folder = os.environ["ASKUR_DATA_FOLDER"] 
     if not os.path.exists(data_folder):
         return []
     for entry in sorted(os.listdir(data_folder) or []):
@@ -33,6 +33,8 @@ def collections(sort_by: str = "name") -> list[dict]:
                 ),
             }
         )
+    if not colls:
+        return [{"name": "No collections found", "size": "-", "created": "-"}]
     if sort_by == "date":
         return sorted(colls, key=lambda x: x["created"], reverse=True)
     elif sort_by == "size":

@@ -171,7 +171,7 @@ class Trie:
             data_values_gen: tuple[bytes] = self.make_trie(input_data)
             bytes_per_indexblock: int = self.write_frozen_data(data_values_gen)
             self.merge_data_files(bytes_per_indexblock)
-        except (KeyboardInterrupt, SystemExit) as e:
+        except (KeyboardInterrupt, SystemExit):
             print("Build process interrupted. Exiting gracefully.")
         except Exception as e:
             print(f"An error occurred during the build process: {e}")
