@@ -30,6 +30,12 @@ uv pip install .
 git clone https://github.com/drengur/askur.git
 cd askur
 uv pip install -e ".[dev]"
+
+# building package
+uv build
+uv pip install dist/<file-distribution-name>.whl
+or
+uv pip install dist/<file-distribution-name>.tar.gz
 ```
 
 ## Quick Start

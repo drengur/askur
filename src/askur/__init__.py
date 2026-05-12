@@ -11,6 +11,8 @@ def collections(sort_by: str = "name") -> list[dict]:
 
     colls = []
     data_folder = os.environ["ASKUR_DATA_FOLDER"]
+    if not os.path.exists(data_folder):
+        return []
     for entry in sorted(os.listdir(data_folder) or []):
         # get size of folder
         entry_size = 0
@@ -64,6 +66,10 @@ def list_collections(sort_by: str = "name") -> None:
         sort_by = args.sort_by
 
     colls = collections(sort_by=sort_by)
+    if not colls:
+        print(f"Data folder '{os.environ['ASKUR_DATA_FOLDER']}' does not exist. Please check your configuration and try again.")
+        return
+
     data_folder = os.environ["ASKUR_DATA_FOLDER"]
     col_1_width = max(len(coll["name"]) for coll in colls) + 6
     col_2_width = max(len(coll["size"]) for coll in colls) + 6
