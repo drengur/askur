@@ -69,7 +69,7 @@ def list_collections(sort_by: str = "name") -> None:
 
     colls = collections(sort_by=sort_by)
     if not colls:
-        print(f"Data folder '{os.environ['ASKUR_DATA_FOLDER']}' does not exist. Please check your configuration and try again.")
+        print(f"Data folder '{os.environ['ASKUR_DATA_FOLDER']}' does not exist.")
         return
 
     data_folder = os.environ["ASKUR_DATA_FOLDER"]
