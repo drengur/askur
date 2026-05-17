@@ -29,9 +29,11 @@ class Search:
         self._collection_name = collection
         self._nr_results = 0
         self._reversed = False
-        
+
         assert self.limit >= 0, "Limit must be a non-negative integer."
-        assert isinstance(self._case_insensitive, bool), "case_insensitive must be a boolean."
+        assert isinstance(self._case_insensitive, bool), (
+            "case_insensitive must be a boolean."
+        )
         assert isinstance(self._levenshtein, bool), "use_levenshtein must be a boolean."
         assert self._collection_name, "Collection name must be provided."
 
@@ -142,7 +144,7 @@ class Search:
 
         alphabet = [
             c
-            for c in self.mmap.alphabet
+            for c in self.mmap.used_alphabet()
             if c
             not in (
                 UNDERSCORE,
@@ -157,6 +159,7 @@ class Search:
                 new_word = query[0][:]
                 new_word.insert(n, i_letter)
                 yield from self._search([new_word, None, None], s_index=1)
+        
 
         # replace the letter at position n with i_letter
         for n in range(len(query[0])):
@@ -166,7 +169,7 @@ class Search:
                     continue
                 new_word[n] = i_letter
                 yield from self._search([new_word, None, None], s_index=1)
-
+        
         # remove the letter at position n
         for n in range(len(query[0])) if len(query[0]) > 1 else []:
             new_word = query[0][:]
@@ -354,15 +357,15 @@ class Search:
         i_letter = query[0][start]
         i_fold_letter = i_letter if start_is_in_mb else self.case_folding(i_letter)
 
-        if range.find(i_letter) >= 0:
+        if i_letter in range:
             chr_range.append(i_letter)
-        if i_letter != i_fold_letter and range.find(i_fold_letter) >= 0:
+        if i_letter != i_fold_letter and i_fold_letter in range:
             chr_range.append(i_fold_letter)
         if chr_range == [] and i_letter == UNDERSCORE:  #  "_"
             chr_range = range
 
         for nr, ic_letter in enumerate(chr_range):
-            chr_index = range.find(ic_letter)
+            chr_index = range.index(ic_letter)
             nr_hc = self.mmap.calculate_hc(s_start + chr_index)
 
             if start == len(query[0]) - 1 and self.mmap.is_end_of_word(
@@ -461,6 +464,7 @@ class Search:
                             # search is completed, so we can return without yielding more results
                             return
                 s_index = nr_hc + 1
+
         if s_start is None or chr_index == -1:
             return
 

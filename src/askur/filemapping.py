@@ -1,6 +1,6 @@
-import io
 import os
 import mmap
+from dataclasses import dataclass
 from askur.alphabet import Alphabet
 from askur.config import Config
 
@@ -8,8 +8,18 @@ Config()  # initialize config environment variables
 A = Alphabet()
 
 
+@dataclass(frozen=True)
+class Section:
+    start: int
+    end: int
+
+
 class Mapping:
     def __init__(self, collection: str) -> None:
+        self._file: str = ""
+        self._mmap: mmap.mmap = None
+        self._view: memoryview = None
+
         self._trie: bytes = b""
 
         self._s_bits: bytes = b""
@@ -29,19 +39,39 @@ class Mapping:
         self.collection: str = collection
 
         # pointers to the starts of the sections
-        self._triet_start: int = 0
+        self._trie_start: int = 0
+        self._trie_end: int = 0
+
         self._select_start: int = 0
+        self._select_end: int = 0
+
         self._select_superblock_start: int = 0
+        self._select_superblock_end: int = 0
+
         self._hc_start: int = 0
+        self._hc_end: int = 0
+
         self._hc_superblock_start: int = 0
+        self._hc_superblock_end: int = 0
+
         self._eow_start: int = 0
+        self._eow_end: int = 0
+
         self._eow_superblock_start: int = 0
+        self._eow_superblock_end: int = 0
+
         self._index_start: int = 0
-        self.alphabet_index_start: int = 0
+        self._index_end: int = 0
+
+        self._alphabet_index_start: int = 0
+        self._alphabet_index_end: int = 0
+
+        self._short_text_start: int = 0
+        self._short_text_end: int = 0
 
         self.alphabet: bytes = b""
         self.check_if_key_exists: bool = False  # are we only checking if key exists?
-        self._reversed_lookup: bool = False  # are we looking up reversed entries?
+        self._reversed_lookup: bool = False  # are we looking up suffixes?
         self._has_reversed_index: bool = False  # does the index have reversed entries?
 
         self.nr_bytes_in_index_block: int = 0
@@ -60,31 +90,32 @@ class Mapping:
 
         # pointers to the starts of the reversed sections
         self._reversed_trie_start: int = 0
+        self._reversed_trie_end: int = 0
 
         self._reversed_select_start: int = 0
+        self._reversed_select_end: int = 0
+
         self._reversed_select_superblock_start: int = 0
+        self._reversed_select_superblock_end: int = 0
+
         self._reversed_hc_start: int = 0
+        self._reversed_hc_end: int = 0
+
         self._reversed_hc_superblock_start: int = 0
+        self._reversed_hc_superblock_end: int = 0
 
         self._reversed_eow_start: int = 0
+        self._reversed_eow_end: int = 0
+
         self._reversed_eow_superblock_start: int = 0
+        self._reversed_eow_superblock_end: int = 0
 
-        # lookup tables in use for index lookups or reverse index lookups
-        self._lookup_trie_list: bytes = b""
-
-        self._lookup_s_bits_list: bytes = b""
-        self._lookup_s_superblocks_list: bytes = b""
-        self._lookup_hc_bits_list: bytes = b""
-        self._lookup_hc_super_blocks_list: bytes = b""
-
-        self._lookup_eow_bits_list: bytes = b""
-        self._lookup_eow_sb_list: bytes = b""
-
-        self._lookup_index_bits_list: bytes = b""
-        self._lookup_index_values_length_list: bytes = b""
-
-        # self._lookup_short_text_list: bytes = b""
         self._load_files()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Ensure that the mmap and file are closed when the object is destroyed
+        to avoid memory leaks and file locks"""
+        self.close()
 
     def _load_files(self):
         # Check for environment variable first, then fall back to config file
@@ -108,98 +139,122 @@ class Mapping:
             sys.exit(1)
 
         data_filename = os.path.join(frozen_folder, "data.bin")
+        self._file = open(data_filename, "rb")
+        self._mmap = mmap.mmap(self._file.fileno(), 0, access=mmap.ACCESS_READ)
+        self._view = memoryview(self._mmap)
 
-        with io.open(data_filename, "rb") as f_data:
-            data = mmap.mmap(f_data.fileno(), 0, access=mmap.ACCESS_READ)
-            self.bits_in_superblock = int.from_bytes(data[4:8], byteorder="big")
-            self.nr_bytes_in_index_block = int.from_bytes(data[8:12], byteorder="big")
+        self.bits_in_superblock = int.from_bytes(self._mmap[4:8], byteorder="big")
+        self.nr_bytes_in_index_block = int.from_bytes(self._mmap[8:12], byteorder="big")
 
-            alphabet_start = int.from_bytes(data[12:16], byteorder="big")
+        alphabet_start = int.from_bytes(self._mmap[12:16], byteorder="big")
+        alphabet_end = int.from_bytes(self._mmap[16:20], byteorder="big")
+        self._trie_start = int.from_bytes(self._mmap[16:20], byteorder="big")
+        self._trie_end = int.from_bytes(self._mmap[20:24], byteorder="big")
 
-            trie_start = int.from_bytes(data[16:20], byteorder="big")
+        self._select_start = self._trie_end
+        self._select_end = int.from_bytes(self._mmap[24:28], byteorder="big")
 
-            select_bits_start = int.from_bytes(data[20:24], byteorder="big")
-            select_superblock_start = int.from_bytes(data[24:28], byteorder="big")
+        self._select_superblock_start = self._select_end
+        self._select_superblock_end = int.from_bytes(self._mmap[28:32], byteorder="big")
 
-            hc_start = int.from_bytes(data[28:32], byteorder="big")
-            hc_superblock_start = int.from_bytes(data[32:36], byteorder="big")
+        self._hc_start = self._select_superblock_end
+        self._hc_end = int.from_bytes(self._mmap[32:36], byteorder="big")
 
-            eow_bytes_start = int.from_bytes(data[36:40], byteorder="big")
-            eow_superblock_start = int.from_bytes(data[40:44], byteorder="big")
+        self._hc_superblock_start = self._hc_end
+        self._hc_superblock_end = int.from_bytes(self._mmap[36:40], byteorder="big")
 
-            index_value_start = int.from_bytes(data[44:48], byteorder="big")
-            index_values_length_start = int.from_bytes(data[48:52], byteorder="big")
+        self._eow_start = self._hc_superblock_end
+        self._eow_end = int.from_bytes(self._mmap[40:44], byteorder="big")
 
-            short_text_start = int.from_bytes(data[52:56], byteorder="big")
+        self._eow_superblock_start = self._eow_end
+        self._eow_superblock_end = int.from_bytes(self._mmap[44:48], byteorder="big")
 
-            reversed_trie_start = int.from_bytes(data[60:64], byteorder="big")
-            reversed_select_start = int.from_bytes(data[64:68], byteorder="big")
-            reversed_select_superblock_start = int.from_bytes(
-                data[68:72], byteorder="big"
-            )
-            reversed_hc_start = int.from_bytes(data[72:76], byteorder="big")
-            reversed_hc_superblock_start = int.from_bytes(data[76:80], byteorder="big")
-            reversed_eow_start = int.from_bytes(data[80:84], byteorder="big")
-            reversed_eow_superblock_start = int.from_bytes(data[84:88], byteorder="big")
-            reversed_index_start = int.from_bytes(data[88:92], byteorder="big")
+        self._index_value_start = self._eow_superblock_end
+        self._index_value_end = int.from_bytes(self._mmap[48:52], byteorder="big")
 
-            self.alphabet = data[alphabet_start:trie_start]
-            self._trie = data[trie_start:select_bits_start]
+        self._index_values_length_start = self._index_value_end
+        self._index_values_length_end = int.from_bytes(
+            self._mmap[52:56], byteorder="big"
+        )
 
-            self._s_bits = data[select_bits_start:select_superblock_start]
-            self._s_superblocks = data[select_superblock_start:hc_start]
+        self._short_text_start = self._index_values_length_end
 
-            self._hc_bitarray = data[hc_start:hc_superblock_start]
-            self._hc_super_blocks = data[hc_superblock_start:eow_bytes_start]
+        self._reversed_trie_start = int.from_bytes(self._mmap[60:64], byteorder="big")
+        self._reversed_trie_end = int.from_bytes(self._mmap[64:68], byteorder="big")
 
-            self._eow_bits = data[eow_bytes_start:eow_superblock_start]
-            self._eow_sb = data[eow_superblock_start:index_value_start]
+        self._reversed_select_start = self._reversed_trie_end
+        self._reversed_select_end = int.from_bytes(self._mmap[68:72], byteorder="big")
 
-            self._index_bits = data[index_value_start:index_values_length_start]
-            self._index_values_length = data[index_values_length_start:short_text_start]
+        self._reversed_select_superblock_start = self._reversed_select_end
+        self._reversed_select_superblock_end = int.from_bytes(
+            self._mmap[72:76], byteorder="big"
+        )
 
-            if reversed_trie_start > 0:
-                self._short_text = data[short_text_start:reversed_trie_start]
-            else:
-                self._short_text = data[short_text_start:]
+        self._reversed_hc_start = self._reversed_select_superblock_end
+        self._reversed_hc_end = int.from_bytes(self._mmap[76:80], byteorder="big")
 
-            self._reversed_trie = data[reversed_trie_start:reversed_select_start]
-            # select bits
-            self._reversed_s_bits = data[
-                reversed_select_start:reversed_select_superblock_start
-            ]
-            self._reversed_s_superblocks = data[
-                reversed_select_superblock_start:reversed_hc_start
-            ]
-            # hc bits
-            self._reversed_hc_bits = data[
-                reversed_hc_start:reversed_hc_superblock_start
-            ]
-            self._reversed_hc_super_blocks = data[
-                reversed_hc_superblock_start:reversed_eow_start
-            ]
-            # eow bits
-            self._reversed_eow_bits = data[
-                reversed_eow_start:reversed_eow_superblock_start
-            ]
-            self._reversed_eow_sb = data[reversed_eow_superblock_start:]
-            # index bits
-            # ATT: We are not using reversed index bits, but translating the index values
-            # back to normal index values
-            # self._reversed_index_bits = self._index_bits
-            self._translate_index_bits = data[reversed_index_start:]
+        self._reversed_hc_superblock_start = self._reversed_hc_end
+        self._reversed_hc_superblock_end = int.from_bytes(
+            self._mmap[80:84], byteorder="big"
+        )
+        self._reversed_eow_start = self._reversed_hc_superblock_end
+        self._reversed_eow_end = int.from_bytes(self._mmap[84:88], byteorder="big")
 
-            self._has_reversed_index = len(self._reversed_trie) > 0
+        self._reversed_eow_superblock_start = self._reversed_eow_end
+        self._reversed_eow_superblock_end = int.from_bytes(
+            self._mmap[88:92], byteorder="big"
+        )
 
-            self._lookup_trie_list = self._trie
-            self._lookup_s_bits_list = self._s_bits
-            self._lookup_s_superblocks_list = self._s_superblocks
-            self._lookup_hc_bits_list = self._hc_bitarray
-            self._lookup_hc_super_blocks_list = self._hc_super_blocks
-            self._lookup_eow_bits_list = self._eow_bits
-            self._lookup_eow_sb_list = self._eow_sb
-            self._lookup_index_bits_list = self._index_bits
-            self._lookup_index_values_length_list = self._index_values_length
+        self._reversed_index_start = self._reversed_eow_superblock_end
+        self._reversed_index_end = int.from_bytes(self._mmap[92:96], byteorder="big")
+
+        self._alphabet = Section(alphabet_start, alphabet_end)
+
+        self._short_text_end = (
+            self._reversed_trie_start if self._reversed_trie_start > 0 else None
+        )
+
+        self._reversed_trie = Section(
+            self._reversed_trie_start, self._reversed_trie_end
+        )
+        self._reversed_s_bits = Section(
+            self._reversed_select_start, self._reversed_select_end
+        )
+        self._reversed_s_superblocks = Section(
+            self._reversed_select_superblock_start, self._reversed_select_superblock_end
+        )
+        self._reversed_hc_bits = Section(self._reversed_hc_start, self._reversed_hc_end)
+        self._reversed_hc_super_blocks = Section(
+            self._reversed_hc_superblock_start, self._reversed_hc_superblock_end
+        )
+        self._reversed_eow_bits = Section(
+            self._reversed_eow_start, self._reversed_eow_end
+        )
+        self._reversed_eow_sb = Section(
+            self._reversed_eow_superblock_start, self._reversed_eow_superblock_end
+        )
+        self._translate_index_bits = Section(
+            self._reversed_index_start, self._reversed_index_end
+        )
+
+        self._has_reversed_index = self._reversed_trie_end > self._reversed_trie_start
+        self.do_reversed_lookup(False)  # initialize the sections for normal lookup
+
+    def section_slice(
+        self, section: Section, start: int, end: int | None = None
+    ) -> bytes:
+        abs_start = section.start + start
+        abs_end = section.end if end is None else section.start + end
+        return self._view[abs_start:abs_end]
+
+    def section_bytes(self, section: Section, index: int) -> int:
+        return self._view[section.start + index]
+
+    def section_find(
+        self, section: Section, needle: bytes, start: int, end: int
+    ) -> int:
+        pos = self._mmap.find(needle, section.start + start, section.start + end)
+        return -1 if pos == -1 else pos - section.start
 
     def has_reversed_index(self) -> bool:
         """Returns True if the index is reversed"""
@@ -208,28 +263,91 @@ class Mapping:
     def do_reversed_lookup(self, reversed_lookup: bool) -> bool:
         """Returns True if the index is reversed and we are doing reversed lookup"""
         self._reversed_lookup = reversed_lookup and self.has_reversed_index()
-        if self._reversed_lookup:
-            self._lookup_trie_list = self._reversed_trie
-            self._lookup_s_bits_list = self._reversed_s_bits
-            self._lookup_s_superblocks_list = self._reversed_s_superblocks
-            self._lookup_hc_bits_list = self._reversed_hc_bits
-            self._lookup_hc_super_blocks_list = self._reversed_hc_super_blocks
-            self._lookup_eow_bits_list = self._reversed_eow_bits
-            self._lookup_eow_sb_list = self._reversed_eow_sb
+        if not self._reversed_lookup:
+            self._trie = Section(self._trie_start, self._trie_end)
+            self._s_bits = Section(self._select_start, self._select_end)
+            self._s_superblocks = Section(
+                self._select_superblock_start, self._select_superblock_end
+            )
+            self._hc_bits = Section(self._hc_start, self._hc_end)
+            self._hc_super_blocks = Section(
+                self._hc_superblock_start, self._hc_superblock_end
+            )
+            self._eow_bits = Section(self._eow_start, self._eow_end)
+            self._eow_sb = Section(self._eow_superblock_start, self._eow_superblock_end)
+
+            self._index_bits = Section(self._index_value_start, self._index_value_end)
+            self._index_values_length = Section(
+                self._index_values_length_start, self._index_values_length_end
+            )
+            self._short_text = Section(self._short_text_start, self._short_text_end)
         else:
-            self._lookup_trie_list = self._trie
-            self._lookup_s_bits_list = self._s_bits
-            self._lookup_s_superblocks_list = self._s_superblocks
-            self._lookup_hc_bits_list = self._hc_bitarray
-            self._lookup_hc_super_blocks_list = self._hc_super_blocks
-            self._lookup_eow_bits_list = self._eow_bits
-            self._lookup_eow_sb_list = self._eow_sb
+            self._trie = Section(self._reversed_trie_start, self._reversed_trie_end)
+            self._s_bits = Section(
+                self._reversed_select_start, self._reversed_select_end
+            )
+            self._s_superblocks = Section(
+                self._reversed_select_superblock_start,
+                self._reversed_select_superblock_end,
+            )
+            self._hc_bits = Section(self._reversed_hc_start, self._reversed_hc_end)
+            self._hc_super_blocks = Section(
+                self._reversed_hc_superblock_start, self._reversed_hc_superblock_end
+            )
+            self._eow_bits = Section(self._reversed_eow_start, self._reversed_eow_end)
+            self._eow_sb = Section(
+                self._reversed_eow_superblock_start, self._reversed_eow_superblock_end
+            )
+        return self._reversed_lookup
+
+        if self._reversed_lookup:
+            self._trie = Section(self._reversed_trie_start, self._reversed_trie_end)
+            self._s_bits = Section(
+                self._reversed_select_start, self._reversed_select_end
+            )
+            self._s_superblocks = Section(
+                self._reversed_select_superblock_start,
+                self._reversed_select_superblock_end,
+            )
+            self._hc_bits = Section(self._reversed_hc_start, self._reversed_hc_end)
+            self._hc_super_blocks = Section(
+                self._reversed_hc_superblock_start, self._reversed_hc_superblock_end
+            )
+            self._eow_bits = Section(self._reversed_eow_start, self._reversed_eow_end)
+            self._eow_sb = Section(
+                self._reversed_eow_superblock_start, self._reversed_eow_superblock_end
+            )
+        else:
+            self._trie = Section(self._trie_start, self._trie_end)
+            self._s_bits = Section(self._select_start, self._select_end)
+            self._s_superblocks = Section(
+                self._select_superblock_start, self._select_superblock_end
+            )
+            self._hc_bits = Section(self._hc_start, self._hc_end)
+            self._hc_super_blocks = Section(
+                self._hc_superblock_start, self._hc_superblock_end
+            )
+            self._eow_bits = Section(self._eow_start, self._eow_end)
+            self._eow_sb = Section(self._eow_superblock_start, self._eow_superblock_end)
+
+            self._index_bits = Section(self._index_value_start, self._index_value_end)
+            self._index_values_length = Section(
+                self._index_values_length_start, self._index_values_length_end
+            )
+            self._short_text = Section(self._short_text_start, self._short_text_end)
+
         return self._reversed_lookup
 
     def set_check_key_exists(self, check_key_exists: bool) -> bool:
         """Returns True if the key exists in the index"""
         self.check_if_key_exists = check_key_exists
         return check_key_exists
+
+    def used_alphabet(self) -> bool:
+        """Returns the alphabet used in the trie"""
+        return self.section_slice(
+            self._alphabet, 0, self._alphabet.end - self._alphabet.start
+        )
 
     def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
@@ -246,9 +364,11 @@ class Mapping:
         if superblock_start > 0:
             start_index = (
                 int.from_bytes(
-                    self._lookup_s_superblocks_list[
-                        (superblock_start - 1) * 4 : (superblock_start - 1) * 4 + 4
-                    ],
+                    self.section_slice(
+                        self._s_superblocks,
+                        (superblock_start - 1) * 4,
+                        (superblock_start - 1) * 4 + 4,
+                    ),
                     byteorder="big",
                     signed=False,
                 )
@@ -267,7 +387,7 @@ class Mapping:
         i: int = 0
 
         while total_sum < sum_ones_wanted + 1:
-            for value in self._lookup_s_bits_list[start_byte : start_byte + 1]:
+            for value in self.section_slice(self._s_bits, start_byte, start_byte + 1):
                 if not value:
                     start_byte += 1
                     loop_index += 8
@@ -299,9 +419,11 @@ class Mapping:
         superblock_bytes: bytes = b""
         if superblock_start > 0:
             start_block = superblock_start * self.bits_in_superblock // bits_in_byte
-            superblock_bytes: bytes = self._lookup_hc_super_blocks_list[
-                (superblock_start - 1) * 4 : (superblock_start - 1) * 4 + 4
-            ]
+            superblock_bytes: bytes = self.section_slice(
+                self._hc_super_blocks,
+                (superblock_start - 1) * 4,
+                (superblock_start - 1) * 4 + 4,
+            )
             bitsum = int.from_bytes(
                 superblock_bytes,
                 byteorder="big",
@@ -311,7 +433,7 @@ class Mapping:
         end_block: int = start_block + self.bits_in_superblock // bits_in_byte + 1
         # það er búið að reikna summu frá 0 til start_block -1
         # þá vantar summuna frá start_block til end_request_index
-        for value in self._lookup_hc_bits_list[start_block:end_block]:
+        for value in self.section_slice(self._hc_bits, start_block, end_block):
             if not value:
                 index += 8
                 continue
@@ -326,59 +448,53 @@ class Mapping:
     def has_child(self, index: int) -> bool:
         """Returns True if node has child = '1'"""
         value: int = (
-            self._lookup_hc_bits_list[0]
+            self._section_byte(self._hc_bits, 0)
             if index < 9
-            else self._lookup_hc_bits_list[index // 8]
+            else self._section_byte(self._hc_bits, index // 8)
         )
         return value & (1 << (7 - index % 8)) > 0
 
     def get_trie_range(self, start: int, end: int) -> list[int]:
         """Returns the range of letters (bytes) in the mmaped trie"""
-        return self._lookup_trie_list[start:end]
+        return list(self.section_slice(self._trie, start, end))
 
     def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
         """Returns the index of the of letter in the given range of the mmap"""
-        return self._lookup_trie_list[start:end].find(letter)
+        return self.section_find(self._trie, bytes([letter]), start, end) - start
 
     def get_index(self, index_value: int) -> list[int, int]:
         """Skilar gildi í index sem segir til hvar í short text
         er að finna niðurstöðuna sem á að skila til baka
         Skilar einnig lengd textans sem á að skila
         """
-
         start_idx: int = index_value * self.nr_bytes_in_index_block
         end_idx: int = start_idx + self.nr_bytes_in_index_block
 
         # short_text index:
         sh_index: int = int.from_bytes(
-            self._lookup_index_bits_list[start_idx:end_idx],
+            self.section_slice(self._index_bits, start_idx, end_idx),
             byteorder="big",
             signed=False,
         )
         # short_text length:
         sh_len: int = int.from_bytes(
-            self._lookup_index_values_length_list[
-                index_value * 2 : index_value * 2 + 2
-            ],
+            self.section_slice(
+                self._index_values_length, index_value * 2, index_value * 2 + 2
+            ),
             byteorder="big",
             signed=False,
         )
-
         return [sh_index, sh_len]
 
     def is_end_of_word(self, index: int) -> int:
         """
         Returns 1 if is end of word, else 0
         """
-
         start_byte: int = index // 8
         extra_bits: int = index % 8
-
-        if self._lookup_eow_bits_list[start_byte : start_byte + 1][0] & (
-            1 << (7 - extra_bits)
-        ):
-            return 1
-        return 0
+        return (
+            self.section_bytes(self._eow_bits, start_byte) & (1 << (7 - extra_bits)) > 0
+        )
 
     def get_value_bits_sum(self, index: int) -> int:
         """
@@ -388,19 +504,19 @@ class Mapping:
         þessir 32 bitar í superblock geyma tölu á fjölda bita í byrjun boxins
         end_index er fjöldi bita í byrjun á næsta boxi sem kemur á eftir.
         """
-        s_start: int = (index // 32 - 1) * 4
+        s_start: int = max(0, index // 32 - 1) * 4
         s_end: int = s_start + 4
-        start_bytes: bytes = self._lookup_eow_sb_list[s_start:s_end]
+        start_bytes: bytes = self.section_slice(self._eow_sb, s_start, s_end)
         start_index: int = int.from_bytes(start_bytes, byteorder="big", signed=False)
 
-        end_bytes: bytes = self._lookup_eow_sb_list[s_end : s_end + 4]
+        end_bytes: bytes = self.section_slice(self._eow_sb, s_end, s_end + 4)
         end_index: int = int.from_bytes(end_bytes, byteorder="big", signed=False)
 
         if end_index == start_index:
             return start_index
 
         extra_bits: int = index - s_end * 8 + 1
-        value_bytes: bytes = self._lookup_eow_bits_list[s_end : s_end + 4]
+        value_bytes: bytes = self.section_slice(self._eow_bits, s_end, s_end + 4)
         for value in value_bytes:
             if not value and extra_bits > 8:
                 extra_bits -= 8
@@ -420,9 +536,11 @@ class Mapping:
         if self._has_reversed_index and self._reversed_lookup:
             value_sum = value_sum * self.nr_bytes_in_index_block
             value_sum = int.from_bytes(
-                self._translate_index_bits[
-                    value_sum : value_sum + self.nr_bytes_in_index_block
-                ],
+                self.section_slice(
+                    self._translate_index_bits,
+                    value_sum,
+                    value_sum + self.nr_bytes_in_index_block,
+                ),
                 byteorder="big",
                 signed=False,
             )
@@ -439,7 +557,7 @@ class Mapping:
 
     def get_short_text(self, index: int, text_len: int) -> list[str]:
         """Returns the short text"""
-        res: bytes = self._short_text[index : index + text_len]
+        res: bytes = self.section_slice(self._short_text, index, index + text_len)
         unicodes: bytes = b""
         text_array: list[str] = []
         i: int = 0
@@ -453,3 +571,12 @@ class Mapping:
         if len(unicodes) > 0:
             text_array.append(A.convert_bytes_to_str(unicodes))
         return sorted(text_array)
+
+    def close(self):
+        """Closes the mmap and file"""
+        if self._view:
+            self._view.release()
+        if self._mmap:
+            self._mmap.close()
+        if self._file:
+            self._file.close()

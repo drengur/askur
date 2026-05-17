@@ -43,7 +43,7 @@ class Watchdog:
         total_used = (int(mem.percent) * total_length) // 100
         total_available = total_length - total_used
         mem_total_gb = mem.total / (1024 * 1024 * 1024)
-        label = f"[{mem.percent}% {'*' * (total_used)}{'_' * (total_available)}]{mem_total_gb:.2f}GB"
+        label = f"{mem.percent}% [{'*' * (total_used)}{'_' * (total_available)}]{mem_total_gb:.2f}GB"
 
         return {
             "total": f"{mem.total / (1024 * 1024):.0f}MB",  # in MB
