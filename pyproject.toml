@@ -1,6 +1,6 @@
 [project]
 name = "askur"
-version = "0.2.7"
+version = "0.2.8"
 description = "Memory mapped binary tree for fast key-value lookup"
 readme = "README.md"
 authors = [
