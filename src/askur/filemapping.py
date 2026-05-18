@@ -152,7 +152,7 @@ class Mapping:
 
         alphabet_start = int.from_bytes(self._mmap[12:16], byteorder="big")
         alphabet_end = int.from_bytes(self._mmap[16:20], byteorder="big")
-        self._trie_start = int.from_bytes(self._mmap[16:20], byteorder="big")
+        self._trie_start = alphabet_end
         self._trie_end = int.from_bytes(self._mmap[20:24], byteorder="big")
 
         self._select_start = self._trie_end
@@ -304,7 +304,6 @@ class Mapping:
             )
         return self._reversed_lookup
 
-
     def set_check_key_exists(self, check_key_exists: bool) -> bool:
         """Returns True if the key exists in the index"""
         self.check_if_key_exists = check_key_exists
@@ -437,7 +436,6 @@ class Mapping:
         """
         start_idx: int = index_value * self.nr_bytes_in_index_block
         end_idx: int = start_idx + self.nr_bytes_in_index_block
-
         # short_text index:
         sh_index: int = int.from_bytes(
             self.section_slice(self._index_bits, start_idx, end_idx),
@@ -514,8 +512,8 @@ class Mapping:
             )
         if self.check_if_key_exists:
             return [value_sum]
-
         index_value, text_len = self.get_index(value_sum)
+
         return self.get_short_text(index_value, text_len)
 
     def get_by_id(self, id: int) -> list[str]:

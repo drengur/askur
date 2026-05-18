@@ -29,8 +29,8 @@ class Search:
             "Limit must be a non-negative integer."
         )
         assert isinstance(case_insensitive, bool), "case_insensitive must be a boolean."
-        assert isinstance(self._levenshtein, bool), "use_levenshtein must be a boolean."
-        assert self._collection_name, "Collection name must be provided."
+        assert isinstance(use_levenshtein, bool), "use_levenshtein must be a boolean."
+        assert collection, "Collection name must be provided."
 
         self.mmap = Mapping(collection)
         self._levenshtein = use_levenshtein

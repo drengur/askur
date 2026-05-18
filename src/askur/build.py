@@ -4,6 +4,7 @@
 from input file
 """
 
+from typing import overload
 import os
 import sys
 import io
@@ -167,7 +168,9 @@ class Trie:
         Returns: None
         """
         try:
-            WD.start(statusbar)  # Start the watchdog to monitor system memory usage during the build process
+            WD.start(
+                statusbar
+            )  # Start the watchdog to monitor system memory usage during the build process
             data_values_gen: tuple[bytes] = self.make_trie(input_data)
             bytes_per_indexblock: int = self.write_frozen_data(data_values_gen)
             self.merge_data_files(bytes_per_indexblock)
@@ -185,7 +188,7 @@ class Trie:
 
         data_values: dict[str, int] = {}
         index: int = -1
-        key: bytes = None
+        key: bytes = b""
         next_index: int = -1
         root = Node()
         for word_key, word_value in self.read_from_input(input_data):
@@ -238,58 +241,73 @@ class Trie:
 
         bytes_per_info: int = 4
         start_bytes = [int.to_bytes(0, bytes_per_info, "big") for _ in range(30)]
+        # 0:4
         start_bytes[0] = int.to_bytes(bytes_per_info, bytes_per_info, "big")
+        # 4:8
         start_bytes[1] = int.to_bytes(self.super_block_size, bytes_per_info, "big")
+        # 8:12
         start_bytes[2] = int.to_bytes(bytes_per_indexblock, bytes_per_info, "big")
 
         with io.open(self.data_file, "ab") as f:
             f.write(b"".join(start_bytes))
 
         next_start: list[int] = [os.path.getsize(self.data_file)]
+        # 12:16
         start_bytes[3] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.trie_file + ".alphabet")
 
         next_start.append(os.path.getsize(self.data_file))
+        # 16:20
         start_bytes[4] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.trie_file)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 20:24
         start_bytes[5] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.select_bits_filename)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 24:28
         start_bytes[6] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.s_sb_file)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 28:32
         start_bytes[7] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.hc_bits_filename)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 32:36
         start_bytes[8] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.hc_sb_file)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 36:40
         start_bytes[9] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.value_bits_filename)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 40:44
         start_bytes[10] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.eow_sb)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 44:48
         start_bytes[11] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.index_bits_filename)
 
         next_start.append(os.path.getsize(self.data_file))
+        # 48:52
         start_bytes[12] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.short_text_bits_filename + ".length")
 
         next_start.append(os.path.getsize(self.data_file))
+        # 52:56
         start_bytes[13] = int.to_bytes(next_start[-1], bytes_per_info, "big")
         self.merge_files(self.data_file, self.short_text_bits_filename)
 
         # length of short text
+        # 56:60
         start_bytes[14] = int.to_bytes(
             os.path.getsize(self.short_text_bits_filename), bytes_per_info, "big"
         )
@@ -521,7 +539,7 @@ class Trie:
         data_values = tuple(data_values)
 
         if len(data_values) == 1:
-            return 1
+            return 4  # if there is only one short text, we can use 4 bytes to store the index value
 
         # total length of all short texts
         total_short_len: int = sum(len(value) for value in data_values)
@@ -673,6 +691,8 @@ class Trie:
 
     def make_reversed(self, statusbar=False) -> None:
         """Make a reversed trie from the original data."""
+        self._make_reversed()
+        return
         try:
             WD.start(statusbar)
             WD.print_label(" Building reversed index...")
@@ -682,7 +702,6 @@ class Trie:
         finally:
             WD.stop()
 
-
     def _make_reversed(self) -> None:
         """Make a reversed trie from the original data."""
 
@@ -690,34 +709,33 @@ class Trie:
         index_byte_len: int = 0
         short_text_len: int = 0
         root = Node()
+        w_key: bytes = b""
 
         with io.open(self.data_file, "rb") as f_data:
             vals = f_data.read(1024)  # read first 1024 bytes
             self.super_block_size = int.from_bytes(vals[4:8], "big")
             index_byte_len = int.from_bytes(vals[8:12], "big")
-            short_text_len = int.from_bytes(vals[52:56], "big")
+            short_text_len = int.from_bytes(vals[56:60], "big")
 
         from askur.search import Search
-
-        search: Search = Search(collection=self.collection_name)
-
-        # All entries in the trie
-        for items in search.exists("*"):
-            for key, value in items.items():
-                self._add(
-                    self.alphabet.convert_str_to_bytes(key[::-1]), int(value), root
-                )
+        with Search(collection=self.collection_name) as search:
+            # All entries in the trie
+            items = search.exists("*")
+            for item in items:
+                key = list(item.keys())[0][::-1]  # reverse the key
+                w_key = self.alphabet.convert_str_to_bytes(key)
+                value = 1 if short_text_len == 0 else list(item.values())[0]
+                self._add(w_key, value, root)
 
         self.level_order_tree([root])
 
         # Translate self._index to short text indices used in the original trie
-        if short_text_len > 0:
-            with io.open(self.index_bits_filename, "wb") as f_index:
-                f_index.write(
-                    b"".join(
-                        [i[0].to_bytes(index_byte_len, "big") for i in self._index]
-                    )
+        with io.open(self.index_bits_filename, "wb") as f_index:
+            f_index.write(
+                b"".join(
+                    [idx[0].to_bytes(index_byte_len, "big") for idx in self._index]
                 )
+            )
 
         self.write_tree_to_file()
 
@@ -757,6 +775,7 @@ class Trie:
         next_start.append(os.path.getsize(self.data_file))
         start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
         self.merge_files(self.data_file, self.eow_sb)
+
         # index bits file
         next_start.append(os.path.getsize(self.data_file))
         start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
@@ -770,7 +789,6 @@ class Trie:
                 f.write(vals)
 
         self.remove_build_files()
-        WD.stop()
 
     def merge_files(self, master_file: str, temp_file: str) -> None:
         """Merge two files into one."""
