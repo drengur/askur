@@ -304,43 +304,6 @@ class Mapping:
             )
         return self._reversed_lookup
 
-        if self._reversed_lookup:
-            self._trie = Section(self._reversed_trie_start, self._reversed_trie_end)
-            self._s_bits = Section(
-                self._reversed_select_start, self._reversed_select_end
-            )
-            self._s_superblocks = Section(
-                self._reversed_select_superblock_start,
-                self._reversed_select_superblock_end,
-            )
-            self._hc_bits = Section(self._reversed_hc_start, self._reversed_hc_end)
-            self._hc_super_blocks = Section(
-                self._reversed_hc_superblock_start, self._reversed_hc_superblock_end
-            )
-            self._eow_bits = Section(self._reversed_eow_start, self._reversed_eow_end)
-            self._eow_sb = Section(
-                self._reversed_eow_superblock_start, self._reversed_eow_superblock_end
-            )
-        else:
-            self._trie = Section(self._trie_start, self._trie_end)
-            self._s_bits = Section(self._select_start, self._select_end)
-            self._s_superblocks = Section(
-                self._select_superblock_start, self._select_superblock_end
-            )
-            self._hc_bits = Section(self._hc_start, self._hc_end)
-            self._hc_super_blocks = Section(
-                self._hc_superblock_start, self._hc_superblock_end
-            )
-            self._eow_bits = Section(self._eow_start, self._eow_end)
-            self._eow_sb = Section(self._eow_superblock_start, self._eow_superblock_end)
-
-            self._index_bits = Section(self._index_value_start, self._index_value_end)
-            self._index_values_length = Section(
-                self._index_values_length_start, self._index_values_length_end
-            )
-            self._short_text = Section(self._short_text_start, self._short_text_end)
-
-        return self._reversed_lookup
 
     def set_check_key_exists(self, check_key_exists: bool) -> bool:
         """Returns True if the key exists in the index"""
