@@ -112,7 +112,11 @@ class Mapping:
 
         self._load_files()
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __enter__(self):
+        """Enter the runtime context related to this object."""
+        return self
+
+    def __exit__(self, exc_type=None, exc_value=None, traceback=None):
         """Ensure that the mmap and file are closed when the object is destroyed
         to avoid memory leaks and file locks"""
         self.close()
@@ -376,7 +380,6 @@ class Mapping:
             start_byte = start_index // 8
             extra_bits = start_index % 8
             start_sum = self.bits_in_superblock * superblock_start
-
         total_sum: int = start_sum
         loop_index: int = start_index
 
@@ -385,9 +388,8 @@ class Mapping:
 
         value: int = 0
         i: int = 0
-
         while total_sum < sum_ones_wanted + 1:
-            for value in self.section_slice(self._s_bits, start_byte, start_byte + 1):
+            for value in self.section_slice(self._s_bits, start_byte, start_byte + 20):
                 if not value:
                     start_byte += 1
                     loop_index += 8
@@ -402,8 +404,7 @@ class Mapping:
                         if total_sum == sum_ones_wanted and res_start_index is None:
                             res_start_index = loop_index
                         if total_sum == sum_ones_wanted + 1 and res_end_index is None:
-                            res_end_index = loop_index
-                            break
+                            return [res_start_index, loop_index]
                     loop_index += 1
                 r_start = 7
                 start_byte += 1
@@ -437,13 +438,17 @@ class Mapping:
             if not value:
                 index += 8
                 continue
+            if value == 255 and index + 8 < end_request_index:
+                bitsum += 8
+                index += 8
+                continue
             for i in range(7, -1, -1):
                 if value & (1 << i):
                     bitsum += 1
                     if index == end_request_index:
                         return bitsum
                 index += 1
-        return 0
+        return 0  # no heads/childen found, return 0
 
     def has_child(self, index: int) -> bool:
         """Returns True if node has child = '1'"""

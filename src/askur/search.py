@@ -22,6 +22,16 @@ class Search:
         case_insensitive: bool = False,
         use_levenshtein: bool = False,
     ) -> None:
+        assert isinstance(collection, str) and collection, (
+            "Collection name must be a non-empty string."
+        )
+        assert isinstance(limit, int) and limit >= 0, (
+            "Limit must be a non-negative integer."
+        )
+        assert isinstance(case_insensitive, bool), "case_insensitive must be a boolean."
+        assert isinstance(self._levenshtein, bool), "use_levenshtein must be a boolean."
+        assert self._collection_name, "Collection name must be provided."
+
         self.mmap = Mapping(collection)
         self._levenshtein = use_levenshtein
         self._limit = limit  # 0 means no limit
@@ -30,12 +40,13 @@ class Search:
         self._nr_results = 0
         self._reversed = False
 
-        assert self.limit >= 0, "Limit must be a non-negative integer."
-        assert isinstance(self._case_insensitive, bool), (
-            "case_insensitive must be a boolean."
-        )
-        assert isinstance(self._levenshtein, bool), "use_levenshtein must be a boolean."
-        assert self._collection_name, "Collection name must be provided."
+    def __enter__(self):
+        """Enter the runtime context related to this object."""
+        return self
+
+    def __exit__(self, exc_type=None, exc_value=None, traceback=None):
+        """Exit the runtime context related to this object."""
+        self.close()
 
     @property
     def check_if_key_exists(self) -> bool:
@@ -142,34 +153,19 @@ class Search:
             # If there are wildcards in the query, we cannot use Levenshtein distance
             return
 
-        alphabet = [
-            c
-            for c in self.mmap.used_alphabet()
-            if c
-            not in (
-                UNDERSCORE,
-                WILDCARD,
-            )
-        ]
-
-        for i_letter in alphabet:
+        for i in range(len(query[0])):
             # add letter between every letter in the word
             # beginning and end as well
-            for n in range(len(query[0]) + 1):
-                new_word = query[0][:]
-                new_word.insert(n, i_letter)
-                yield from self._search([new_word, None, None], s_index=1)
-        
+            new_word = query[0][:]
+            new_word.insert(i, UNDERSCORE)
+            yield from self._search([new_word, None, None], s_index=1)
 
         # replace the letter at position n with i_letter
         for n in range(len(query[0])):
-            for i_letter in alphabet:
-                new_word = query[0][:]
-                if new_word[n] == i_letter:
-                    continue
-                new_word[n] = i_letter
-                yield from self._search([new_word, None, None], s_index=1)
-        
+            new_word = query[0][:]
+            new_word[n] = UNDERSCORE
+            yield from self._search([new_word, None, None], s_index=1)
+
         # remove the letter at position n
         for n in range(len(query[0])) if len(query[0]) > 1 else []:
             new_word = query[0][:]
@@ -632,6 +628,11 @@ class Search:
             return None
         return [res, None, None]
 
+    def close(self):
+        """Close the memory-mapped file."""
+        if self.mmap:
+            self.mmap.close()
+
 
 def main():
     """Main entry point for the askur-search CLI command."""
@@ -677,22 +678,22 @@ def main():
     assert collection is not None, "Collection 'c' is required."
     assert query is not None, "query/word 'q' is required."
 
-    S = Search(
+    with Search(
         collection=collection,
         limit=limit,
         case_insensitive=case_insensitive,
         use_levenshtein=fuzzy_search,
-    )
-    if exists:
-        for items in S.exists(query):
+    ) as S:
+        if exists:
+            for items in S.exists(query):
+                print(items)
+            return
+        if fuzzy_search:
+            for items in S.fuzzy_search(query):
+                print(items)
+            return
+        for items in S.lookup(query):
             print(items)
-        return
-    if fuzzy_search:
-        for items in S.fuzzy_search(query):
-            print(items)
-        return
-    for items in S.lookup(query):
-        print(items)
 
 
 if __name__ == "__main__":

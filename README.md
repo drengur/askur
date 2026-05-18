@@ -124,7 +124,30 @@ S.lookup('hello\*')
 for item in S.lookup('key'):
     print(item)
 
+# Release the memory mapped object when done:
+S.close()
+
+# Or use the search as a context manager with autmatic cleanup:
+with Search(
+    collection=collection,
+    limit=limit,
+    case_insensitive=case_insensitive,
+    use_levenshtein=fuzzy_search,
+) as S:
+    if exists:
+        for items in S.exists(query):
+            print(items)
+        return
+    if fuzzy_search:
+        for items in S.fuzzy_search(query):
+            print(items)
+        return
+    for items in S.lookup(query):
+        print(items)
+
+
 ```
+
 
 ## Performance
 
