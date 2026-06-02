@@ -217,26 +217,6 @@ class Mapping:
         self._short_text_end = (
             self._reversed_trie_start if self._reversed_trie_start > 0 else None
         )
-
-        self._reversed_trie = Section(
-            self._reversed_trie_start, self._reversed_trie_end
-        )
-        self._reversed_s_bits = Section(
-            self._reversed_select_start, self._reversed_select_end
-        )
-        self._reversed_s_superblocks = Section(
-            self._reversed_select_superblock_start, self._reversed_select_superblock_end
-        )
-        self._reversed_hc_bits = Section(self._reversed_hc_start, self._reversed_hc_end)
-        self._reversed_hc_super_blocks = Section(
-            self._reversed_hc_superblock_start, self._reversed_hc_superblock_end
-        )
-        self._reversed_eow_bits = Section(
-            self._reversed_eow_start, self._reversed_eow_end
-        )
-        self._reversed_eow_sb = Section(
-            self._reversed_eow_superblock_start, self._reversed_eow_superblock_end
-        )
         self._translate_index_bits = Section(
             self._reversed_index_start, self._reversed_index_end
         )
@@ -356,7 +336,6 @@ class Mapping:
                     start_byte += 1
                     loop_index += 8
                     continue
-
                 if extra_bits > 0:
                     r_start = 7 - extra_bits
                     extra_bits = 0
@@ -373,7 +352,7 @@ class Mapping:
         return [res_start_index, res_end_index]
 
     def calculate_hc(self, end_request_index: int) -> int:
-        """Hver er heildar summan við end_request_index"""
+        """what is the total sum of "1" bits in hc_bits from 0 to end_request_index?"""
         bits_in_byte: int = 8
         superblock_start: int = end_request_index // self.bits_in_superblock
         start_block: int = 0
@@ -394,14 +373,10 @@ class Mapping:
             )
             index = superblock_start * self.bits_in_superblock
         end_block: int = start_block + self.bits_in_superblock // bits_in_byte + 1
-        # það er búið að reikna summu frá 0 til start_block -1
-        # þá vantar summuna frá start_block til end_request_index
+        # we have already calculated the sum from 0 to start_block -1
+        # now we need the sum from start_block to end_request_index
         for value in self.section_slice(self._hc_bits, start_block, end_block):
             if not value:
-                index += 8
-                continue
-            if value == 255 and index + 8 < end_request_index:
-                bitsum += 8
                 index += 8
                 continue
             for i in range(7, -1, -1):
@@ -415,9 +390,9 @@ class Mapping:
     def has_child(self, index: int) -> bool:
         """Returns True if node has child = '1'"""
         value: int = (
-            self._section_byte(self._hc_bits, 0)
+            self.section_bytes(self._hc_bits, 0)
             if index < 9
-            else self._section_byte(self._hc_bits, index // 8)
+            else self.section_bytes(self._hc_bits, index // 8)
         )
         return value & (1 << (7 - index % 8)) > 0
 
@@ -427,6 +402,7 @@ class Mapping:
 
     def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
         """Returns the index of the of letter in the given range of the mmap"""
+        # print([f"{i}:{chr(c)}={c}" for i, c in enumerate   (self.section_slice(self._trie, start, end))])
         return self.section_find(self._trie, bytes([letter]), start, end) - start
 
     def get_index(self, index_value: int) -> list[int, int]:
@@ -464,41 +440,56 @@ class Mapping:
 
     def get_value_bits_sum(self, index: int) -> int:
         """
-        Returns the sum of "0"  bits in the value bits
-        Það eru 32 bitar í hverju boxi (= 4 bytes)
-        Þess vegna þarf að margfalda index með 4 til að fá réttu bætin sem við erum að leita í
-        þessir 32 bitar í superblock geyma tölu á fjölda bita í byrjun boxins
-        end_index er fjöldi bita í byrjun á næsta boxi sem kemur á eftir.
+        eow_superblock has 4 byte in each block
+        Each block in eow_superblock stores the number of "1" bits at the beginning of the next block in eow_bits
         """
-        s_start: int = max(0, index // 32 - 1) * 4
-        s_end: int = s_start + 4
-        start_bytes: bytes = self.section_slice(self._eow_sb, s_start, s_end)
-        start_index: int = int.from_bytes(start_bytes, byteorder="big", signed=False)
+        # superblock start index:
+        sb_start_index: int = max(0, index // 32) * 4 - 4
+        sb_end_index: int = sb_start_index + 4
 
-        end_bytes: bytes = self.section_slice(self._eow_sb, s_end, s_end + 4)
-        end_index: int = int.from_bytes(end_bytes, byteorder="big", signed=False)
+        # superblock bytes:
+        sb_start_bytes: bytes = self.section_slice(
+            self._eow_sb, sb_start_index, sb_end_index
+        )
+        # nr of "1" bits before the start of the current superblock:
+        nr_ones_before: int = (
+            0
+            if index < 32
+            else int.from_bytes(sb_start_bytes, byteorder="big", signed=False)
+        )
+        # number of bits to read in the current eow_bits block:
+        nr_rest_bits: int = index - sb_end_index * 8
 
-        if end_index == start_index:
-            return start_index
+        eow_bytes = self.section_slice(self._eow_bits, sb_end_index, sb_end_index + 4)
+        nr_ones: int = self.eow_index(nr_rest_bits, eow_bytes)
 
-        extra_bits: int = index - s_end * 8 + 1
-        value_bytes: bytes = self.section_slice(self._eow_bits, s_end, s_end + 4)
+        return nr_ones + nr_ones_before - 1
+
+    def eow_index(self, end_index: int, value_bytes: bytes) -> int:
+        """Returns the index of the last "1" bit in the given bytes"""
+        bits: int = 0
+        index: int = 0
+        i: int = 0
         for value in value_bytes:
-            if not value and extra_bits > 8:
-                extra_bits -= 8
+            if not value:
+                index += 8
+                continue
+            if index + 8 < end_index:
+                bits += bin(value).count("1")
+                index += 8
                 continue
             for i in range(7, -1, -1):
-                if extra_bits > 0:
-                    extra_bits -= 1
-                    if value & (1 << i):
-                        start_index += 1
-                else:
-                    return start_index - 1
-        return start_index - 1
+                if value & (1 << i):
+                    bits += 1
+                if index == end_index:
+                    return bits
+                index += 1
+        return bits
 
     def get_result(self, value_index: int) -> list[str]:
         """Returns result of the query"""
         value_sum: int = self.get_value_bits_sum(value_index)
+
         if self._has_reversed_index and self._reversed_lookup:
             value_sum = value_sum * self.nr_bytes_in_index_block
             value_sum = int.from_bytes(
