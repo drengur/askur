@@ -403,7 +403,8 @@ class Mapping:
     def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
         """Returns the index of the of letter in the given range of the mmap"""
         # print([f"{i}:{chr(c)}={c}" for i, c in enumerate   (self.section_slice(self._trie, start, end))])
-        return self.section_find(self._trie, bytes([letter]), start, end) - start
+        chr_index: int =  self.section_find(self._trie, bytes([letter]), start, end)
+        return chr_index - start if chr_index != -1 else chr_index
 
     def get_index(self, index_value: int) -> list[int, int]:
         """Skilar gildi í index sem segir til hvar í short text
