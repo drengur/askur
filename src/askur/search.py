@@ -39,6 +39,7 @@ class Search:
         self._collection_name = collection
         self._nr_results = 0
         self._reversed = False
+        self._levenshtein_query = None
 
     def __enter__(self):
         """Enter the runtime context related to this object."""
@@ -67,6 +68,11 @@ class Search:
         self._nr_results += 1
 
         key: str
+        if self.levenshtein:
+            key = list(value.keys())[0]
+            if key == self._levenshtein_query:
+                self._nr_results -= 1  # Don't count the original query word as a result
+                return None  # Skip the original query word in fuzzy search results
         if self.check_if_key_exists:
             val: int = list(value.values())[0][0]
         else:
@@ -145,6 +151,7 @@ class Search:
         - remove a letter
         - replace a letter
         """
+
         if (
             query[0] is None
             or UNDERSCORE in query[0]  # "_" wildcard
@@ -152,6 +159,10 @@ class Search:
         ):
             # If there are wildcards in the query, we cannot use Levenshtein distance
             return
+
+        # Store the original query as a string for comparison in results, 
+        # to avoid returning the original query word in fuzzy search results
+        self._levenshtein_query = self._query_to_string(query[0])
 
         for i in range(len(query[0])):
             # add letter between every letter in the word
@@ -313,6 +324,7 @@ class Search:
         s_start, s_end = self.mmap.calculate_select(s_index)
         chr_range = self.mmap.get_trie_range(s_start, s_end)
         next_query = [[], query[1], query[2]]
+
         if len(query) > 3:
             next_query.append(query[3] + query[0][0:start])
         else:
