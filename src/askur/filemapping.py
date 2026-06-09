@@ -384,6 +384,8 @@ class Mapping:
                     bitsum += 1
                     if index == end_request_index:
                         return bitsum
+                    if index > end_request_index:
+                        return 0
                 index += 1
         return 0  # no heads/childen found, return 0
 
@@ -403,8 +405,8 @@ class Mapping:
     def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
         """Returns the index of the of letter in the given range of the mmap"""
         # print([f"{i}:{chr(c)}={c}" for i, c in enumerate   (self.section_slice(self._trie, start, end))])
-        chr_index: int =  self.section_find(self._trie, bytes([letter]), start, end)
-        return chr_index - start if chr_index != -1 else chr_index
+        chr_index: int = self.section_find(self._trie, bytes([letter]), start, end)
+        return -1 if chr_index < 0 else chr_index - start
 
     def get_index(self, index_value: int) -> list[int, int]:
         """Skilar gildi í index sem segir til hvar í short text
@@ -475,13 +477,8 @@ class Mapping:
             if not value:
                 index += 8
                 continue
-            if index + 8 < end_index:
-                bits += bin(value).count("1")
-                index += 8
-                continue
             for i in range(7, -1, -1):
-                if value & (1 << i):
-                    bits += 1
+                bits += (value >> i) & 1
                 if index == end_index:
                     return bits
                 index += 1
@@ -490,7 +487,6 @@ class Mapping:
     def get_result(self, value_index: int) -> list[str]:
         """Returns result of the query"""
         value_sum: int = self.get_value_bits_sum(value_index)
-
         if self._has_reversed_index and self._reversed_lookup:
             value_sum = value_sum * self.nr_bytes_in_index_block
             value_sum = int.from_bytes(
