@@ -238,7 +238,7 @@ class Mapping:
         self, section: Section, needle: bytes, start: int, end: int
     ) -> int:
         pos = self._mmap.find(needle, section.start + start, section.start + end)
-        return -1 if pos == -1 else pos - section.start
+        return -1 if pos < 0 else pos - section.start
 
     def has_reversed_index(self) -> bool:
         """Returns True if the index is reversed"""
@@ -297,8 +297,6 @@ class Mapping:
 
     def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
-
-        res_end_index: int = None
         res_start_index: int = None
         r_start: int = 7
         superblock_start: int = sum_ones_wanted // self.bits_in_superblock
@@ -306,6 +304,8 @@ class Mapping:
         start_byte: int = 0
         extra_bits: int = 0
         start_sum: int = 0
+        start_select: int = sum_ones_wanted
+        end_select: int = sum_ones_wanted + 1
 
         if superblock_start > 0:
             start_index = (
@@ -329,11 +329,12 @@ class Mapping:
             res_start_index = start_index - 1
 
         value: int = 0
-        i: int = 0
-        while total_sum < sum_ones_wanted + 1:
-            for value in self.section_slice(self._s_bits, start_byte, start_byte + 20):
+        end_byte: int = start_byte
+        while total_sum < end_select:
+            start_byte = end_byte
+            end_byte = start_byte + 16
+            for value in self.section_slice(self._s_bits, start_byte, end_byte):
                 if not value:
-                    start_byte += 1
                     loop_index += 8
                     continue
                 if extra_bits > 0:
@@ -342,14 +343,12 @@ class Mapping:
                 for i in range(r_start, -1, -1):
                     if value & (1 << i):
                         total_sum += 1
-                        if total_sum == sum_ones_wanted and res_start_index is None:
+                        if not res_start_index and total_sum == start_select:
                             res_start_index = loop_index
-                        if total_sum == sum_ones_wanted + 1 and res_end_index is None:
+                        if total_sum == end_select:
                             return [res_start_index, loop_index]
                     loop_index += 1
                 r_start = 7
-                start_byte += 1
-        return [res_start_index, res_end_index]
 
     def calculate_hc(self, end_request_index: int) -> int:
         """what is the total sum of "1" bits in hc_bits from 0 to end_request_index?"""
@@ -384,9 +383,9 @@ class Mapping:
                     bitsum += 1
                     if index == end_request_index:
                         return bitsum
-                    if index > end_request_index:
-                        return 0
                 index += 1
+                if index > end_request_index:
+                    return 0
         return 0  # no heads/childen found, return 0
 
     def has_child(self, index: int) -> bool:

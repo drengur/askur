@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 class Alphabet:
     RES_SEPARATOR = 141  # separator between results for multiple results in the lookup result (short_text)
 
@@ -21,7 +22,7 @@ class Alphabet:
     def alphabet(self) -> dict[int, int]:
         return self._alphabet
 
-    def add(self, w_key:int|str|bytes) -> None:
+    def add(self, w_key: int | str | bytes) -> None:
         key: int
         if isinstance(w_key, str):
             key = ord(w_key)
@@ -40,38 +41,6 @@ class Alphabet:
         example: {0: 97, 1: 98, ...}
         """
         return {v: k for k, v in self._alphabet.items()}
-    
-    @staticmethod
-    def convert_multibytes_to_int(multi_bytes: list[bytes]) -> list[int]:
-        """Convert a list of bytes representing a multibyte character to an integer."""
-        i: int = 0
-        res: list[int] = []
-        while i < len(multi_bytes):
-            if multi_bytes[i] <= 4:
-                multi_bytes_char: list[bytes] = multi_bytes[i + 1 : i + 1 + multi_bytes[i]]
-                try:
-                    int_value:int =int.from_bytes(bytearray(multi_bytes_char), "big")
-                    res.append(int_value)
-                except (ValueError, OverflowError):
-                    res.extend(multi_bytes[i : i + 1 + multi_bytes[i]])  # fallback for invalid unicode
-                i = 1 + i + multi_bytes[i]
-            else:
-                res.append(multi_bytes[i])
-                i += 1
-        return res
-    
-    def convert_to_multibytes(self, int_values: list[int]) -> list[bytes]:
-        """Convert a list of integers to a list of bytes representing multibyte characters."""
-        res: list[bytes] = []
-        for int_value in int_values:
-            if int_value <= 255:
-                res.append(int_value)
-            else:
-                nr_bytes = (int_value.bit_length() + 7) // 8
-                byte_values = int_value.to_bytes(nr_bytes, byteorder="big")
-                res.append(nr_bytes)
-                res.extend(byte_values)
-        return res
 
     @staticmethod
     def convert_bytes_to_str(query: list[bytes]) -> str:
@@ -86,7 +55,7 @@ class Alphabet:
             if query[i] <= 4:
                 multi_bytes_char: list[bytes] = query[i + 1 : i + 1 + query[i]]
                 try:
-                    int_value:int =int.from_bytes(bytearray(multi_bytes_char), "big")
+                    int_value: int = int.from_bytes(bytearray(multi_bytes_char), "big")
                     text_array.append(chr(int_value))
                 except (ValueError, OverflowError):
                     text_array.append("?")  # fallback for invalid unicode
