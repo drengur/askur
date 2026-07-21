@@ -3,7 +3,7 @@ import sys
 
 
 class Alphabet:
-    RES_SEPARATOR = 141  # separator between results for multiple results in the lookup result (short_text)
+    UNIT_SEPARATOR = b"\x1f"  # int = 31, unit separator between results for multiple results in the lookup result (short_text)
 
     def __init__(self) -> None:
         if os.getenv("ASKUR_ALPHABET") is None:

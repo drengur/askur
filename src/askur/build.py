@@ -206,7 +206,7 @@ class Trie:
         self.level_order_tree([root])
 
         # return tuple-generator(data_values) to save memory, instead of creating a list of all data values in memory
-        return (self.alphabet.convert_str_to_bytes(k) for k, _ in data_values.items())
+        return (k.encode("utf-8") for k in data_values.keys())
 
     def write_frozen_data(self, data_values_gen: tuple[bytes, None, None]) -> None:
         """Write the LOUDS, HC, SELECT, INDEX, VALUE, INDEX_VALUE and SHORT_TEXT arrays to disk.
@@ -438,7 +438,6 @@ class Trie:
         with io.open(self.trie_file, "ab") as f:
             for chunk in self.generate_data(self._trie):
                 f.write(chunk)
-            f.close()
 
     def write_hc_to_file(self, filename: str) -> None:
         """Write the head child array to a file."""
@@ -458,7 +457,6 @@ class Trie:
         if len(buffer) > 0:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
-                f.close()
 
     def write_select_to_file(self, filename: str) -> None:
         """Write the select array to a file."""
@@ -549,7 +547,7 @@ class Trie:
             1 if len(bin(total_short_len)[2:]) % 8 else 0
         )
 
-        short_texts: list[bytearray] = []
+        short_texts: list[bytes] = []
         sum_index: int = 0
 
         # short_text_index has same length and index reference as self._index
@@ -557,44 +555,23 @@ class Trie:
         short_text_index: list[bytes] = []
         indices: dict[str, bytes] = {}
         short_text_values_length: list[int] = []
+        tmp_txt: bytes = b""
 
         for _, idxs in enumerate(self._index):
-            multi_text = []
-            for idx in idxs:
-                if len(idxs) == 1:
-                    if str(idx) not in indices:
-                        byte_value = sum_index.to_bytes(byte_len, "big")
-                        indices[str(idx)] = byte_value
-                        short_text_index.append(byte_value)
-                        short_texts.append(data_values[idx])
-                        short_text_values_length.append(len(data_values[idx]))
-                        sum_index += len(data_values[idx])
-                    else:
-                        short_text_values_length.append(len(data_values[idx]))
-                        short_text_index.append(indices[str(idx)])
-                else:
-                    multi_text.append(data_values[idx])
-            if len(multi_text) > 1:
-                tmp_txt: bytearray = bytearray()
-                for mtx in multi_text:
-                    if len(tmp_txt) == 0:
-                        tmp_txt = mtx[:]
-                    else:
-                        tmp_txt.append(141)
-                        for c in mtx:
-                            tmp_txt.append(c)
-                idxs.sort()  # sort to make sure indexes are uniqe
-                idxs_str = "_".join([str(i) for i in idxs])
-                if idxs_str not in indices:
-                    byte_value = sum_index.to_bytes(byte_len, "big")
-                    indices[idxs_str] = byte_value
-                    short_text_index.append(byte_value)
-                    short_texts.append(tmp_txt)
-                    short_text_values_length.append(len(tmp_txt))
-                    sum_index += len(tmp_txt)
-                else:
-                    short_text_index.append(indices[idxs_str])
-                    short_text_values_length.append(len(tmp_txt))
+            tmp_txt = A.UNIT_SEPARATOR.join([data_values[idx] for idx in idxs])
+            idxs.sort()  # sort to make sure indexes are unique
+            idxs_str = "_".join([str(i) for i in idxs])
+            if idxs_str not in indices:
+                byte_value = sum_index.to_bytes(byte_len, "big")
+                indices[idxs_str] = byte_value
+                short_text_index.append(byte_value)
+                short_texts.append(tmp_txt)
+                short_text_values_length.append(len(tmp_txt))
+                sum_index += len(tmp_txt)
+            else:
+                short_text_index.append(indices[idxs_str])
+                short_text_values_length.append(len(tmp_txt))
+
             if len(short_texts) >= 10240:
                 with io.open(self.short_text_bits_filename, "ab") as fb:
                     for item in short_texts:
@@ -662,7 +639,7 @@ class Trie:
 
         return block_size: int
         """
-        # block size in bits has to be multiple of 8
+        # block size in bits has to be a multiple of 8
         block_size: int = m.ceil(m.log2(len(self._select)) / 2) // 8 * 8
         block_size = max(8, block_size)
 
