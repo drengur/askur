@@ -289,14 +289,11 @@ class Mapping:
         self.check_if_key_exists = check_key_exists
         return check_key_exists
 
-    def used_alphabet(self) -> bool:
-        """Returns the alphabet used in the trie"""
-        return self.section_slice(
-            self._alphabet, 0, self._alphabet.end - self._alphabet.start
-        )
-
     def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
+        """ Returns the index of the first "1" bit in the select array that is equal to sum_ones_wanted
+            and the index of the next "1" bit in the select array that is equal to sum_ones_wanted + 1
+        """
         res_start_index: int = None
         r_start: int = 7
         superblock_start: int = sum_ones_wanted // self.bits_in_superblock
@@ -351,7 +348,9 @@ class Mapping:
                 r_start = 7
 
     def calculate_hc(self, end_request_index: int) -> int:
-        """what is the total sum of "1" bits in hc_bits from 0 to end_request_index?"""
+        """what is the total number of "1" bits in hc_bits from 0 to end_request_index?
+        Returns the total sum (number) of "1" bits in hc_bits from 0 to end_request_index
+        """
         bits_in_byte: int = 8
         superblock_start: int = end_request_index // self.bits_in_superblock
         start_block: int = 0
