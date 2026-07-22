@@ -291,8 +291,8 @@ class Mapping:
 
     def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
-        """ Returns the index of the first "1" bit in the select array that is equal to sum_ones_wanted
-            and the index of the next "1" bit in the select array that is equal to sum_ones_wanted + 1
+        """Returns the index of the first "1" bit in the select array that is equal to sum_ones_wanted
+        and the index of the next "1" bit in the select array that is equal to sum_ones_wanted + 1
         """
         res_start_index: int = None
         r_start: int = 7
@@ -503,7 +503,8 @@ class Mapping:
         return self.get_short_text(index_value, text_len)
 
     def get_by_id(self, id: int) -> list[str]:
-        # id is the value_sum from the method get_result()
+        """id is the value_sum from the method get_result()"""
+
         index_value, text_len = self.get_index(id)
         return self.get_short_text(index_value, text_len)
 
@@ -512,7 +513,9 @@ class Mapping:
         res: bytes = bytes(
             self.section_slice(self._short_text, index, index + text_len)
         )
-        text_array: list[bytes] = res.split(A.UNIT_SEPARATOR) if A.UNIT_SEPARATOR in res else [res]
+        text_array: list[bytes] = (
+            res.split(A.UNIT_SEPARATOR) if A.UNIT_SEPARATOR in res else [res]
+        )
         return sorted([txt.decode("utf-8") for txt in text_array])
 
     def close(self):

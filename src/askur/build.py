@@ -216,13 +216,13 @@ class Trie:
         self.write_tree_to_file()
 
         self.write_select_to_file(self.select_bits_filename)
-        self.super_block_size = self.select_to_superblock()
+        self.super_block_size = self.write_select_to_superblock()
 
         self.write_hc_to_file(self.hc_bits_filename)
-        self.hc_to_superblock()
+        self.write_hc_to_superblock()
 
         self.write_eow_values_to_file(self.value_bits_filename)
-        self.write_eow_sums_to_file(self.eow_sb)
+        self.write_eow_superblock_to_file(self.eow_sb)
 
         bytes_per_indexblock: int = self.write_short_text_to_file(data_values_gen)
         return bytes_per_indexblock
@@ -502,7 +502,7 @@ class Trie:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
 
-    def write_eow_sums_to_file(self, filename: str) -> None:
+    def write_eow_superblock_to_file(self, filename: str) -> None:
         """sum of "1"-bits in a block of 32 bits to a file."""
 
         bitsum: int = 0
@@ -607,7 +607,7 @@ class Trie:
 
         return byte_len
 
-    def hc_to_superblock(self):
+    def write_hc_to_superblock(self):
         """Writing to hc-superblock file"""
 
         nr_bytes: int = 4
@@ -633,7 +633,7 @@ class Trie:
             with io.open(self.hc_sb_file, "ab") as fb:
                 fb.write(buffer)
 
-    def select_to_superblock(self) -> int:
+    def write_select_to_superblock(self) -> int:
         """Write the select superblock to a file.
         returns the block size used in bits for the select superblock and hc superblock.
 
@@ -717,13 +717,13 @@ class Trie:
         self.write_tree_to_file()
 
         self.write_select_to_file(self.select_bits_filename)
-        self.select_to_superblock()
+        self.write_select_to_superblock()
 
         self.write_eow_values_to_file(self.value_bits_filename)
-        self.write_eow_sums_to_file(self.eow_sb)
+        self.write_eow_superblock_to_file(self.eow_sb)
 
         self.write_hc_to_file(self.hc_bits_filename)
-        self.hc_to_superblock()
+        self.write_hc_to_superblock()
 
         start_bytes: list[bytes] = []
         bytes_per_info: int = 4
