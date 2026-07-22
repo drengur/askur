@@ -184,8 +184,8 @@ class Trie:
     def make_trie(self, input_data: str) -> tuple[bytes]:
         """Returns a generator that yields the data values in the same order as the indices in the trie."""
 
+        #clear the data file if it exists
         io.open(self.data_file, "w").close()
-
         data_values: dict[str, int] = {}
         index: int = -1
         key: bytes = b""
@@ -222,7 +222,7 @@ class Trie:
         self.write_hc_to_superblock()
 
         self.write_eow_values_to_file(self.value_bits_filename)
-        self.write_eow_superblock_to_file(self.eow_sb)
+        self.write_eow_to_superblock(self.eow_sb)
 
         bytes_per_indexblock: int = self.write_short_text_to_file(data_values_gen)
         return bytes_per_indexblock
@@ -341,12 +341,16 @@ class Trie:
         line_nr: int = 0
         line_count: int = 0
 
-        if input_data != sys.stdin:
+        if input_data is not sys.stdin:
             with io.open(input_data.name, "r", encoding="utf-8") as f:
                 line_count = sum(1 for _ in f)
+        else:
+            if sys.stdin.isatty():
+                print("No input data provided. Exiting.")
+                sys.exit(1)
         with (
             io.open(input_data.name, "r", encoding="utf-8")
-            if input_data != sys.stdin
+            if input_data is not sys.stdin
             else sys.stdin as f
         ):
             for line in f:
@@ -502,7 +506,7 @@ class Trie:
             with io.open(filename, "ab") as f:
                 f.write(buffer)
 
-    def write_eow_superblock_to_file(self, filename: str) -> None:
+    def write_eow_to_superblock(self, filename: str) -> None:
         """sum of "1"-bits in a block of 32 bits to a file."""
 
         bitsum: int = 0
@@ -666,10 +670,8 @@ class Trie:
                 f.write(buffer)
         return block_size
 
-    def make_reversed(self, statusbar=False) -> None:
+    def make_reversed(self, statusbar=True) -> None:
         """Make a reversed trie from the original data."""
-        self._make_reversed()
-        return
         try:
             WD.start(statusbar)
             WD.print_label(" Building reversed index...")
@@ -720,7 +722,7 @@ class Trie:
         self.write_select_to_superblock()
 
         self.write_eow_values_to_file(self.value_bits_filename)
-        self.write_eow_superblock_to_file(self.eow_sb)
+        self.write_eow_to_superblock(self.eow_sb)
 
         self.write_hc_to_file(self.hc_bits_filename)
         self.write_hc_to_superblock()
@@ -830,7 +832,12 @@ def main():
     txt = args.file
     field_separator = args.field_separator or ";"
 
-    if txt is not None and args.collection is not None:
+    if txt is None or (txt.name == "<stdin>" and sys.stdin.isatty()):
+        print("\n" + "*"*5 + " No input data provided. Exiting.")
+        arg_parser.print_help()
+        sys.exit(1)
+
+    if args.collection is not None:
         trie = Trie(
             collection_name=args.collection,
             reversed=False,
@@ -847,7 +854,7 @@ def main():
         trie.make_reversed()
     gc.collect()  # Force garbage collection to free up memory after build process
 
-    if args.collection is None or (txt is None and not args.reversed):
+    if args.collection is None:
         arg_parser.print_help()
 
 
