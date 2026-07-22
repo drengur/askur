@@ -160,7 +160,7 @@ class Search:
             # If there are wildcards in the query, we cannot use Levenshtein distance
             return
 
-        # Store the original query as a string for comparison in results, 
+        # Store the original query as a string for comparison in results,
         # to avoid returning the original query word in fuzzy search results
         self._levenshtein_query = self._query_to_string(query[0])
 
@@ -361,19 +361,19 @@ class Search:
         chr_range = []
         next_query = [[], query[1], query[2], query[3]]
         s_start, s_end = self.mmap.calculate_select(s_index)
-        range = self.mmap.get_trie_range(s_start, s_end)
+        trie_range = self.mmap.get_trie_range(s_start, s_end)
         i_letter = query[0][start]
         i_fold_letter = i_letter if start_is_in_mb else self.case_folding(i_letter)
 
-        if i_letter in range:
+        if i_letter in trie_range:
             chr_range.append(i_letter)
-        if i_letter != i_fold_letter and i_fold_letter in range:
+        if i_letter != i_fold_letter and i_fold_letter in trie_range:
             chr_range.append(i_fold_letter)
-        if chr_range == [] and i_letter == UNDERSCORE:  #  "_"
-            chr_range = range
+        if not chr_range and i_letter == UNDERSCORE:  #  "_"
+            chr_range = trie_range
 
         for nr, ic_letter in enumerate(chr_range):
-            chr_index = range.index(ic_letter)
+            chr_index = trie_range.index(ic_letter)
             nr_hc = self.mmap.calculate_hc(s_start + chr_index)
 
             if start == len(query[0]) - 1 and self.mmap.is_end_of_word(
@@ -399,9 +399,8 @@ class Search:
                 return
 
             if query[0][-1] == WILDCARD and len(query[0][start:]) == 2:
-                wild_query = [None, query[1], query[2]]
-                wild_query[0] = query[0][:][start:]
-                wild_query[0][0] = ic_letter
+                wild_query = [query[0][:][start:], query[1], query[2]]
+
                 if len(query) > 3:
                     wild_query.append(query[3] + query[0][:][0:start])
                 else:
@@ -530,12 +529,13 @@ class Search:
             self.check_if_key_exists = False
 
     def get_by_id(self, id) -> list[int]:
-        # Implement the method to get a word by its ID
+        """Implement the method to get a word by its ID."""
         if type(id) is not int or id < 0:
             raise ValueError("ID must be a non-negative integer.")
         return self.mmap.get_by_id(id)
 
     def search(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
+        """Search for a word in the trie."""
         modified_query = self._prepare_query(query)
         self._nr_results = 0  # Reset the number of results for each search
 
@@ -562,6 +562,7 @@ class Search:
             yield from self._search(modified_query, 1)
 
     def lookup(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
+        """Lookup a word in the trie."""
         return self.search(query)
 
     def _prepare_query(self, query):
