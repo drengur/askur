@@ -10,11 +10,15 @@ A = Alphabet()
 
 @dataclass(frozen=True)
 class Section:
+    """Represents a section of the memory-mapped file."""
+
     start: int
     end: int
 
 
 class Mapping:
+    """Class for memory-mapped file access and manipulation."""
+
     def __init__(self, collection: str) -> None:
         self._file: str = ""
         self._mmap: mmap.mmap = None
@@ -124,23 +128,14 @@ class Mapping:
     def _load_files(self):
         # Check for environment variable first, then fall back to config file
         data_folder = os.environ.get("ASKUR_DATA_FOLDER")
-        if data_folder is None:
-            print(
-                "DATA_FOLDER environment variable is not set. Please update config.py."
-            )
-            import sys
-
-            sys.exit(1)
+        assert data_folder is not None, (
+            "ASKUR_DATA_FOLDER environment variable is not set. Please update config.py."
+        )
 
         frozen_folder = os.path.join(data_folder, self.collection)
-
-        if not os.path.exists(frozen_folder):
-            import sys
-            from askur.__init__ import list_collections
-
-            print(f"\n  '{self.collection}' collection does not exist!")
-            list_collections()
-            sys.exit(1)
+        assert os.path.exists(frozen_folder), (
+            f"'{self.collection}' collection does not exist! \nPlease list available collections (askur-list_collections)\nor check the ASKUR_DATA_FOLDER directory: {data_folder}"
+        )
 
         data_filename = os.path.join(frozen_folder, "data.bin")
         self._file = open(data_filename, "rb")
