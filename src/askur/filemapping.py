@@ -429,9 +429,9 @@ class Mapping:
         )
         return [sh_index, sh_len]
 
-    def is_end_of_word(self, index: int) -> int:
+    def is_end_of_word(self, index: int) -> bool:
         """
-        Returns 1 if is end of word, else 0
+        Returns True if is end of word, else False
         """
         start_byte: int = index // 8
         extra_bits: int = index % 8
