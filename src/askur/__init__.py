@@ -2,8 +2,9 @@ import argparse
 import os
 import sys
 from askur.config import Config
+Config()  # Initialize the global CONFIG variable
 
-Config()  # initialize config environment variables
+
 
 
 def collections(sort_by: str = "name") -> list[dict]:
@@ -200,9 +201,4 @@ def rename_collection(old_name: str = None, new_name: str = None) -> None:
 
 
 def list_configuration() -> None:
-    config = Config()
-    col1_width = max(len(key) for key in config.__dict__.keys()) + 2
-    col2_width = max(len(str(value)) for value in config.__dict__.values()) + 2
-    print("Current configuration:")
-    for key, value in config.__dict__.items():
-        print(f"{key:<{col1_width}}: {str(value):<{col2_width}}")
+    Config().list_variables()
