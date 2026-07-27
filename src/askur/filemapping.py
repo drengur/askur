@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from askur.alphabet import Alphabet
 from askur.config import Config
 
-Config()  # initialize config environment variables
+Config()  # Initialize the global CONFIG variable
 A = Alphabet()
 
 

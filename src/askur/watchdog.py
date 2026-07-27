@@ -21,7 +21,7 @@ class Watchdog:
 
             if available_percent < self.threshold:
                 print(
-                    f"Available memory is below {self.threshold * 100}%. Exiting gracefully."
+                    f"Available memory is below {self.threshold * 100}%. Exiting."
                 )
                 self.stop()
                 os._exit(1)

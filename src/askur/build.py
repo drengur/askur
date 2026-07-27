@@ -4,7 +4,6 @@
 from input file
 """
 
-from typing import overload
 import os
 import sys
 import io
@@ -17,9 +16,9 @@ from askur import watchdog
 # initialization of global variables
 # Config is initialized at the start of the build process and contains the configuration
 # for the build process, such as the alphabet and data folder.
-CONFIG: Config = Config()
+Config() # Initialize the global CONFIG variable
 
-WD = watchdog.Watchdog()  # Watchdog to monitor system memory usage during build process
+WD = watchdog.Watchdog(threshold=int(os.environ.get("ASKUR_MEMORY_THRESHOLD", "5")))  # Watchdog to monitor system memory usage during build process
 A: alphabet.Alphabet | None = alphabet.Alphabet
 
 
