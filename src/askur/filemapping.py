@@ -79,10 +79,8 @@ class Mapping:
 
         start = int.from_bytes(self._mmap[section_slices["start"]], byteorder="big")
         end = int.from_bytes(self._mmap[section_slices["end"]], byteorder="big")
-        if end == 0:
-            end = (
-                self._mmap.size()
-            )  # If the section is empty, set end to the size of the mmap
+        if end == 0 and start > 0:
+            end = self._mmap.size()  # happens when the section is at the end of the file, usually the short text section, which is the last section in the file
 
         return Section(
             start=start,
