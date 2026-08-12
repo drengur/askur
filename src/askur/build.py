@@ -12,13 +12,16 @@ from dataclasses import dataclass
 from askur.config import Config
 from askur import alphabet
 from askur import watchdog
+from askur.map_infos import MapAddressInfo as ma
 
 # initialization of global variables
 # Config is initialized at the start of the build process and contains the configuration
 # for the build process, such as the alphabet and data folder.
-Config() # Initialize the global CONFIG variable
+Config()  # Initialize the global CONFIG variable
 
-WD = watchdog.Watchdog(threshold=int(os.environ.get("ASKUR_MEMORY_THRESHOLD", "5")))  # Watchdog to monitor system memory usage during build process
+WD = watchdog.Watchdog(
+    threshold=int(os.environ.get("ASKUR_MEMORY_THRESHOLD", "5"))
+)  # Watchdog to monitor system memory usage during build process
 A: alphabet.Alphabet | None = alphabet.Alphabet
 
 
@@ -183,7 +186,7 @@ class Trie:
     def make_trie(self, input_data: str) -> tuple[bytes]:
         """Returns a generator that yields the data values in the same order as the indices in the trie."""
 
-        #clear the data file if it exists
+        # clear the data file if it exists
         io.open(self.data_file, "w").close()
         data_values: dict[str, int] = {}
         index: int = -1
@@ -239,81 +242,108 @@ class Trie:
         WD.clear_label()
 
         bytes_per_info: int = 4
-        start_bytes = [int.to_bytes(0, bytes_per_info, "big") for _ in range(30)]
-        # 0:4
-        start_bytes[0] = int.to_bytes(bytes_per_info, bytes_per_info, "big")
-        # 4:8
-        start_bytes[1] = int.to_bytes(self.super_block_size, bytes_per_info, "big")
-        # 8:12
-        start_bytes[2] = int.to_bytes(bytes_per_indexblock, bytes_per_info, "big")
+        # initialize data_file with info cells
+        with io.open(self.data_file, "wb") as f:
+            for item in ma:
+                f.write(int.to_bytes(0, bytes_per_info, "big"))
 
-        with io.open(self.data_file, "ab") as f:
-            f.write(b"".join(start_bytes))
+        header_bytes = [int.to_bytes(0, bytes_per_info, "big") for _ in range(len(ma))]
 
-        next_start: list[int] = [os.path.getsize(self.data_file)]
-        # 12:16
-        start_bytes[3] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.trie_file + ".alphabet")
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 16:20
-        start_bytes[4] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.trie_file)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 20:24
-        start_bytes[5] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.select_bits_filename)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 24:28
-        start_bytes[6] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.s_sb_file)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 28:32
-        start_bytes[7] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.hc_bits_filename)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 32:36
-        start_bytes[8] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.hc_sb_file)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 36:40
-        start_bytes[9] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.value_bits_filename)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 40:44
-        start_bytes[10] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.eow_sb)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 44:48
-        start_bytes[11] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.index_bits_filename)
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 48:52
-        start_bytes[12] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.short_text_bits_filename + ".length")
-
-        next_start.append(os.path.getsize(self.data_file))
-        # 52:56
-        start_bytes[13] = int.to_bytes(next_start[-1], bytes_per_info, "big")
-        self.merge_files(self.data_file, self.short_text_bits_filename)
-
-        # length of short text
-        # 56:60
-        start_bytes[14] = int.to_bytes(
-            os.path.getsize(self.short_text_bits_filename), bytes_per_info, "big"
+        header_bytes[ma.BYTES_PR_INFO_CELL.value] = int.to_bytes(
+            bytes_per_info, bytes_per_info, "big"
         )
 
+        header_bytes[ma.BITS_PR_SB.value] = int.to_bytes(
+            self.super_block_size, bytes_per_info, "big"
+        )
+
+        header_bytes[ma.BYTES_PR_INDEX_BLOCK.value] = int.to_bytes(
+            bytes_per_indexblock, bytes_per_info, "big"
+        )
+
+        # calculate the next data offset for the start of the data section.
+        next_data_offset: int = (len(ma) - 1) * bytes_per_info
+
+        header_bytes[ma.ALPHABET.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.trie_file + ".alphabet")
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.TRIE.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.trie_file)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.SELECT.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.select_bits_filename)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.SELECT_SB.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.s_sb_file)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.HC.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.hc_bits_filename)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.HC_SB.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.hc_sb_file)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.EOW.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.value_bits_filename)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.EOW_SB.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.eow_sb)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.INDEX_VALUE.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.index_bits_filename)
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.INDEX_VALUE_LENGTH.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.short_text_bits_filename + ".length")
+
+        next_data_offset = os.path.getsize(self.data_file)
+
+        header_bytes[ma.SHORT_TEXT.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
+        self.merge_files(self.data_file, self.short_text_bits_filename)
+
         with io.open(self.data_file, "rb+") as f:
-            f.seek(0)
-            f.write(b"".join(start_bytes))
+            for item in ma:
+                if header_bytes[item.value] is not None:
+                    f.seek(item.value * bytes_per_info)
+                    f.write(header_bytes[item.value])
 
         self.remove_build_files()
 
@@ -683,26 +713,33 @@ class Trie:
     def _make_reversed(self) -> None:
         """Make a reversed trie from the original data."""
 
-        self.super_block_size = 0
+        self.super_block_size: int = 0
         index_byte_len: int = 0
         short_text_len: int = 0
-        root = Node()
+        root: Node = Node()
+        key: bytes = b""
         w_key: bytes = b""
+        value: int | None = None
 
         with io.open(self.data_file, "rb") as f_data:
-            vals = f_data.read(1024)  # read first 1024 bytes
-            self.super_block_size = int.from_bytes(vals[4:8], "big")
-            index_byte_len = int.from_bytes(vals[8:12], "big")
-            short_text_len = int.from_bytes(vals[56:60], "big")
+            file_slice: bytes = f_data.read(len(ma) * 4)
+            index_byte_len = int.from_bytes(
+                file_slice[ma.address(ma.BYTES_PR_INDEX_BLOCK)], "big"
+            )
+            self.super_block_size = int.from_bytes(
+                file_slice[ma.address(ma.BITS_PR_SB)], "big"
+            )
 
         from askur.search import Search
+
         with Search(collection=self.collection_name) as search:
             # All entries in the trie
+            short_text_len = search.value_size
             items = search.exists("*")
             for item in items:
                 key = list(item.keys())[0][::-1]  # reverse the key
                 w_key = self.alphabet.convert_str_to_bytes(key)
-                value = 1 if short_text_len == 0 else list(item.values())[0]
+                value = None if short_text_len == 0 else list(item.values())[0]
                 self._add(w_key, value, root)
 
         self.level_order_tree([root])
@@ -726,45 +763,67 @@ class Trie:
         self.write_hc_to_file(self.hc_bits_filename)
         self.write_hc_to_superblock()
 
-        start_bytes: list[bytes] = []
         bytes_per_info: int = 4
+        header_data: list[bytes] = [None for _ in range(len(ma))]
+
         # merge reversed files into data file
-        next_start: list[int] = [os.path.getsize(self.data_file)]
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        next_data_offset: int = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_TRIE.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.trie_file)
+
         # select
-        next_start.append(os.path.getsize(self.data_file))
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        next_data_offset = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_SELECT.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.select_bits_filename)
-        next_start.append(os.path.getsize(self.data_file))
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+
+        next_data_offset = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_SELECT_SB.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.s_sb_file)
+
         # hc files
-        next_start.append(os.path.getsize(self.data_file))
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        next_data_offset = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_HC.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.hc_bits_filename)
-        next_start.append(os.path.getsize(self.data_file))
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+
+        next_data_offset = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_HC_SB.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.hc_sb_file)
+
         # eow files
-        next_start.append(os.path.getsize(self.data_file))
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        next_data_offset = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_EOW.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.value_bits_filename)
-        next_start.append(os.path.getsize(self.data_file))
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+
+        next_data_offset = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_EOW_SB.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.eow_sb)
 
         # index bits file
-        next_start.append(os.path.getsize(self.data_file))
-        start_bytes.append(int.to_bytes(next_start[-1], bytes_per_info, "big"))
+        next_data_offset = os.path.getsize(self.data_file)
+        header_data[ma.SUFFIX_INDEX_VALUE.value] = int.to_bytes(
+            next_data_offset, bytes_per_info, "big"
+        )
         self.merge_files(self.data_file, self.index_bits_filename)
 
         with io.open(self.data_file, "rb+") as f:
-            start_index: int = 60
-            for n in range(len(start_bytes)):
-                f.seek(start_index + n * bytes_per_info)
-                vals = start_bytes[n]
-                f.write(vals)
+            for i in range(len(ma)):
+                if header_data[i] is not None:
+                    f.seek(i * bytes_per_info)
+                    f.write(header_data[i])
 
         self.remove_build_files()
 
@@ -832,7 +891,7 @@ def main():
     field_separator = args.field_separator or ";"
 
     if txt is None or (txt.name == "<stdin>" and sys.stdin.isatty()):
-        print("\n" + "*"*5 + " No input data provided. Exiting.")
+        print("\n" + "*" * 5 + " No input data provided. Exiting.")
         arg_parser.print_help()
         sys.exit(1)
 

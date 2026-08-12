@@ -15,7 +15,7 @@ class Config:
         self.load_from_env_file()
 
     def list_variables(self):
-        
+
         print("\nCurrent configuration variables:")
         print(f"Config file: {self.config_env_file}")
         print("-" * 50)
@@ -33,7 +33,6 @@ class Config:
             )
             data_dir: str = os.path.join(base_dir, "askur", "data")
             config_env_file: str = os.path.join(base_dir, "askur", "config.env")
-            return data_dir, config_env_file
         else:
             data_dir: str = os.path.join(
                 str(Path.home()), ".local", "share", "askur", "data"
@@ -41,7 +40,7 @@ class Config:
             config_env_file: str = os.path.join(
                 str(Path.home()), ".config", "askur", "config.env"
             )
-            return data_dir, config_env_file
+        return data_dir, config_env_file
 
     def pre_create_config_file(self, path: str) -> None:
         """Pre-create the config.env file with default values if it does not exist."""
@@ -74,7 +73,9 @@ class Config:
     def defaults(self) -> None:
         """Initialize environment variables."""
         return {
-            "ASKUR_ALPHABET": "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -", # default sort order for the alphabet
-            "ASKUR_DATA_FOLDER": self.get_default_folders()[0], # default data folder path based on OS
-            "ASKUR_MEMORY_THRESHOLD": "5", # % system memory left before stopping the build process
+            "ASKUR_ALPHABET": "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -",  # default sort order for the alphabet
+            "ASKUR_DATA_FOLDER": self.get_default_folders()[
+                0
+            ],  # default data folder path based on OS
+            "ASKUR_MEMORY_THRESHOLD": "5",  # % system memory left before stopping the build process
         }

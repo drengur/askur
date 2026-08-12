@@ -58,9 +58,10 @@ class Search:
 
     @check_if_key_exists.setter
     def check_if_key_exists(self, value: bool):
-        self.mmap.set_check_key_exists(value)
+        self.mmap.check_if_key_exists = value
 
     def _add_result(self, value) -> dict[str, list[str] | int] | None:
+
         if self.search_completed():
             # Reset the flag for checking key existence for future searches
             self.check_if_key_exists = False
@@ -74,7 +75,11 @@ class Search:
                 self._nr_results -= 1  # Don't count the original query word as a result
                 return None  # Skip the original query word in fuzzy search results
         if self.check_if_key_exists:
-            val: int = list(value.values())[0][0]
+            val: list[str] | int = (
+                0
+                if not value.values() or not list(value.values())[0]
+                else list(value.values())[0][0]
+            )
         else:
             val: list[str] = list(value.values())[0]
         if self.reversed:
@@ -94,6 +99,18 @@ class Search:
         if (char >= 97 and char <= 122) or (char >= 224 and char <= 254):
             return char - 32
         return char
+
+    @property
+    def count_collection_items(self) -> int:
+        """Return the number of items in the collection."""
+        return self.mmap.count_items()
+
+    @property
+    def value_size(self) -> int:
+        """Return the size of the value associated with each word in the collection.
+        = short_text_len
+        """
+        return self.mmap.value_size()
 
     @property
     def collection_name(self) -> str:
@@ -119,6 +136,10 @@ class Search:
     def levenshtein(self, use_levenshtein: bool):
         """Set whether to use Levenshtein distance for the search."""
         self._levenshtein = use_levenshtein
+
+    @property
+    def has_suffix_index(self) -> int:
+        return self.mmap.has_reversed_index()
 
     @property
     def reversed(self) -> bool:
@@ -522,8 +543,6 @@ class Search:
 
     def get_by_id(self, result_id: int) -> list[int]:
         """Implement the method to get a word by its ID."""
-        if not isinstance(result_id, int) or result_id < 0:
-            raise ValueError("ID must be a non-negative integer.")
         return self.mmap.get_by_id(result_id)
 
     def search(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
@@ -575,6 +594,12 @@ class Search:
             and not query.endswith("*")
             and len(query) > 1
         )
+        reversed_query = (
+            False
+            if reversed_query and [ch for ch in query[1:] if ch != "_"] == []
+            else reversed_query
+        )
+
         if reversed_query:
             self.reversed = True
             query = query[::-1]

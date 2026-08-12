@@ -1,58 +1,88 @@
 import argparse
 import os
 import sys
+from typing import Any
 from askur.config import Config
+
 Config()  # Initialize the global CONFIG variable
 
 
-
-
-def collections(sort_by: str = "name") -> list[dict]:
+def collections(sort_by: str = "name", descending: bool = False) -> list[dict]:
     import datetime as dt
+    from askur.search import Search as S
 
-    colls = []
-    data_folder = os.environ["ASKUR_DATA_FOLDER"] 
+    sort_columns = {
+        "name": "name",
+        "date": "date",
+        "size": "entry_size",
+        "count": "entry_count",
+    }
+    sort_by = sort_columns.get(sort_by.lower(), "name")
+    rows: list[dict[str, Any]] = []
+    data_folder = os.environ["ASKUR_DATA_FOLDER"]
+    total_size: int = 0
+    has_suffix: bool = False
+    
     if not os.path.exists(data_folder):
         return []
+    
     for entry in sorted(os.listdir(data_folder) or []):
         # get size of folder
+        search_instance = S(collection=entry)
+        count = search_instance.count_collection_items
+        has_suffix = search_instance.has_suffix_index
+        search_instance.close()  # Close the search instance to free resources
+
         entry_size = 0
         for file in os.listdir(os.path.join(data_folder, entry)):
             entry_size += os.path.getsize(os.path.join(data_folder, entry, file))
             date_created = os.path.getctime(os.path.join(data_folder, entry))
+        total_size += entry_size
         size = (
             f"{entry_size / 1_000_000:.2f} MB"
             if entry_size > 1_000_000
             else f"{entry_size / 1_000:.2f} KB"
         )
-        colls.append(
+        rows.append(
             {
                 "name": entry,
                 "size": size,
+                "count": f"{count:_}",
                 "created": dt.datetime.fromtimestamp(date_created).strftime(
                     "%Y-%m-%d %H:%M:%S"
                 ),
+                "entry_size": entry_size,
+                "date": date_created,
+                "entry_count": count,
+                "suffix": "R" if has_suffix else "_"
             }
         )
-    if not colls:
-        return [{"name": "No collections found", "size": "-", "created": "-"}]
-    if sort_by == "date":
-        return sorted(colls, key=lambda x: x["created"], reverse=True)
-    elif sort_by == "size":
-        return sorted(colls, key=lambda x: x["size"], reverse=True)
+    if not rows:
+        return []
 
-    return sorted(colls, key=lambda x: x["name"])
+    rows = sorted(rows, key=lambda x: x[sort_by], reverse=descending)
+    for col in ["entry_size", "entry_count"]:
+        for row in rows:
+            row.pop(col, None)
+
+    return {
+        "collections": rows,
+        "total_size": total_size,
+        "data_folder": data_folder,
+    }
 
 
-def list_collections(sort_by: str = "name") -> None:
-    """Lists all collections in the data folder with their size and creation date. Sorts by name, date or size depending on the sort_by argument.
+def list_collections(sort_by: str = "name", descending: bool = False) -> None:
+    """Lists all collections in the data folder with their size and creation date. 
+    Sorts by name, date, number of items or size depending on the sort_by argument.
     arguments:
-        sort_by: str, either 'name', 'date' or 'size'. Default is 'name'.
+        sort_by: str, either 'name', 'date', 'size' or 'count'. Default is 'name'.
+        descending: bool, whether to sort in descending order. Default is False.
     """
     import sys
 
-    if sort_by not in ["name", "date", "size"]:
-        print(f"Invalid sort_by value '{sort_by}'. Defaulting to 'name'.")
+    sort_by = sort_by.lower()
+    if sort_by not in ["name", "date", "size", "count"]:
         sort_by = "name"
 
     if sys.argv and len(sys.argv) > 1:
@@ -61,41 +91,56 @@ def list_collections(sort_by: str = "name") -> None:
             "-s",
             "--sort_by",
             type=str,
-            choices=["name", "date", "size"],
+            choices=["name", "date", "size", "count"],
             default="name",
-            help="Sort collections by 'name', 'date' or 'size'",
+            help="Sort collections by 'name', 'date', 'size' or 'count' (default: 'name')",
+        )
+        parser.add_argument(
+            "-d",
+            "--descending",
+            action="store_true",
+            help="Sort collections in descending order (default: ascending)",
+            default=False,
         )
         args = parser.parse_args()
         sort_by = args.sort_by
+        sort_descending = args.descending
+    else:
+        sort_descending = False
 
-    colls = collections(sort_by=sort_by)
-    if not colls:
-        print(f"Data folder '{os.environ['ASKUR_DATA_FOLDER']}' does not exist.")
+    collection_infos = collections(sort_by=sort_by, descending=sort_descending)
+    if not collection_infos:
+        print("No collections found.\nCheck your ASKUR_DATA_FOLDER environment variable.")
         return
+    
+    data_folder = collection_infos.get("data_folder")
+    total_size = collection_infos.get("total_size")
+    rows = collection_infos.get("collections")
 
-    data_folder = os.environ["ASKUR_DATA_FOLDER"]
-    col_1_width = max(len(coll["name"]) for coll in colls) + 6
-    col_2_width = max(len(coll["size"]) for coll in colls) + 6
-    col_3_width = max(len(coll["created"]) for coll in colls) + 2
+    if not rows:
+        print(f"No collections found in the data folder '{data_folder}'.")
+        return
+    
+    col_0_width = len(str(len(rows))) + 2
+    col_1_width = max(len(coll["name"]) for coll in rows) + 6
+    col_2_width = max(len(coll["size"]) for coll in rows) + 6
+    col_3_width = max(len(coll["count"]) for coll in rows) + 2
+    col_4_width = max(len(coll["suffix"]) for coll in rows) + 2
+    col_5_width = max(len(coll["created"]) for coll in rows) + 2
 
     print(f"\nCollections in {data_folder}:")
     print(
-        f"{'Collection':<{col_1_width}} {'Size':>{col_2_width}}   {'Created':<{col_3_width}}"
+        f"{'n':>{col_0_width}} {'Name':<{col_1_width}} {'Size':>{col_2_width}} {'Items':>{col_3_width}}   {'S':<{col_4_width}} {'Created':<{col_5_width}}"
     )
-    print("-" * (col_1_width + col_2_width + col_3_width))
-    total_size = 0
-    for coll in colls:
-        size_str = coll["size"]
-        if "MB" in size_str:
-            total_size += float(size_str.replace(" MB", "")) * 1_000_000
-        elif "KB" in size_str:
-            total_size += float(size_str.replace(" KB", "")) * 1_000
+    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + 4))
+    for n, coll in enumerate(rows):
         print(
-            f"{coll['name']:<{col_1_width}} {coll['size']:>{col_2_width}}   {coll['created']:<{col_3_width}}"
+            f"{n+1:>{col_0_width}} {coll['name']:<{col_1_width}} {coll['size']:>{col_2_width}} {coll['count']:>{col_3_width}}   {coll['suffix']:<{col_4_width}} {coll['created']:<{col_5_width}}"
         )
-    print("-" * (col_1_width + col_2_width + col_3_width))
+        
+    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + 4))
     print(
-        f"{'Total':<{col_1_width}} {(total_size / 1_000_000):>{col_2_width - 3}.2f} MB\n"
+        f"{'Total':<{col_0_width + col_1_width}}  {(total_size / 1_000_000):>{col_2_width - 3}.2f} MB\n"
     )
 
 
@@ -124,7 +169,9 @@ def build_collection(
             )
             trie.make_reversed()
     except FileNotFoundError:
-        print(f"Input file '{input_file}' not found. Use absolute path or check the file name and try again.")
+        print(
+            f"Input file '{input_file}' not found. Use absolute path or check the file name and try again."
+        )
         return -1
     finally:
         if "file" in dir():
@@ -133,13 +180,16 @@ def build_collection(
         gc.collect()
     return 0
 
+
 def get_id(
     collection_name: str = None,
     id: int = None,
 ) -> list[str]:
 
     if collection_name is None or id is None:
-        parser = argparse.ArgumentParser(description="Lookup in an Askur collection by ID")
+        parser = argparse.ArgumentParser(
+            description="Lookup in an Askur collection by ID"
+        )
         parser.add_argument(
             "-c", "--collection_name", type=str, help="Name of the collection"
         )
@@ -157,6 +207,7 @@ def get_id(
     S = search_module.Search(collection=collection_name)
     result = S.get_by_id(id)
     return result
+
 
 def remove_collection(collection_name: str = None) -> None:
     if collection_name is None:

@@ -3,6 +3,7 @@ import mmap
 from dataclasses import dataclass
 from askur.alphabet import Alphabet
 from askur.config import Config
+from askur.map_infos import MapAddressInfo as ma
 
 Config()  # Initialize the global CONFIG variable
 A = Alphabet()
@@ -24,95 +25,42 @@ class Mapping:
         self._mmap: mmap.mmap = None
         self._view: memoryview = None
 
-        self._trie: bytes = b""
+        self._trie: Section = None
 
-        self._s_bits: bytes = b""
-        self._s_superblocks: bytes = b""
+        self._s_bits: Section = None
+        self._s_superblocks: Section = None
 
-        self._hc_bitarray: bytes = b""
-        self._hc_super_blocks: bytes = b""
+        self._hc_bits: Section = None
+        self._hc_super_blocks: Section = None
 
-        self._eow_bits: bytes = b""
-        self._eow_sb: bytes = b""
+        self._eow_bits: Section = None
+        self._eow_sb: Section = None
 
-        self._index_bits: bytes = b""
-        self._index_values_length: bytes = b""
+        self._index_bits: Section = None
+        self._index_values_length: Section = None
 
-        self.short_text_len: int = 0
         self.bits_in_superblock: int = 0
         self.collection: str = collection
 
-        # pointers to the starts of the sections
-        self._trie_start: int = 0
-        self._trie_end: int = 0
+        self._short_text: Section = None
+        self.alphabet: Section = None
 
-        self._select_start: int = 0
-        self._select_end: int = 0
-
-        self._select_superblock_start: int = 0
-        self._select_superblock_end: int = 0
-
-        self._hc_start: int = 0
-        self._hc_end: int = 0
-
-        self._hc_superblock_start: int = 0
-        self._hc_superblock_end: int = 0
-
-        self._eow_start: int = 0
-        self._eow_end: int = 0
-
-        self._eow_superblock_start: int = 0
-        self._eow_superblock_end: int = 0
-
-        self._index_start: int = 0
-        self._index_end: int = 0
-
-        self._alphabet_index_start: int = 0
-        self._alphabet_index_end: int = 0
-
-        self._short_text_start: int = 0
-        self._short_text_end: int = 0
-
-        self.alphabet: bytes = b""
-        self.check_if_key_exists: bool = False  # are we only checking if key exists?
+        self._check_if_key_exists: bool = False  # are we only checking if key exists?
         self._reversed_lookup: bool = False  # are we looking up suffixes?
         self._has_reversed_index: bool = False  # does the index have reversed entries?
 
         self.nr_bytes_in_index_block: int = 0
+        self.max_index_value: int = 0  # number of (items -1)  in the short text index, used to calculate the number of items in the collection
 
-        self._reversed_trie: bytes = b""
+        self._reversed_trie: Section = None
+        self._reversed_s_bits: Section = None
+        self._reversed_s_superblocks: Section = None
 
-        self._reversed_s_bits: bytes = b""
-        self._reversed_s_superblocks: bytes = b""
-        self._reversed_hc_bits: bytes = b""
-        self._reversed_hc_super_blocks: bytes = b""
+        self._reversed_hc_bits: Section = None
+        self._reversed_hc_super_blocks: Section = None
 
-        self._reversed_eow_bits: bytes = b""
-        self._reversed_eow_sb: bytes = b""
-
-        self._short_text: bytes = b""
-
-        # pointers to the starts of the reversed sections
-        self._reversed_trie_start: int = 0
-        self._reversed_trie_end: int = 0
-
-        self._reversed_select_start: int = 0
-        self._reversed_select_end: int = 0
-
-        self._reversed_select_superblock_start: int = 0
-        self._reversed_select_superblock_end: int = 0
-
-        self._reversed_hc_start: int = 0
-        self._reversed_hc_end: int = 0
-
-        self._reversed_hc_superblock_start: int = 0
-        self._reversed_hc_superblock_end: int = 0
-
-        self._reversed_eow_start: int = 0
-        self._reversed_eow_end: int = 0
-
-        self._reversed_eow_superblock_start: int = 0
-        self._reversed_eow_superblock_end: int = 0
+        self._reversed_eow_bits: Section = None
+        self._reversed_eow_sb: Section = None
 
         self._load_files()
 
@@ -124,6 +72,22 @@ class Mapping:
         """Ensure that the mmap and file are closed when the object is destroyed
         to avoid memory leaks and file locks"""
         self.close()
+
+    def map_section(self, map_address: int) -> Section:
+        """Convert a section slice dictionary to a Section based on the given slice."""
+        section_slices = ma.value_slices(map_address)
+
+        start = int.from_bytes(self._mmap[section_slices["start"]], byteorder="big")
+        end = int.from_bytes(self._mmap[section_slices["end"]], byteorder="big")
+        if end == 0:
+            end = (
+                self._mmap.size()
+            )  # If the section is empty, set end to the size of the mmap
+
+        return Section(
+            start=start,
+            end=end,
+        )
 
     def _load_files(self):
         # Check for environment variable first, then fall back to config file
@@ -138,86 +102,49 @@ class Mapping:
         )
 
         data_filename = os.path.join(frozen_folder, "data.bin")
+
         self._file = open(data_filename, "rb")
         self._mmap = mmap.mmap(self._file.fileno(), 0, access=mmap.ACCESS_READ)
         self._view = memoryview(self._mmap)
 
-        self.bits_in_superblock = int.from_bytes(self._mmap[4:8], byteorder="big")
-        self.nr_bytes_in_index_block = int.from_bytes(self._mmap[8:12], byteorder="big")
-
-        alphabet_start = int.from_bytes(self._mmap[12:16], byteorder="big")
-        alphabet_end = int.from_bytes(self._mmap[16:20], byteorder="big")
-        self._trie_start = alphabet_end
-        self._trie_end = int.from_bytes(self._mmap[20:24], byteorder="big")
-
-        self._select_start = self._trie_end
-        self._select_end = int.from_bytes(self._mmap[24:28], byteorder="big")
-
-        self._select_superblock_start = self._select_end
-        self._select_superblock_end = int.from_bytes(self._mmap[28:32], byteorder="big")
-
-        self._hc_start = self._select_superblock_end
-        self._hc_end = int.from_bytes(self._mmap[32:36], byteorder="big")
-
-        self._hc_superblock_start = self._hc_end
-        self._hc_superblock_end = int.from_bytes(self._mmap[36:40], byteorder="big")
-
-        self._eow_start = self._hc_superblock_end
-        self._eow_end = int.from_bytes(self._mmap[40:44], byteorder="big")
-
-        self._eow_superblock_start = self._eow_end
-        self._eow_superblock_end = int.from_bytes(self._mmap[44:48], byteorder="big")
-
-        self._index_value_start = self._eow_superblock_end
-        self._index_value_end = int.from_bytes(self._mmap[48:52], byteorder="big")
-
-        self._index_values_length_start = self._index_value_end
-        self._index_values_length_end = int.from_bytes(
-            self._mmap[52:56], byteorder="big"
+        self.bits_in_superblock = int.from_bytes(
+            self._mmap[ma.address(ma.BITS_PR_SB)], byteorder="big"
         )
 
-        self._short_text_start = self._index_values_length_end
-
-        self._reversed_trie_start = int.from_bytes(self._mmap[60:64], byteorder="big")
-        self._reversed_trie_end = int.from_bytes(self._mmap[64:68], byteorder="big")
-
-        self._reversed_select_start = self._reversed_trie_end
-        self._reversed_select_end = int.from_bytes(self._mmap[68:72], byteorder="big")
-
-        self._reversed_select_superblock_start = self._reversed_select_end
-        self._reversed_select_superblock_end = int.from_bytes(
-            self._mmap[72:76], byteorder="big"
+        self.nr_bytes_in_index_block = int.from_bytes(
+            self._mmap[ma.address(ma.BYTES_PR_INDEX_BLOCK)], byteorder="big"
         )
 
-        self._reversed_hc_start = self._reversed_select_superblock_end
-        self._reversed_hc_end = int.from_bytes(self._mmap[76:80], byteorder="big")
+        self.alphabet = self.map_section(ma.ALPHABET)
 
-        self._reversed_hc_superblock_start = self._reversed_hc_end
-        self._reversed_hc_superblock_end = int.from_bytes(
-            self._mmap[80:84], byteorder="big"
-        )
-        self._reversed_eow_start = self._reversed_hc_superblock_end
-        self._reversed_eow_end = int.from_bytes(self._mmap[84:88], byteorder="big")
+        self._trie = self.map_section(ma.TRIE)
 
-        self._reversed_eow_superblock_start = self._reversed_eow_end
-        self._reversed_eow_superblock_end = int.from_bytes(
-            self._mmap[88:92], byteorder="big"
-        )
+        self._s_bits = self.map_section(ma.SELECT)
+        self._s_superblocks = self.map_section(ma.SELECT_SB)
 
-        self._reversed_index_start = self._reversed_eow_superblock_end
-        self._reversed_index_end = int.from_bytes(self._mmap[92:96], byteorder="big")
+        self._hc_bits = self.map_section(ma.HC)
+        self._hc_super_blocks = self.map_section(ma.HC_SB)
 
-        self._alphabet = Section(alphabet_start, alphabet_end)
+        self._eow_bits = self.map_section(ma.EOW)
+        self._eow_sb = self.map_section(ma.EOW_SB)
 
-        self._short_text_end = (
-            self._reversed_trie_start if self._reversed_trie_start > 0 else None
-        )
-        self._translate_index_bits = Section(
-            self._reversed_index_start, self._reversed_index_end
-        )
+        self._index_bits = self.map_section(ma.INDEX_VALUE)
+        self._index_values_length = self.map_section(ma.INDEX_VALUE_LENGTH)
 
-        self._has_reversed_index = self._reversed_trie_end > self._reversed_trie_start
-        self.do_reversed_lookup(False)  # initialize the sections for normal lookup
+        self._short_text = self.map_section(ma.SHORT_TEXT)
+
+        # translate_index_bits is used to translate the
+        # index value to the corresponding index in the reversed index
+        self._translate_index_bits = self.map_section(ma.SUFFIX_INDEX_VALUE)
+
+        # how many items are in the trie (max_index is equivalent to row count):
+        self.max_index_value = (
+            self._index_values_length.end - self._index_values_length.start
+        ) // 2 - 1
+
+        # initialize reversed lookup if the index has a suffix trie section
+        # and we are doing a reversed lookup (suffix search)
+        self.do_reversed_lookup(False)
 
     def section_slice(
         self, section: Section, start: int, end: int | None = None
@@ -241,48 +168,42 @@ class Mapping:
 
     def do_reversed_lookup(self, reversed_lookup: bool) -> bool:
         """Returns True if the index is reversed and we are doing reversed lookup"""
-        self._reversed_lookup = reversed_lookup and self.has_reversed_index()
-        if not self._reversed_lookup:
-            self._trie = Section(self._trie_start, self._trie_end)
-            self._s_bits = Section(self._select_start, self._select_end)
-            self._s_superblocks = Section(
-                self._select_superblock_start, self._select_superblock_end
-            )
-            self._hc_bits = Section(self._hc_start, self._hc_end)
-            self._hc_super_blocks = Section(
-                self._hc_superblock_start, self._hc_superblock_end
-            )
-            self._eow_bits = Section(self._eow_start, self._eow_end)
-            self._eow_sb = Section(self._eow_superblock_start, self._eow_superblock_end)
 
-            self._index_bits = Section(self._index_value_start, self._index_value_end)
-            self._index_values_length = Section(
-                self._index_values_length_start, self._index_values_length_end
-            )
-            self._short_text = Section(self._short_text_start, self._short_text_end)
-        else:
-            self._trie = Section(self._reversed_trie_start, self._reversed_trie_end)
-            self._s_bits = Section(
-                self._reversed_select_start, self._reversed_select_end
-            )
-            self._s_superblocks = Section(
-                self._reversed_select_superblock_start,
-                self._reversed_select_superblock_end,
-            )
-            self._hc_bits = Section(self._reversed_hc_start, self._reversed_hc_end)
-            self._hc_super_blocks = Section(
-                self._reversed_hc_superblock_start, self._reversed_hc_superblock_end
-            )
-            self._eow_bits = Section(self._reversed_eow_start, self._reversed_eow_end)
-            self._eow_sb = Section(
-                self._reversed_eow_superblock_start, self._reversed_eow_superblock_end
-            )
+        # If there is a suffix trie section, then we have a reversed index. If not, we don't.
+        suffix_trie_section = self.map_section(ma.SUFFIX_TRIE)
+        self._has_reversed_index = suffix_trie_section.end > suffix_trie_section.start
+        self._reversed_lookup = reversed_lookup and self._has_reversed_index
+
+        if self._reversed_lookup:
+            # use the reversed sections for lookup
+            self._trie = self.map_section(ma.SUFFIX_TRIE)
+            self._s_bits = self.map_section(ma.SUFFIX_SELECT)
+            self._s_superblocks = self.map_section(ma.SUFFIX_SELECT_SB)
+            self._hc_bits = self.map_section(ma.SUFFIX_HC)
+            self._hc_super_blocks = self.map_section(ma.SUFFIX_HC_SB)
+            self._eow_bits = self.map_section(ma.SUFFIX_EOW)
+            self._eow_sb = self.map_section(ma.SUFFIX_EOW_SB)
+
         return self._reversed_lookup
 
-    def set_check_key_exists(self, check_key_exists: bool) -> bool:
-        """Returns True if the key exists in the index"""
-        self.check_if_key_exists = check_key_exists
-        return check_key_exists
+    @property
+    def check_if_key_exists(self) -> bool:
+        """Returns True if the search is in 'exists' mode,
+        where we only check if the key (the word) exists without returning the value.
+        """
+        return self._check_if_key_exists
+
+    @check_if_key_exists.setter
+    def check_if_key_exists(self, value: bool):
+        self._check_if_key_exists = value
+
+    def count_items(self) -> int:
+        """Returns the number of items in the index"""
+        return self.max_index_value + 1
+
+    def value_size(self) -> int:
+        """Returns true size of the short text (the resulting value)"""
+        return self._short_text.end - self._short_text.start
 
     def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
@@ -290,7 +211,7 @@ class Mapping:
         and the index of the next "1" bit in the select array that is equal to sum_ones_wanted + 1
         """
         res_start_index: int = None
-        r_start: int = 7
+        r_start: int = 7  # the bit position in the byte to start searching from, 7 is the leftmost bit
         superblock_start: int = sum_ones_wanted // self.bits_in_superblock
         start_index: int = 0
         start_byte: int = 0
@@ -313,6 +234,7 @@ class Mapping:
             ) + 1
             start_byte = start_index // 8
             extra_bits = start_index % 8
+            r_start = 7 - extra_bits
             start_sum = self.bits_in_superblock * superblock_start
         total_sum: int = start_sum
         loop_index: int = start_index
@@ -322,6 +244,7 @@ class Mapping:
 
         value: int = 0
         end_byte: int = start_byte
+
         while total_sum < end_select:
             start_byte = end_byte
             end_byte = start_byte + 16
@@ -329,9 +252,6 @@ class Mapping:
                 if not value:
                     loop_index += 8
                     continue
-                if extra_bits > 0:
-                    r_start = 7 - extra_bits
-                    extra_bits = 0
                 for i in range(r_start, -1, -1):
                     if value & (1 << i):
                         total_sum += 1
@@ -354,7 +274,7 @@ class Mapping:
         superblock_bytes: bytes = b""
         if superblock_start > 0:
             start_block = superblock_start * self.bits_in_superblock // bits_in_byte
-            superblock_bytes: bytes = self.section_slice(
+            superblock_bytes = self.section_slice(
                 self._hc_super_blocks,
                 (superblock_start - 1) * 4,
                 (superblock_start - 1) * 4 + 4,
@@ -408,6 +328,7 @@ class Mapping:
         """
         start_idx: int = index_value * self.nr_bytes_in_index_block
         end_idx: int = start_idx + self.nr_bytes_in_index_block
+
         # short_text index:
         sh_index: int = int.from_bytes(
             self.section_slice(self._index_bits, start_idx, end_idx),
@@ -434,36 +355,38 @@ class Mapping:
             self.section_bytes(self._eow_bits, start_byte) & (1 << (7 - extra_bits)) > 0
         )
 
-    def get_value_bits_sum(self, index: int) -> int:
+    def get_value_bits_sum(self, trie_index_value: int) -> int:
         """
         eow_superblock has 4 byte in each block
-        Each block in eow_superblock stores the number of "1" bits at the beginning of the next block in eow_bits
+        Each block in eow_sb stores the number of "1" bits at the beginning of the next block in eow_bits
         """
-        # superblock start index:
-        sb_start_index: int = max(0, index // 32) * 4 - 4
+        # superblock start index
+        sb_start_index: int = trie_index_value // 32 * 4 - 4
         sb_end_index: int = sb_start_index + 4
 
-        # superblock bytes:
-        sb_start_bytes: bytes = self.section_slice(
-            self._eow_sb, sb_start_index, sb_end_index
+        # superblock bytes
+        sb_start_bytes: bytes = (
+            0
+            if trie_index_value < 32
+            else self.section_slice(self._eow_sb, sb_start_index, sb_end_index)
         )
+
         # nr of "1" bits before the start of the current superblock:
         nr_ones_before: int = (
             0
-            if index < 32
+            if trie_index_value < 32
             else int.from_bytes(sb_start_bytes, byteorder="big", signed=False)
         )
         # number of bits to read in the current eow_bits block:
-        nr_rest_bits: int = index - sb_end_index * 8
+        nr_rest_bits: int = trie_index_value - sb_end_index * 8
 
         eow_bytes = self.section_slice(self._eow_bits, sb_end_index, sb_end_index + 4)
         nr_ones: int = self.eow_index(nr_rest_bits, eow_bytes)
-
         return nr_ones + nr_ones_before - 1
 
     def eow_index(self, end_index: int, value_bytes: bytes) -> int:
         """Returns the index of the last "1" bit in the given bytes"""
-        bits: int = 0
+        bitsum: int = 0
         index: int = 0
         i: int = 0
         for value in value_bytes:
@@ -471,37 +394,42 @@ class Mapping:
                 index += 8
                 continue
             for i in range(7, -1, -1):
-                bits += (value >> i) & 1
+                bitsum += (value >> i) & 1
                 if index == end_index:
-                    return bits
+                    return bitsum
                 index += 1
-        return bits
+        return bitsum
 
-    def get_result(self, value_index: int) -> list[str]:
+    def translate_index(self, index_value: int) -> int:
+        """Translate the index value to the corresponding index in the reversed index"""
+        start_idx: int = index_value * self.nr_bytes_in_index_block
+        end_idx: int = start_idx + self.nr_bytes_in_index_block
+
+        # short_text index:
+        translated_index: int = int.from_bytes(
+            self.section_slice(self._translate_index_bits, start_idx, end_idx),
+            byteorder="big",
+            signed=False,
+        )
+        return translated_index
+
+    def get_result(self, trie_index_value: int) -> list[str]:
         """Returns result of the query"""
-        value_sum: int = self.get_value_bits_sum(value_index)
-        if self._has_reversed_index and self._reversed_lookup:
-            value_sum = value_sum * self.nr_bytes_in_index_block
-            value_sum = int.from_bytes(
-                self.section_slice(
-                    self._translate_index_bits,
-                    value_sum,
-                    value_sum + self.nr_bytes_in_index_block,
-                ),
-                byteorder="big",
-                signed=False,
-            )
-        if self.check_if_key_exists:
-            return [value_sum]
-        index_value, text_len = self.get_index(value_sum)
+        eow_index_value: int = self.get_value_bits_sum(trie_index_value)
+        if self._reversed_lookup:
+            eow_index_value = self.translate_index(eow_index_value)
+        return self.get_by_id(eow_index_value)
 
-        return self.get_short_text(index_value, text_len)
-
-    def get_by_id(self, id: int) -> list[str]:
+    def get_by_id(self, value_index_id: int) -> list[str]:
         """id is the value_sum from the method get_result()"""
 
-        index_value, text_len = self.get_index(id)
-        return self.get_short_text(index_value, text_len)
+        if value_index_id < 0 or value_index_id > self.max_index_value:
+            return []
+        if self._check_if_key_exists:
+            return [value_index_id]
+
+        index_value, text_len = self.get_index(value_index_id)
+        return {value_index_id: self.get_short_text(index_value, text_len)}
 
     def get_short_text(self, index: int, text_len: int) -> list[str]:
         """Returns the short text"""
@@ -511,6 +439,7 @@ class Mapping:
         text_array: list[bytes] = (
             res.split(A.UNIT_SEPARATOR) if A.UNIT_SEPARATOR in res else [res]
         )
+
         return sorted([txt.decode("utf-8") for txt in text_array])
 
     def close(self):
