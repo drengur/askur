@@ -20,6 +20,8 @@ class Section:
 class Mapping:
     """Class for memory-mapped file access and manipulation."""
 
+    BYTE_LOOKUP_DICT = {i: i.bit_count() for i in range(256)}
+
     def __init__(self, collection: str) -> None:
         self._file: str = ""
         self._mmap: mmap.mmap = None
@@ -247,9 +249,12 @@ class Mapping:
             start_byte = end_byte
             end_byte = start_byte + 16
             for value in self.section_slice(self._s_bits, start_byte, end_byte):
-                if not value:
+                bit_count = self.BYTE_LOOKUP_DICT.get(value, 0)
+                if not value or r_start == 7 and total_sum + bit_count < start_select:
+                    total_sum += bit_count
                     loop_index += 8
                     continue
+
                 for i in range(r_start, -1, -1):
                     if value & (1 << i):
                         total_sum += 1
@@ -290,6 +295,7 @@ class Mapping:
             if not value:
                 index += 8
                 continue
+
             for i in range(7, -1, -1):
                 if value & (1 << i):
                     bitsum += 1
@@ -387,8 +393,10 @@ class Mapping:
         bitsum: int = 0
         index: int = 0
         i: int = 0
+
         for value in value_bytes:
-            if not value:
+            if not value or index + 8 < end_index:
+                bitsum += self.BYTE_LOOKUP_DICT.get(value, 0)
                 index += 8
                 continue
             for i in range(7, -1, -1):
@@ -414,6 +422,7 @@ class Mapping:
     def get_result(self, trie_index_value: int) -> list[str]:
         """Returns result of the query"""
         eow_index_value: int = self.get_value_bits_sum(trie_index_value)
+
         if self._reversed_lookup:
             eow_index_value = self.translate_index(eow_index_value)
         return self.get_by_id(eow_index_value)
