@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from typing import Any
+import hashlib
 from askur.config import Config
 
 Config()  # Initialize the global CONFIG variable
@@ -37,6 +38,11 @@ def collections(sort_by: str = "name", descending: bool = False) -> list[dict]:
         for file in os.listdir(os.path.join(data_folder, entry)):
             entry_size += os.path.getsize(os.path.join(data_folder, entry, file))
             date_created = os.path.getctime(os.path.join(data_folder, entry))
+            md5sum = hashlib.md5()
+            with open(os.path.join(data_folder, entry, file), "rb") as f:
+                while chunk := f.read(1024):
+                    md5sum.update(chunk)
+            md5sum = md5sum.hexdigest()
         total_size += entry_size
         size = (
             f"{entry_size / 1_000_000:.2f} MB"
@@ -54,7 +60,8 @@ def collections(sort_by: str = "name", descending: bool = False) -> list[dict]:
                 "entry_size": entry_size,
                 "date": date_created,
                 "entry_count": count,
-                "suffix": "R" if has_suffix else "_"
+                "suffix": "R" if has_suffix else "_",
+                "md5sum": md5sum,
             }
         )
     if not rows:
@@ -127,18 +134,20 @@ def list_collections(sort_by: str = "name", descending: bool = False) -> None:
     col_3_width = max(len(coll["count"]) for coll in rows) + 2
     col_4_width = max(len(coll["suffix"]) for coll in rows) + 2
     col_5_width = max(len(coll["created"]) for coll in rows) + 2
+    col_6_width = max(len(coll["md5sum"]) for coll in rows) + 2
+    
 
     print(f"\nCollections in {data_folder}:")
     print(
-        f"{'n':>{col_0_width}} {'Name':<{col_1_width}} {'Size':>{col_2_width}} {'Items':>{col_3_width}}   {'S':<{col_4_width}} {'Created':<{col_5_width}}"
+        f"{'n':>{col_0_width}} {'Name':<{col_1_width}} {'Size':>{col_2_width}} {'Items':>{col_3_width}}   {'S':<{col_4_width}} {'Created':<{col_5_width}} {'MD5':<{col_6_width}}"
     )
-    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + 4))
+    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + col_6_width + 4))
     for n, coll in enumerate(rows):
         print(
-            f"{n+1:>{col_0_width}} {coll['name']:<{col_1_width}} {coll['size']:>{col_2_width}} {coll['count']:>{col_3_width}}   {coll['suffix']:<{col_4_width}} {coll['created']:<{col_5_width}}"
+            f"{n+1:>{col_0_width}} {coll['name']:<{col_1_width}} {coll['size']:>{col_2_width}} {coll['count']:>{col_3_width}}   {coll['suffix']:<{col_4_width}} {coll['created']:<{col_5_width}} {coll['md5sum']:<{col_6_width}}"
         )
         
-    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + 4))
+    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + col_6_width + 4))
     print(
         f"{'Total':<{col_0_width + col_1_width}}  {(total_size / 1_000_000):>{col_2_width - 3}.2f} MB\n"
     )

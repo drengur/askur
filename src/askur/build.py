@@ -497,7 +497,7 @@ class Trie:
         while i < len(self._hc):
             buffer.append(int("".join([str(c) for c in self._hc[i : i + 8]]), 2))
             i += 8
-            if len(buffer) >= 10240:
+            if len(buffer) >= 1024:
                 with io.open(filename, "ab") as f:
                     f.write(buffer)
                 buffer.clear()  # Clear the buffer to free memory
@@ -519,7 +519,7 @@ class Trie:
         while i < len(self._select):
             buffer.append(int("".join([str(c) for c in self._select[i : i + 8]]), 2))
             i += 8
-            if len(buffer) >= 10240:
+            if len(buffer) >= 1024:
                 with io.open(filename, "ab") as f:
                     f.write(buffer)
                 buffer.clear()
@@ -539,7 +539,7 @@ class Trie:
         while i < len(self._is_eow):
             buffer.append(int("".join([str(c) for c in self._is_eow[i : i + 8]]), 2))
             i += 8
-            if len(buffer) >= 10240:
+            if len(buffer) >= 1024:
                 with io.open(filename, "ab") as f:
                     f.write(buffer)
                 buffer.clear()
@@ -564,7 +564,7 @@ class Trie:
             if i == bits_in_block:
                 i = 0
                 buffer.append(bitsum)
-                if len(buffer) >= 10240:
+                if len(buffer) >= 1024:
                     with io.open(filename, "ab") as fb:
                         for summa in buffer:
                             fb.write(summa.to_bytes(bytes_in_block, "big"))
@@ -722,7 +722,7 @@ class Trie:
             WD.stop()
 
     def _make_reversed(self) -> None:
-        """Make a reversed trie from the original data."""
+        """Make a reversed/suffix trie from the original data."""
 
         self.super_block_size: int = 0
         index_byte_len: int = 0
@@ -842,7 +842,7 @@ class Trie:
         with io.open(master_file, "ab") as f_master:
             with io.open(temp_file, "rb") as f_temp:
                 while True:
-                    chunk = f_temp.read(10240)
+                    chunk = f_temp.read(1024)
                     if not chunk:
                         break
                     f_master.write(chunk)
