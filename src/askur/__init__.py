@@ -168,9 +168,9 @@ def build_collection(
             reversed=False,
             field_separator=field_separator,
         )
-        trie.make_frozen_data(input_data=file)
+        res_build:int = trie.make_frozen_data(input_data=file)
 
-        if reversed:
+        if reversed and res_build == 0:
             trie = askur.build.Trie(
                 collection_name=collection_name,
                 reversed=True,
