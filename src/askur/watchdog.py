@@ -1,7 +1,7 @@
-import psutil
 import os
 import threading
 import time
+import psutil
 
 
 class Watchdog:
@@ -12,6 +12,7 @@ class Watchdog:
         self._text_label: str = ""
         self.running: bool = True
         self.print_statusbar = False
+        self.clear_build: object = None  # Placeholder for the collection name
         self.start()
 
     def monitor_system_memory(self):
@@ -20,10 +21,10 @@ class Watchdog:
             available_percent = mem.available / mem.total
 
             if available_percent < self.threshold:
-                print(
-                    f"Available memory is below {self.threshold * 100}%. Exiting."
-                )
+                print(f"Available memory is below {self.threshold * 100}%. Exiting.")
                 self.stop()
+                if self.clear_build is not None and callable(self.clear_build):
+                    self.clear_build(True)
                 os._exit(1)
             if self.print_statusbar:
                 print(
@@ -54,6 +55,12 @@ class Watchdog:
             "label": label,
         }
 
+    def set_clear_build_method(self, clear_method: object) -> None:
+        """Set the method to be called when memory is low.
+        This method should handle the cleanup of build files or any other necessary actions before exiting.
+        """
+        self.clear_build = clear_method
+
     def print_label(self, label: str = "Memory Status", end: str = "\r") -> None:
         self._text_label = label
 
@@ -72,4 +79,3 @@ class Watchdog:
     def stop(self):
         self.running = False
         self.clear_label()
-

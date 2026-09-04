@@ -106,6 +106,16 @@ class Search:
         return self.mmap.count_items()
 
     @property
+    def start_letters(self) -> list[int]:
+        """Return the first letters of all keys in the collection."""
+        return self.mmap.get_start_letters()
+
+    @property
+    def alphabet(self) -> dict[int, int]:
+        """Return the alphabet used in the collection."""
+        return self.mmap.get_alphabet()
+
+    @property
     def value_size(self) -> int:
         """Return the size of the value associated with each word in the collection.
         = short_text_len
@@ -211,6 +221,27 @@ class Search:
         end_part: list = query[2]
         s_start, s_end = self.mmap.calculate_select(s_index)
 
+        if s_index == 1 and query[0] is None:
+            # We are here because we need to handle the middle part or end_part as a beginning of a word
+            # otherwise we will miss potential matches that start with the middle part/end part
+
+            # two possibilities: either the start_part and middle part are None (query="*word"), or
+            # start_part is None and end_part is None (query="*word*")
+            # we need to construct a new query based on these possibilities
+            # (new_query = "word*")
+            if query[1] is None:
+                n_start_part = query[2][:]
+                n_middle_parts = None
+            else:
+                n_start_part = query[1][0][:]
+                n_middle_parts = query[1][1:][:] or None
+            n_start_part.append(WILDCARD)
+            new_query = [n_start_part, n_middle_parts, None]
+            yield from self._search(
+                new_query,
+                s_index,
+            )
+
         next_start_part: list = (
             start_part[:-1][:]
             if start_part and start_part[-1] == WILDCARD
@@ -218,6 +249,7 @@ class Search:
             if start_part
             else []
         )
+
         for idx, i_letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
             if i_letter in (UNDERSCORE, WILDCARD):
                 i_letter *= -1
@@ -290,7 +322,7 @@ class Search:
             word_parts = [[s,t],[a,k],[r,a]]
             Returns True because "st" appears first, then "ak", then "ra"
         """
-        if word_parts is None or word_part is None:
+        if not word_parts or not word_part:
             return True
 
         word_len: int = len(word_part)
@@ -717,13 +749,12 @@ def main():
         if exists:
             for items in S.exists(query):
                 print(items)
-            return
-        if fuzzy_search:
+        elif fuzzy_search:
             for items in S.fuzzy_search(query):
                 print(items)
-            return
-        for items in S.lookup(query):
-            print(items)
+        else:
+            for items in S.lookup(query):
+                print(items)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import os
 import mmap
+from pathlib import Path
 from dataclasses import dataclass
 from askur.alphabet import Alphabet
 from askur.config import Config
@@ -96,12 +97,12 @@ class Mapping:
             "ASKUR_DATA_FOLDER environment variable is not set. Please update config.py."
         )
 
-        frozen_folder = os.path.join(data_folder, self.collection)
-        assert os.path.exists(frozen_folder), (
+        frozen_folder = Path(data_folder) / self.collection
+        assert frozen_folder.exists(), (
             f"'{self.collection}' collection does not exist! \nPlease list available collections (askur-list_collections)\nor check the ASKUR_DATA_FOLDER directory: {data_folder}"
         )
 
-        data_filename = os.path.join(frozen_folder, "data.bin")
+        data_filename = Path(frozen_folder) / "data.bin"
 
         self._file = open(data_filename, "rb")
         self._mmap = mmap.mmap(self._file.fileno(), 0, access=mmap.ACCESS_READ)
@@ -205,6 +206,19 @@ class Mapping:
         """Returns true size of the short text (the resulting value)"""
         return self._short_text.end - self._short_text.start
 
+    def get_start_letters(self) -> list[str]:
+        """Get all first letters in any word in the collection. ."""
+        return [chr(c) for c in self.get_trie_range(*self.calculate_select(1))]
+
+    def get_alphabet(self) -> list[str]:
+        """Get the alphabet used in the collection."""
+        return [
+            chr(c)
+            for c in self.section_slice(
+                self.alphabet, 0, self.alphabet.end - self.alphabet.start
+            )
+        ]
+
     def calculate_select(self, sum_ones_wanted: int) -> list[int, int]:
         # There are 32 bits/4 bytes in each superblock
         """Returns the index of the first "1" bit in the select array that is equal to sum_ones_wanted
@@ -247,7 +261,9 @@ class Mapping:
 
         while total_sum < end_select:
             start_byte = end_byte
-            end_byte = start_byte + 16
+            end_byte = (
+                start_byte + 16
+            )  # read 16 bytes at a time, to reduce the number of calls to section_slice
             for value in self.section_slice(self._s_bits, start_byte, end_byte):
                 bit_count = self.BYTE_LOOKUP_DICT.get(value, 0)
                 if not value or r_start == 7 and total_sum + bit_count < start_select:

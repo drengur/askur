@@ -13,10 +13,7 @@ class Alphabet:
         self._alphabet: dict[int, int] = {
             ord(c): n for n, c in enumerate(os.getenv("ASKUR_ALPHABET"))
         }
-
-        self._used_alphabet: list[
-            dict[int, int]
-        ] = []  # used alphabet is empty at the start and gets filled as words are added
+        self._used_alphabet: list[int] = []
 
     @property
     def alphabet(self) -> dict[int, int]:
@@ -80,6 +77,8 @@ class Alphabet:
             if ord(c) > 255:
                 nr_bytes = (ord(c).bit_length() + 7) // 8
                 res.append(nr_bytes)
+                if nr_bytes not in self._used_alphabet:
+                    self._used_alphabet.append(nr_bytes)
                 byte_values = ord(c).to_bytes(nr_bytes, byteorder="big")
                 res.extend([b for b in byte_values])
                 self.add(nr_bytes)
@@ -87,21 +86,17 @@ class Alphabet:
                 continue
             if ord(c) not in self._alphabet:
                 self.add(c)
-            res.extend(ord(c).to_bytes(1, byteorder="big"))
             if ord(c) not in self._used_alphabet:
-                self._used_alphabet.extend([ord(c)])
+                self._used_alphabet.append(ord(c))
+            res.extend(ord(c).to_bytes(1, byteorder="big"))
         return res
 
     @property
-    def used_alphabet(self) -> list[dict[int, int]]:
+    def used_alphabet(self) -> list[int]:
         """Return the used letters in the alphabet."""
-        return self._used_alphabet
+        return self.get_used
 
     @property
     def get_used(self) -> bytearray:
         """Return the used letters in the alphabet as a bytearray."""
-        alphabet_bytes = bytearray()
-        for k in self._alphabet.keys():
-            if k in self._used_alphabet and k not in alphabet_bytes:
-                alphabet_bytes.append(k)
-        return alphabet_bytes
+        return  [c for c in self._used_alphabet]
