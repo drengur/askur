@@ -5,8 +5,8 @@ import psutil
 
 
 class Watchdog:
-    def __init__(self, threshold: int = 5, interval: int = 3):
-        self.threshold: float = threshold * 0.01  # Convert percentage to fraction
+    def __init__(self, threshold: int = 60, interval: int = 3):
+        self.threshold: float = 1 -threshold * 0.01  # Convert percentage to fraction
         self.interval: int = interval
         self.thread: threading.Thread | None = None
         self._text_label: str = ""
@@ -21,7 +21,7 @@ class Watchdog:
             available_percent = mem.available / mem.total
 
             if available_percent < self.threshold:
-                print(f"Available memory is below {self.threshold * 100}%. Exiting.")
+                print(f"Available memory is less than {self.threshold * 100}%. Exiting.")
                 self.stop()
                 if self.clear_build is not None and callable(self.clear_build):
                     self.clear_build(True)

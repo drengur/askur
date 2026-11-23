@@ -3,6 +3,8 @@ import sys
 
 
 class Alphabet:
+    UNDERSCORE = ord("_")
+    WILDCARD = ord("*")
     UNIT_SEPARATOR = b"\x1f"  # int = 31, unit separator between results for multiple results in the lookup result (short_text)
 
     def __init__(self) -> None:
@@ -99,4 +101,21 @@ class Alphabet:
     @property
     def get_used(self) -> bytearray:
         """Return the used letters in the alphabet as a bytearray."""
-        return  [c for c in self._used_alphabet]
+        return [c for c in self._used_alphabet]
+
+    @property
+    def get_used_sorted(self) -> list[int]:
+        """Return the used letters in the alphabet sorted."""
+        res = []
+        for _, c in enumerate(self._alphabet):
+            if c in self._used_alphabet:
+                res.append(c)
+        return res
+
+    def case_folding(self, char: int) -> int:
+        """Convert character to lower case if it's upper case and vice versa."""
+        if (char >= 65 and char <= 90) or (char >= 192 and char <= 222):
+            return char + 32
+        if (char >= 97 and char <= 122) or (char >= 224 and char <= 254):
+            return char - 32
+        return char

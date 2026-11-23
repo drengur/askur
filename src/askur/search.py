@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 
+import sys
+import json
+
 from typing import Iterator
 from askur.filemapping import Mapping
 from askur.config import Config
 from askur.alphabet import Alphabet
+
+# from askur.scan import Scanner
+from askur.query_builder import QueryBuilder as qb
+# from askur.lookup import Lookup
+
 
 Config()  # Initialize the global CONFIG variable
 A = Alphabet()
@@ -21,6 +29,12 @@ class Search:
         limit: int = 0,
         case_insensitive: bool = False,
         use_levenshtein: bool = False,
+        exists: bool = False,
+        sort_ascending: bool = False,
+        sort_descending: bool = False,
+        id: int = -1,
+        output_json: bool = False,
+        output_list: bool = False,
     ) -> None:
         assert isinstance(collection, str) and collection, (
             "Collection name must be a non-empty string."
@@ -31,6 +45,9 @@ class Search:
         assert isinstance(case_insensitive, bool), "case_insensitive must be a boolean."
         assert isinstance(use_levenshtein, bool), "use_levenshtein must be a boolean."
         assert collection, "Collection name must be provided."
+        assert (output_json and output_list) is False, (
+            "Cannot set both output_json and output_list to True."
+        )
 
         self.mmap = Mapping(collection)
         self._levenshtein = use_levenshtein
@@ -40,6 +57,13 @@ class Search:
         self._nr_results = 0
         self._reversed = False
         self._levenshtein_query = None
+        self._exists = self._set_check_if_key_exists(exists)  # check if key exists mode
+
+        self._sort_ascending = sort_ascending
+        self._sort_descending = sort_descending
+        self._id = id
+        self._output_json = output_json
+        self._output_list = output_list
 
     def __enter__(self):
         """Enter the runtime context related to this object."""
@@ -49,32 +73,20 @@ class Search:
         """Exit the runtime context related to this object."""
         self.close()
 
-    @property
-    def check_if_key_exists(self) -> bool:
-        """Check if the search is in 'exists' mode,
-        where we only check if the key (the word) exists without returning the value.
-        """
+    def _set_check_if_key_exists(self, value: bool):
+        self.mmap.check_if_key_exists = value
         return self.mmap.check_if_key_exists
 
-    @check_if_key_exists.setter
-    def check_if_key_exists(self, value: bool):
-        self.mmap.check_if_key_exists = value
-
-    def _add_result(self, value) -> dict[str, list[str] | int] | None:
-
-        if self.search_completed():
-            # Reset the flag for checking key existence for future searches
-            self.check_if_key_exists = False
-            return None
+    def add_result(self, value) -> dict[str, list[str] | int] | None:
         self._nr_results += 1
 
         key: str
-        if self.levenshtein:
+        if self._levenshtein:
             key = list(value.keys())[0]
             if key == self._levenshtein_query:
                 self._nr_results -= 1  # Don't count the original query word as a result
                 return None  # Skip the original query word in fuzzy search results
-        if self.check_if_key_exists:
+        if self._exists:
             val: list[str] | int = (
                 0
                 if not value.values() or not list(value.values())[0]
@@ -82,23 +94,42 @@ class Search:
             )
         else:
             val: list[str] = list(value.values())[0]
-        if self.reversed:
-            key = list(value.keys())[0][::-1]
-        else:
-            key = list(value.keys())[0]
+        key = list(value.keys())[0]
         return {key: val}
+
+    def format_output(self, value) -> str:
+        """Format the output based on the current output settings."""
+        if not value:
+            return ""
+        key = list(value.keys())[0]
+        val = value[key]
+
+        if self._output_list:
+            return self.results_as_list(key, val)
+        if self._output_json:
+            return self.result_as_json(key, val)
+        return f"{key}: {val}"
+
+    def results_as_list(self, key: str, value: dict[str, list[str] | int]):
+        """Convert the search result to a list format."""
+
+        if isinstance(value, list):
+            value_str = ", ".join(value)
+        if isinstance(value, dict):
+            value_str = ", ".join(f"{k}: {v}" for k, v in value.items())
+
+        return f"{key}: {value_str}"
+
+    def result_as_json(self, key: str, value: dict[str, list[str] | int]) -> str:
+        """Convert the search result to a JSON string."""
+        return json.dumps({key: value}, ensure_ascii=False)
 
     def search_completed(self) -> bool:
         """Check if the search is completed."""
-        return self._limit > 0 and self._nr_results >= self._limit
+        if self._sort_ascending or self._sort_descending:
+            return False
 
-    def case_folding(self, char: int) -> int:
-        """Convert character to lower case if it's upper case and vice versa."""
-        if (char >= 65 and char <= 90) or (char >= 192 and char <= 222):
-            return char + 32
-        if (char >= 97 and char <= 122) or (char >= 224 and char <= 254):
-            return char - 32
-        return char
+        return self._limit > 0 and self._nr_results >= self._limit
 
     @property
     def count_collection_items(self) -> int:
@@ -115,580 +146,69 @@ class Search:
         """Return the alphabet used in the collection."""
         return self.mmap.get_alphabet()
 
-    @property
-    def value_size(self) -> int:
-        """Return the size of the value associated with each word in the collection.
-        = short_text_len
-        """
-        return self.mmap.value_size()
 
-    @property
-    def collection_name(self) -> str:
-        """Return the name of the collection being searched."""
-        return self._collection_name
-
-    @property
-    def limit(self) -> int:
-        """Return the maximum number of results to return. 0 means no limit."""
-        return self._limit
-
-    @limit.setter
-    def limit(self, value: int):
-        self._limit = value
-        assert self._limit >= 0, "Limit must be a non-negative integer."
-
-    @property
-    def levenshtein(self) -> bool:
-        """Return whether to use Levenshtein distance (of one) for the search."""
-        return self._levenshtein
-
-    @levenshtein.setter
-    def levenshtein(self, use_levenshtein: bool):
-        """Set whether to use Levenshtein distance for the search."""
-        self._levenshtein = use_levenshtein
-
-    @property
-    def has_suffix_index(self) -> int:
-        return self.mmap.has_reversed_index()
-
-    @property
-    def reversed(self) -> bool:
-        """Return whether to search in reversed order (suffix search)."""
-        return self._reversed and self.mmap.has_reversed_index()
-
-    @reversed.setter
-    def reversed(self, is_reversed: bool):
-        """Set whether to search in reversed order."""
-        self._reversed = is_reversed and self.mmap.has_reversed_index()
-        self.mmap.do_reversed_lookup(self._reversed)
-
-    @property
-    def case_insensitive(self) -> bool:
-        """Return whether to use case insensitive search."""
-        return self._case_insensitive
-
-    @case_insensitive.setter
-    def case_insensitive(self, value: bool):
-        """Set whether to use case insensitive search."""
-        self._case_insensitive = value
-
-    def levenshtein_find(self, query: list) -> None:
-        """Method to find similar words
-        Levenshtein distance of 1 is used to find similar words
-        Case folding is applied to find similar words in case insensitive search
-
-        WORD can be transformed into another word by:
-        - add a letter
-        - remove a letter
-        - replace a letter
-        """
-
-        if query[0] is None or UNDERSCORE in query[0] or WILDCARD in query[0]:
-            # If there are wildcards in the query, we cannot use Levenshtein distance
-            return
-
-        # Store the original query as a string for comparison in results,
-        # to avoid returning the original query word in fuzzy search results
-        self._levenshtein_query = self._query_to_string(query[0])
-
-        for i in range(len(query[0])):
-            # add letter between every letter in the word
-            # beginning and end as well
-            new_word = query[0][:]
-            new_word.insert(i, UNDERSCORE)
-            yield from self._search([new_word, None, None], s_index=1)
-
-        # replace the letter at position n with i_letter
-        for n in range(len(query[0])):
-            new_word = query[0][:]
-            new_word[n] = UNDERSCORE
-            yield from self._search([new_word, None, None], s_index=1)
-
-        # remove the letter at position n
-        for n in range(len(query[0])) if len(query[0]) > 1 else []:
-            new_word = query[0][:]
-            del new_word[n]
-            yield from self._search([new_word, None, None], s_index=1)
-
-    def _wildcard_search(
-        self, s_index, query, original_start_part=None
-    ) -> Iterator[dict[str, list[str]]]:
-        """Search for a word in the trie with wildcards (*) in the query."""
-        if self.search_completed():
-            return
-        start_part: list = query[0]
-        middle_parts: list = query[1]
-        end_part: list = query[2]
-        s_start, s_end = self.mmap.calculate_select(s_index)
-
-        if s_index == 1 and query[0] is None:
-            # We are here because we need to handle the middle part or end_part as a beginning of a word
-            # otherwise we will miss potential matches that start with the middle part/end part
-
-            # two possibilities: either the start_part and middle part are None (query="*word"), or
-            # start_part is None and end_part is None (query="*word*")
-            # we need to construct a new query based on these possibilities
-            # (new_query = "word*")
-            if query[1] is None:
-                n_start_part = query[2][:]
-                n_middle_parts = None
-            else:
-                n_start_part = query[1][0][:]
-                n_middle_parts = query[1][1:][:] or None
-            n_start_part.append(WILDCARD)
-            new_query = [n_start_part, n_middle_parts, None]
-            yield from self._search(
-                new_query,
-                s_index,
-            )
-
-        next_start_part: list = (
-            start_part[:-1][:]
-            if start_part and start_part[-1] == WILDCARD
-            else start_part[:]
-            if start_part
-            else []
-        )
-
-        for idx, i_letter in enumerate(self.mmap.get_trie_range(s_start, s_end)):
-            if i_letter in (UNDERSCORE, WILDCARD):
-                i_letter *= -1
-
-            next_start_part.append(i_letter)
-            next_end_part: list = (
-                None if not end_part else next_start_part[-len(end_part) :]
-            )
-            # pattern_to_match = [end_part] when checking if the end part matches
-            end_part_match = self._matches_pattern_sequence(next_end_part, [end_part])
-
-            # Remove the original start part from the next start part
-            # to get the pattern to match for the middle parts
-            if not original_start_part:
-                original_start_part = next_start_part[:-1][:]
-
-            word_parts_match = False
-            if end_part_match:
-                # If the end part matches, we can check if the middle parts matches
-                # with the pattern to match
-                pattern_to_match = next_start_part[len(original_start_part) :]
-                word_parts_match = self._matches_pattern_sequence(
-                    pattern_to_match, middle_parts
-                )
-
-            # Check if we can match any of the patterns in word_parts sequentially
-            if word_parts_match and self.mmap.is_end_of_word(s_start + idx):
-                result = self.mmap.get_result(s_start + idx)
-                if len(query) > 3:
-                    word = self._query_to_string((query[3] or []) + next_start_part)
-                else:
-                    word = self._query_to_string(next_start_part)
-
-                res = self._add_result({word: result})
-                if res:
-                    yield res
-                else:
-                    # search is completed, so we can return without yielding more results
-                    return
-
-            # If we have a match, continue searching.
-            # bitsum is the number of children (nr_hc = head count) for the current letter in the trie.
-            bitsum = self.mmap.calculate_hc(s_start + idx)
-            if bitsum > 0:
-                yield from self._wildcard_search(
-                    bitsum + 1,
-                    [
-                        next_start_part,
-                        middle_parts,
-                        end_part,
-                        query[3] if len(query) > 3 else None,
-                    ],
-                    original_start_part,
-                )
-            next_start_part.pop()
-
-    def _matches_pattern_sequence(self, word_part, word_parts) -> bool:
-        """
-        Check if word_part contains ALL patterns from word_parts in sequential order.
-
-        Args:
-            word_part: Current accumulated letters as list of integers
-            word_parts: List of patterns, e.g. [[s,t],[a,k],[r,a]] for "st*ak*ra"
-
-        Returns:
-            bool: True if ALL patterns are found in their relative order
-
-        Example:
-            word_part = [s,t,u,v,a,k,w,x,r,a,z]
-            word_parts = [[s,t],[a,k],[r,a]]
-            Returns True because "st" appears first, then "ak", then "ra"
-        """
-        if not word_parts or not word_part:
-            return True
-
-        word_len: int = len(word_part)
-        search_start: int = 0
-        # MUST match ALL patterns in the given order
-        for pattern in word_parts:
-            pattern_len = len(pattern)
-            pattern_matches = False
-
-            # Search for this pattern starting from where the last pattern ended
-            for i in range(search_start, word_len - pattern_len + 1):
-                chr_match = True
-                for j in range(pattern_len):
-                    if pattern[j] == UNDERSCORE:
-                        # Underscore matches any character, so we skip this position
-                        continue
-                    current_char = word_part[i + j]
-                    pattern_chars = (
-                        [pattern[j]]
-                        if not self.case_insensitive
-                        else [pattern[j], self.case_folding(pattern[j])]
-                    )
-                    if current_char not in pattern_chars:
-                        chr_match = False
-                        break
-                if chr_match:
-                    # Pattern found! Next pattern must start after this one
-                    search_start = i + pattern_len
-                    pattern_matches = True
-                    break
-
-            # If ANY pattern is not found, the whole sequence fails
-            if not pattern_matches:
-                return False
-
-        # Only returns True if ALL patterns were found in order
-        return True
-
-    def _underscore_search(
-        self, s_index, query, start
-    ) -> Iterator[dict[str, list[str]]]:
-        """
-        Search for a word in the trie from a given index.
-        This method handles the underscore wildcard "_" which matches any single character.
-        """
-        s_start, s_end = self.mmap.calculate_select(s_index)
-        chr_range = self.mmap.get_trie_range(s_start, s_end)
-        next_query = [[], query[1], query[2]]
-
-        if len(query) > 3:
-            next_query.append(query[3] + query[0][0:start])
-        else:
-            next_query.append(query[0][0:start])
-
-        for i_letter in chr_range:
-            if i_letter in (UNDERSCORE, WILDCARD):
-                i_letter *= -1  # Escape the character
-            next_query[0] = [i_letter] + query[0][start + 1 :][:]
-            yield from self._search(next_query, s_index)
-
-    def _case_insensitive_search(
-        self, query, s_index, start=0
-    ) -> Iterator[dict[str, list[str]]]:
-        """
-        Search for a word in the trie from a given index.
-        This method handles case insensitive search by checking both upper and lower case letters.
-        """
-        if start >= len(query[0]):
-            # We have reached the end of the query, so we can return without yielding more results
-            return
-
-        start_is_in_mb: bool = False  # check if the start index is in a multibyte character, because then we should not apply case folding to it
-        multibytes: list[int] = [tal for tal in query[0] if 1 < tal <= 4]
-        for item in multibytes:
-            mb_start = query[0].index(item)
-            mb_end = mb_start + item + 1
-            if mb_start <= start < mb_end:
-                start_is_in_mb = True
-                break
-
-        if len(query) == 3:
-            query.append([])
-
-        chr_range = []
-        next_query = [[], query[1], query[2], query[3]]
-        s_start, s_end = self.mmap.calculate_select(s_index)
-        trie_range = self.mmap.get_trie_range(s_start, s_end)
-        i_letter = query[0][start]
-        i_fold_letter = i_letter if start_is_in_mb else self.case_folding(i_letter)
-
-        if i_letter in trie_range:
-            chr_range.append(i_letter)
-        if i_letter != i_fold_letter and i_fold_letter in trie_range:
-            chr_range.append(i_fold_letter)
-        if not chr_range and i_letter == UNDERSCORE:  #  "_"
-            chr_range = trie_range
-
-        for nr, ic_letter in enumerate(chr_range):
-            chr_index = trie_range.index(ic_letter)
-            nr_hc = self.mmap.calculate_hc(s_start + chr_index)
-
-            if start == len(query[0]) - 1 and self.mmap.is_end_of_word(
-                s_start + chr_index
-            ):
-                result = self.mmap.get_result(s_start + chr_index)
-                word = self._query_to_string(query[0][:][0:start]) + chr(ic_letter)
-                if len(query) > 3:
-                    word = self._query_to_string(query[3]) + word
-
-                result = self._add_result({word: result})
-                if result is not None:
-                    yield result
-                else:
-                    return
-
-                if nr < len(chr_range) - 1:
-                    continue
-                break
-
-            if self.search_completed():
-                return
-
-            if query[0][-1] == WILDCARD and len(query[0][start:]) == 2:
-                wild_query = [query[0][:][start:], query[1], query[2]]
-
-                if len(query) > 3:
-                    wild_query.append(query[3] + query[0][:][0:start])
-                else:
-                    wild_query.append(query[0][:][0:start])
-                yield from self._search(wild_query, s_index)
-
-            if nr_hc > 0:
-                s_index_next = nr_hc + 1
-                next_query[0] = query[0][:]
-                next_query[0][start] = ic_letter
-
-                yield from self._case_insensitive_search(
-                    next_query, s_index_next, start + 1
-                )
-
-    def _search(
-        self, query: list, s_index: int
+    def search(
+        self, query_string: str
     ) -> Iterator[dict[str, list[str]] | dict[str, int]]:
-        chr_index: int = -1
-        if self.search_completed():
-            return
-
-        for n, i_letter in enumerate(query[0]):
-            if i_letter == WILDCARD:  # "*"
-                yield from self._wildcard_search(s_index, query)
-                return
-            if i_letter == UNDERSCORE:  # "_"
-                yield from self._underscore_search(s_index, query, n)
-                return
-            if i_letter < 0:  # Negative ASCII value means escaped character
-                i_letter *= -1
-            s_start, s_end = self.mmap.calculate_select(s_index)
-            chr_index = self.mmap.get_trie_index_of(s_start, s_end, i_letter)
-            # No such letter in the trie range, so we can return
-            if chr_index == -1:
-                return
-
-            if n < len(query[0]) - 1:
-                nr_hc = self.mmap.calculate_hc(s_start + chr_index)
-                if nr_hc == 0:
-                    if n == len(query[0]) - 2 and query[0][-1] == WILDCARD:
-                        if query[1] is None and query[2] is None:
-                            break
-                    # We can return here without result, because we have nothing more to search for
-                    return
-
-                # if we are at the end of the query and the last letter in the query is a wildcard
-                # and we have perhaps a complete word at this point, even if there are no more letters
-                # in the query, we can still find a possible result
-                if (
-                    n == len(query[0]) - 2
-                    and query[0][-1] == WILDCARD
-                    and not query[1]
-                    and not query[2]
-                ):
-                    end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
-                    if end_of_word:
-                        result = self.mmap.get_result(s_start + chr_index)
-                        word = self._query_to_string(query[0])
-                        if (
-                            len(query) > 3
-                        ):  # If there is a prefix in the query from underscore search
-                            word = self._query_to_string(query[3]) + word
-                        res = self._add_result({word: result})
-                        if res is not None:
-                            yield res
-                        else:
-                            # search is completed, so we can return without yielding more results
-                            return
-                s_index = nr_hc + 1
-
-        if s_start is None or chr_index == -1:
-            return
-
-        end_of_word = self.mmap.is_end_of_word(s_start + chr_index)
-
-        if end_of_word:
-            result = self.mmap.get_result(s_start + chr_index)
-            word = self._query_to_string(query[0])
-            # If there is a prefix in the query from underscore search
-            if len(query) > 3:
-                word = self._query_to_string(query[3]) + word
-
-            res = self._add_result({word: result})
-            if res is not None:
-                yield res
-            else:
-                return  # search is completed, so we can return without yielding more results
-
-    def _query_to_string(self, query) -> str:
-        """Convert a query list of integers (ASCII values) back to text."""
-        if query is None:
-            return ""
-        if len(query) > 1 and query[-1] == WILDCARD:
-            # Remove the wildcard from the end of the query, because it is not part of the word
-            query = query[:-1][:]
-
-        # Convert negative (escaped) ASCII values back to their original characters
-        query = [val if val >= 0 else -val for val in query]
-        return A.convert_bytes_to_str(query)
-
-    def fuzzy_search(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
-        """Fuzzy search for a word in the trie.
-        This method uses Levenshtein distance of 1 to find similar words.
-        """
-        self.levenshtein = True
-        try:
-            yield from self.search(query)
-        finally:
-            self.levenshtein = False
-
-    def exists(self, query) -> Iterator[dict[str, int]]:
-        """
-        For faster search results.
-        Check if a word exists in the collection.
-        This method does not return the value associated with the word,
-        it only checks if the word exists.
-        returns list of words with its index value.
-        """
-        self.check_if_key_exists = True
-        try:
-            yield from self.search(query)
-        finally:
-            self.check_if_key_exists = False
-
-    def get_by_id(self, result_id: int) -> list[int]:
-        """Implement the method to get a word by its ID."""
-        return self.mmap.get_by_id(result_id)
-
-    def search(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
         """Search for a word in the trie."""
-        modified_query = self._prepare_query(query)
-        self._nr_results = 0  # Reset the number of results for each search
 
-        if self.levenshtein:
-            # Using Levenshtein distance to find similar words.
-            if (
-                modified_query is None
-                or modified_query[0] is None
-                or modified_query[1] is not None
-                or modified_query[2] is not None
-            ):
-                print("Invalid query for fuzzy search.")
-                return
-            yield from self.levenshtein_find(modified_query)
-            self.levenshtein = False
-        elif self.case_insensitive and modified_query[0] is not None:
-            # Using case insensitive search.
-            yield from self._case_insensitive_search(modified_query, 1)
-        elif modified_query[0] is None:
-            # Using wildcards in start of query:
-            yield from self._wildcard_search(1, modified_query)
+        qb_instance = qb(
+            query_string,
+            limit=self._limit,
+            case_insensitive=self._case_insensitive,
+            use_levenshtein=self._levenshtein,
+            key_exists=self._exists,
+            id=self._id,
+        )
+        # print(qb_instance)
+
+        if qb_instance.query_type == "scan":
+            from askur.scan import Scanner
+
+            scanner = Scanner(qb_instance, self)
+            if self._sort_ascending or self._sort_descending:
+                yield from self.sorted_results(scanner.start_scan)
+            else:
+                yield from [self.format_output(item) for item in scanner.start_scan()]
+            return
+
+        from askur.lookup import Lookup
+
+        lookup = Lookup(self, qb_instance)
+        if self._sort_ascending or self._sort_descending:
+            yield from self.sorted_results(lookup.lookup)
         else:
-            # Using no wildcards in start of query:
-            yield from self._search(modified_query, 1)
+            yield from [self.format_output(item) for item in lookup.lookup()]
 
-    def lookup(self, query) -> Iterator[dict[str, list[str]] | dict[str, int]]:
-        """Lookup a word in the trie."""
-        return self.search(query)
+    def sorted_results(self, method) -> Iterator[dict[str, list[str]] | dict[str, int]]:
+        """Return the search results sorted by key."""
+        results = list(method())
 
-    def _prepare_query(self, query):
-        """Modify the query to be used in the search.
-        This method handles wildcards, underscores, and character encoding.
-        It returns a list with three parts and converts characters to their ASCII values:
-        - starts_with: characters before the first wildcard (*)
-        - middle_part: characters between the first and last wildcard (*)
-        - ends_with: characters after the last wildcard (*)
-        If there are no wildcards, it returns a list with the query as the first element and None for the other two.
-        """
-        res = []
-        esc = False  # Escape character for wildcards '\'
+        if not results:
+            return iter([])
 
-        reversed_query = (
-            self.mmap.has_reversed_index()
-            and query.startswith("*")
-            and not query.endswith("*")
-            and len(query) > 1
-        )
-        reversed_query = (
-            False
-            if reversed_query and [ch for ch in query[1:] if ch != "_"] == []
-            else reversed_query
-        )
+        # returns a single item if the id is specified
+        if self._id > -1:
+            return iter([self.format_output(res) for res in results])
 
-        if reversed_query:
-            self.reversed = True
-            query = query[::-1]
-        for c in query:
-            if ord(c) > 255:
-                multi_bytes = A.convert_str_to_bytes(c)
-                res.extend(multi_bytes)
-            else:
-                if c == "\\" and not esc:
-                    esc = True
-                    continue
-                if esc:
-                    if c in ("*", "_"):
-                        res.append(-1 * ord(c))
-                    else:
-                        res.append(ord(c))
-                    esc = False
-                    continue
+        def key_func(item):
+            return [self.alphabet.index(c) for c in next(iter(item)).casefold()]
 
-                res.append(ord(c))
+        if self._sort_descending:
+            results = sorted(
+                results,
+                key=key_func,
+                reverse=True,
+            )
+        elif self._sort_ascending:
+            results = sorted(
+                results,
+                key=key_func,
+            )
 
-        if WILDCARD in res:
-            # Every character before the first wildcard belong to the start
-            starts_with = None
-            # Every character between the first and last wildcard belongs to the middle
-            middle_part = []
-            # Every character after the last wildcard belongs to the end
-            ends_with = None
-            # split at first wildcard
-            index = res.index(WILDCARD)
-            if index > 0:
-                starts_with = res[: index + 1]
-            # Split at the last occurrence of wildcard
-            last_index = len(res) - 1 - res[::-1].index(WILDCARD)
-            ends_with = res[last_index + 1 :]
-            if not ends_with:
-                ends_with = None
-
-            # the part between the first and last wildcard is split at every wildcard, to get the middle parts
-            parts = res[index + 1 : last_index]
-            res = res[index + 1 :]
-            sublist = []
-            for _, item in enumerate(parts):
-                if item == WILDCARD:
-                    middle_part.append(sublist)
-                    sublist = []
-                else:
-                    sublist.append(item)
-            if sublist:
-                middle_part.append(sublist)
-            else:
-                middle_part = None
-            return [starts_with, middle_part, ends_with]
-
-        if res == []:
-            return None
-        return [res, None, None]
+        if self._limit > 0:
+            return iter([self.format_output(res) for res in results[: self._limit]])
+        return iter([self.format_output(res) for res in results])
 
     def close(self):
         """Close the memory-mapped file."""
@@ -699,11 +219,19 @@ class Search:
 def main():
     """Main entry point for the askur-search CLI command."""
     import argparse
+    import signal
+
+    # Handle SIGPIPE for proper pipe behavior (Unix/Linux)
+    # Allows silent exit when piping to commands like 'head'
+    if hasattr(signal, "SIGPIPE"):
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     arg_parser = argparse.ArgumentParser(
         description="Search for a key in a collection of key-value pairs stored in a LOUDS trie."
     )
-    arg_parser.add_argument("-c", type=str, help="The collection to search in.")
+    arg_parser.add_argument(
+        "-c", type=str, required=True, help="The collection to search in."
+    )
     arg_parser.add_argument(
         "-q",
         type=str,
@@ -727,6 +255,20 @@ def main():
         action="store_true",
         help="Check if the word exists in the collection.",
     )
+    arg_parser.add_argument(
+        "--id",
+        type=int,
+        default=-1,
+        help="Return the search results by ID.",
+    )
+    arg_parser.add_argument("--asc", action="store_true", help="Sort ascending")
+    arg_parser.add_argument("--desc", action="store_true", help="Sort descending")
+    arg_parser.add_argument(
+        "--json", action="store_true", help="Output results in JSON format."
+    )
+    arg_parser.add_argument(
+        "--list", action="store_true", help="Output results as a list."
+    )
 
     args = arg_parser.parse_args()
 
@@ -736,25 +278,29 @@ def main():
     fuzzy_search = args.z
     case_insensitive = args.insensitive
     exists = args.exists
-
-    assert collection is not None, "Collection 'c' is required."
-    assert query is not None, "query/word 'q' is required."
+    id = args.id if args.id > -1 else -1
+    sort_ascending = args.asc
+    sort_descending = args.desc
 
     with Search(
         collection=collection,
         limit=limit,
         case_insensitive=case_insensitive,
         use_levenshtein=fuzzy_search,
-    ) as S:
-        if exists:
-            for items in S.exists(query):
-                print(items)
-        elif fuzzy_search:
-            for items in S.fuzzy_search(query):
-                print(items)
-        else:
-            for items in S.lookup(query):
-                print(items)
+        exists=exists,
+        sort_ascending=sort_ascending,
+        sort_descending=sort_descending,
+        id=id,
+        output_json=args.json,
+        output_list=args.list,
+    ) as s:
+        try:
+            for item in s.search(query):
+                print(item)
+        except BrokenPipeError:
+            # Silently exit when pipe is closed (e.g., by 'head')
+            s.close()
+            sys.exit(0)
 
 
 if __name__ == "__main__":

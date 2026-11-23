@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 from typing import Any
-import hashlib
 from askur.config import Config
 
 Config()  # Initialize the global CONFIG variable
@@ -22,27 +21,20 @@ def collections(sort_by: str = "name", descending: bool = False) -> list[dict]:
     rows: list[dict[str, Any]] = []
     data_folder = os.environ["ASKUR_DATA_FOLDER"]
     total_size: int = 0
-    has_suffix: bool = False
-    
+
     if not os.path.exists(data_folder):
         return []
-    
+
     for entry in sorted(os.listdir(data_folder) or []):
         # get size of folder
         search_instance = S(collection=entry)
         count = search_instance.count_collection_items
-        has_suffix = search_instance.has_suffix_index
         search_instance.close()  # Close the search instance to free resources
 
         entry_size = 0
         for file in os.listdir(os.path.join(data_folder, entry)):
             entry_size += os.path.getsize(os.path.join(data_folder, entry, file))
             date_created = os.path.getctime(os.path.join(data_folder, entry))
-            md5sum = hashlib.md5()
-            with open(os.path.join(data_folder, entry, file), "rb") as f:
-                while chunk := f.read(1024):
-                    md5sum.update(chunk)
-            md5sum = md5sum.hexdigest()
         total_size += entry_size
         size = (
             f"{entry_size / 1_000_000:.2f} MB"
@@ -60,8 +52,6 @@ def collections(sort_by: str = "name", descending: bool = False) -> list[dict]:
                 "entry_size": entry_size,
                 "date": date_created,
                 "entry_count": count,
-                "suffix": "R" if has_suffix else "_",
-                "md5sum": md5sum,
             }
         )
     if not rows:
@@ -80,7 +70,7 @@ def collections(sort_by: str = "name", descending: bool = False) -> list[dict]:
 
 
 def list_collections(sort_by: str = "name", descending: bool = False) -> None:
-    """Lists all collections in the data folder with their size and creation date. 
+    """Lists all collections in the data folder with their size and creation date.
     Sorts by name, date, number of items or size depending on the sort_by argument.
     arguments:
         sort_by: str, either 'name', 'date', 'size' or 'count'. Default is 'name'.
@@ -117,44 +107,80 @@ def list_collections(sort_by: str = "name", descending: bool = False) -> None:
 
     collection_infos = collections(sort_by=sort_by, descending=sort_descending)
     if not collection_infos:
-        print("No collections found.\nCheck your ASKUR_DATA_FOLDER environment variable.")
+        print(
+            "No collections found.\nCheck your ASKUR_DATA_FOLDER environment variable."
+        )
         return
-    
+
     data_folder = collection_infos.get("data_folder")
     total_size = collection_infos.get("total_size")
     rows = collection_infos.get("collections")
 
-    if not rows:
-        print(f"No collections found in the data folder '{data_folder}'.")
-        return
-    
-    col_0_width = len(str(len(rows))) + 2
-    col_1_width = max(len(coll["name"]) for coll in rows) + 6
-    col_2_width = max(len(coll["size"]) for coll in rows) + 6
-    col_3_width = max(len(coll["count"]) for coll in rows) + 2
-    col_4_width = max(len(coll["suffix"]) for coll in rows) + 2
-    col_5_width = max(len(coll["created"]) for coll in rows) + 2
-    col_6_width = max(len(coll["md5sum"]) for coll in rows) + 2
-    
+    if len(str(total_size)) > 6:
+        total_size = f"{total_size / 1_000_000:.2f} MB"
+    else:
+        total_size = f"{total_size:.2f} bytes"
+    total_text = f"Total Size: {total_size}"
 
-    print(f"\nCollections in {data_folder}:")
-    print(
-        f"{'n':>{col_0_width}} {'Name':<{col_1_width}} {'Size':>{col_2_width}} {'Items':>{col_3_width}}   {'S':<{col_4_width}} {'Created':<{col_5_width}} {'MD5':<{col_6_width}}"
+    cols = []
+
+    cols.append(
+        {"name": "n", "title": "n", "align": ">", "width": len(str(len(rows))) + 2}
     )
-    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + col_6_width + 4))
-    for n, coll in enumerate(rows):
-        print(
-            f"{n+1:>{col_0_width}} {coll['name']:<{col_1_width}} {coll['size']:>{col_2_width}} {coll['count']:>{col_3_width}}   {coll['suffix']:<{col_4_width}} {coll['created']:<{col_5_width}} {coll['md5sum']:<{col_6_width}}"
-        )
-        
-    print("-" * (col_0_width + col_1_width + col_2_width + col_3_width + col_4_width + col_5_width + col_6_width + 4))
-    print(
-        f"{'Total':<{col_0_width + col_1_width}}  {(total_size / 1_000_000):>{col_2_width - 3}.2f} MB\n"
+    cols.append(
+        {
+            "name": "name",
+            "title": "Name",
+            "align": "<",
+            "width": max(max(len(coll["name"]) for coll in rows), len(str(len(rows))))
+            + 2,
+        }
     )
+    cols.append(
+        {
+            "name": "size",
+            "title": "Size",
+            "align": ">",
+            "width": max(len(coll["size"]) for coll in rows) + 6,
+        }
+    )
+    cols.append(
+        {
+            "name": "count",
+            "title": "Items",
+            "align": ">",
+            "width": max(len(coll["count"]) for coll in rows) + 2,
+        }
+    )
+    cols.append(
+        {
+            "name": "created",
+            "title": "Created",
+            "align": "<",
+            "width": max(len(coll["created"]) for coll in rows) + 2,
+        }
+    )
+
+    print(f"\n   Collections in {data_folder}:")
+    print(" | ".join(f"{item['title']:^{item['width']}}" for item in cols))
+    print("-" * (sum(col["width"] for col in cols) + 3 * (len(cols) - 1)))
+    for n, row in enumerate(rows):
+        for i, col in enumerate(cols):
+            if i == 0:
+                print(f"{n + 1: {col['align']}{col['width']}}", end=" | ")
+            else:
+                print(
+                    f"{row[col['name']]:{col['align']}{col['width']}}",
+                    end=" | " if i < len(cols) - 1 else "\n",
+                )
+
+    print("-" * (sum(col["width"] for col in cols) + 3 * (len(cols) - 1)))
+    padding = " ".join(f"{'':^{col['width'] - 1}}" for col in cols[:2])
+    print(padding + total_text + "\n")
 
 
 def build_collection(
-    collection_name: str, input_file: str, reversed=False, field_separator=";"
+    collection_name: str, input_file: str, field_separator=";"
 ) -> int:
     import gc
 
@@ -165,18 +191,10 @@ def build_collection(
 
         trie = askur.build.Trie(
             collection_name=collection_name,
-            reversed=False,
             field_separator=field_separator,
         )
-        res_build:int = trie.make_frozen_data(input_data=file)
+        trie.make_frozen_data(input_data=file)
 
-        if reversed and res_build == 0:
-            trie = askur.build.Trie(
-                collection_name=collection_name,
-                reversed=True,
-                field_separator=field_separator,
-            )
-            trie.make_reversed()
     except FileNotFoundError:
         print(
             f"Input file '{input_file}' not found. Use absolute path or check the file name and try again."
@@ -195,6 +213,7 @@ def get_id(
     id: int = None,
 ) -> list[str]:
 
+
     if collection_name is None or id is None:
         parser = argparse.ArgumentParser(
             description="Lookup in an Askur collection by ID"
@@ -207,15 +226,14 @@ def get_id(
 
         collection_name = args.collection_name
         id = args.id
-    if collection_name is None or id is None:
-        print("Please provide both collection name and ID.")
-        return ""
 
-    import askur.search as search_module
 
-    S = search_module.Search(collection=collection_name)
-    result = S.get_by_id(id)
-    return result
+    from askur.search import Search as s
+
+    look = s(collection=collection_name,id=id)
+    res = look.search(query_string='')
+    return next(res, None)
+    
 
 
 def remove_collection(collection_name: str = None) -> None:

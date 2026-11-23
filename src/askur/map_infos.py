@@ -14,16 +14,16 @@ class MapAddressInfo(Enum):
     BYTES_PR_INFO_CELL = 0
     BITS_PR_SB = 1
     BYTES_PR_INDEX_BLOCK = 2
-    VOID_1 = 3
-    VOID_2 = 4
+    NR_WORDS = 3
+    BW_BYTE_SIZE = 4
     VOID_3 = 5
     VOID_4 = 6
     VOID_5 = 7
     VOID_6 = 8
     VOID_7 = 9
     VOID_8 = 10
-    VOID_9 = 11
-    VOID_10 = 12
+    HC_TO_CHR = 11
+    SELECT_FROM_CHR = 12
     ALPHABET = 13
     TRIE = 14
     SELECT = 15
@@ -35,14 +35,6 @@ class MapAddressInfo(Enum):
     INDEX_VALUE = 21
     INDEX_VALUE_LENGTH = 22
     SHORT_TEXT = 23
-    SUFFIX_TRIE = 24
-    SUFFIX_SELECT = 25
-    SUFFIX_SELECT_SB = 26
-    SUFFIX_HC = 27
-    SUFFIX_HC_SB = 28
-    SUFFIX_EOW = 29
-    SUFFIX_EOW_SB = 30
-    SUFFIX_INDEX_VALUE = 31
 
     @classmethod
     def value_slices(cls, info_name) -> dict[str, slice]:
@@ -60,9 +52,10 @@ class MapAddressInfo(Enum):
         TRIE data = mmap[TRIE.start:TRIE.end], when finally mapped.
         """
         start_cell: int = cls(info_name).value * 4
+        end_cell = start_cell + 8 if cls(info_name).value < len(cls) - 1 else 0
         return {
             "start": slice(start_cell, start_cell + 4),
-            "end": slice(start_cell + 4, start_cell + 8),
+            "end": slice(start_cell + 4, end_cell),
         }
 
     @classmethod

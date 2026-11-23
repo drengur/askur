@@ -70,12 +70,12 @@ class Config:
                     key, value or ""
                 )
 
-    def defaults(self) -> None:
+    def defaults(self) -> dict[str, str]:
         """Initialize environment variables."""
         return {
             "ASKUR_ALPHABET": "0123456789AaÁáBbCcDdÐðEeÉéFfGgHhIiÍíJjKkLlMmNnOoÓóPpQqRrSsTtUuÚúVvWwXxYyÝýZzÞþÆæÖöØøßÅå -",  # default sort order for the alphabet
             "ASKUR_DATA_FOLDER": self.get_default_folders()[
                 0
             ],  # default data folder path based on OS
-            "ASKUR_MEMORY_THRESHOLD": "5",  # % system memory left before stopping the build process
+            "ASKUR_MEMORY_THRESHOLD": "60",  # % system memory used before stopping the build process
         }

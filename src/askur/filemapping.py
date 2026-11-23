@@ -21,8 +21,6 @@ class Section:
 class Mapping:
     """Class for memory-mapped file access and manipulation."""
 
-    BYTE_LOOKUP_DICT = {i: i.bit_count() for i in range(256)}
-
     def __init__(self, collection: str) -> None:
         self._file: str = ""
         self._mmap: mmap.mmap = None
@@ -48,22 +46,17 @@ class Mapping:
         self._short_text: Section = None
         self.alphabet: Section = None
 
+        self._s_chr: Section = None
+        self._hc_to_chr: Section = None
+
         self._check_if_key_exists: bool = False  # are we only checking if key exists?
         self._reversed_lookup: bool = False  # are we looking up suffixes?
         self._has_reversed_index: bool = False  # does the index have reversed entries?
 
         self.nr_bytes_in_index_block: int = 0
-        self.max_index_value: int = 0  # number of (items -1)  in the short text index, used to calculate the number of items in the collection
-
-        self._reversed_trie: Section = None
-        self._reversed_s_bits: Section = None
-        self._reversed_s_superblocks: Section = None
-
-        self._reversed_hc_bits: Section = None
-        self._reversed_hc_super_blocks: Section = None
-
-        self._reversed_eow_bits: Section = None
-        self._reversed_eow_sb: Section = None
+        self._max_index_value: int = 0  # number of (items -1)  in the short text index, used to calculate the number of items in the collection
+        self._nr_words: int = 0
+        self._bw_byte_size: int = 0  # backwards traversal byte size
 
         self._load_files()
 
@@ -82,6 +75,7 @@ class Mapping:
 
         start = int.from_bytes(self._mmap[section_slices["start"]], byteorder="big")
         end = int.from_bytes(self._mmap[section_slices["end"]], byteorder="big")
+
         if end == 0 and start > 0:
             end = self._mmap.size()  # happens when the section is at the end of the file, usually the short text section, which is the last section in the file
 
@@ -108,12 +102,20 @@ class Mapping:
         self._mmap = mmap.mmap(self._file.fileno(), 0, access=mmap.ACCESS_READ)
         self._view = memoryview(self._mmap)
 
+        # bits in superblock is number of "1"s a single super block contains
         self.bits_in_superblock = int.from_bytes(
             self._mmap[ma.address(ma.BITS_PR_SB)], byteorder="big"
         )
 
+        self._nr_words = int.from_bytes(
+            self._mmap[ma.address(ma.NR_WORDS)], byteorder="big"
+        )
+
         self.nr_bytes_in_index_block = int.from_bytes(
             self._mmap[ma.address(ma.BYTES_PR_INDEX_BLOCK)], byteorder="big"
+        )
+        self._bw_byte_size = int.from_bytes(
+            self._mmap[ma.address(ma.BW_BYTE_SIZE)], byteorder="big"
         )
 
         self.alphabet = self.map_section(ma.ALPHABET)
@@ -122,6 +124,8 @@ class Mapping:
 
         self._s_bits = self.map_section(ma.SELECT)
         self._s_superblocks = self.map_section(ma.SELECT_SB)
+        self._s_chr = self.map_section(ma.SELECT_FROM_CHR)
+        self._hc_to_chr = self.map_section(ma.HC_TO_CHR)
 
         self._hc_bits = self.map_section(ma.HC)
         self._hc_super_blocks = self.map_section(ma.HC_SB)
@@ -134,18 +138,10 @@ class Mapping:
 
         self._short_text = self.map_section(ma.SHORT_TEXT)
 
-        # translate_index_bits is used to translate the
-        # index value to the corresponding index in the reversed index
-        self._translate_index_bits = self.map_section(ma.SUFFIX_INDEX_VALUE)
-
         # how many items are in the trie (max_index is equivalent to row count):
-        self.max_index_value = (
+        self._max_index_value = (
             self._index_values_length.end - self._index_values_length.start
         ) // 2 - 1
-
-        # initialize reversed lookup if the index has a suffix trie section
-        # and we are doing a reversed lookup (suffix search)
-        self.do_reversed_lookup(False)
 
     def section_slice(
         self, section: Section, start: int, end: int | None = None
@@ -160,32 +156,12 @@ class Mapping:
     def section_find(
         self, section: Section, needle: bytes, start: int, end: int
     ) -> int:
-        pos = self._mmap.find(needle, section.start + start, section.start + end)
+        pos = self._mmap.find(
+            needle,
+            section.start + start,
+            section.start + (end or section.end - section.start),
+        )
         return -1 if pos < 0 else pos - section.start
-
-    def has_reversed_index(self) -> bool:
-        """Returns True if the index is reversed"""
-        return self._has_reversed_index
-
-    def do_reversed_lookup(self, reversed_lookup: bool) -> bool:
-        """Returns True if the index is reversed and we are doing reversed lookup"""
-
-        # If there is a suffix trie section, then we have a reversed index. If not, we don't.
-        suffix_trie_section = self.map_section(ma.SUFFIX_TRIE)
-        self._has_reversed_index = suffix_trie_section.end > suffix_trie_section.start
-        self._reversed_lookup = reversed_lookup and self._has_reversed_index
-
-        if self._reversed_lookup:
-            # use the reversed sections for lookup
-            self._trie = self.map_section(ma.SUFFIX_TRIE)
-            self._s_bits = self.map_section(ma.SUFFIX_SELECT)
-            self._s_superblocks = self.map_section(ma.SUFFIX_SELECT_SB)
-            self._hc_bits = self.map_section(ma.SUFFIX_HC)
-            self._hc_super_blocks = self.map_section(ma.SUFFIX_HC_SB)
-            self._eow_bits = self.map_section(ma.SUFFIX_EOW)
-            self._eow_sb = self.map_section(ma.SUFFIX_EOW_SB)
-
-        return self._reversed_lookup
 
     @property
     def check_if_key_exists(self) -> bool:
@@ -200,11 +176,7 @@ class Mapping:
 
     def count_items(self) -> int:
         """Returns the number of items in the index"""
-        return self.max_index_value + 1
-
-    def value_size(self) -> int:
-        """Returns true size of the short text (the resulting value)"""
-        return self._short_text.end - self._short_text.start
+        return self._nr_words
 
     def get_start_letters(self) -> list[str]:
         """Get all first letters in any word in the collection. ."""
@@ -265,7 +237,7 @@ class Mapping:
                 start_byte + 16
             )  # read 16 bytes at a time, to reduce the number of calls to section_slice
             for value in self.section_slice(self._s_bits, start_byte, end_byte):
-                bit_count = self.BYTE_LOOKUP_DICT.get(value, 0)
+                bit_count = value.bit_count()
                 if not value or r_start == 7 and total_sum + bit_count < start_select:
                     total_sum += bit_count
                     loop_index += 8
@@ -280,6 +252,72 @@ class Mapping:
                             return [res_start_index, loop_index]
                     loop_index += 1
                 r_start = 7
+
+    def calculate_select_from_index(self, target_index: int) -> int:
+        """Calculate the hc index from the given start bit sum."""
+        byte_len = self._bw_byte_size
+        s_index = max((target_index // (byte_len * 8) - 1) * byte_len, 0)
+        hc = int.from_bytes(
+            self.section_slice(self._s_chr, s_index, s_index + byte_len),
+            byteorder="big",
+        )
+
+        sel_start, sel_end = self.calculate_select(hc)
+        if sel_start <= target_index < sel_end:
+            letter = self.get_trie_range(sel_start, sel_end)[target_index - sel_start]
+            return {
+                "s_start": sel_start,
+                "s_end": sel_end,
+                "chr_index": target_index - sel_start,
+                "key": letter,
+                "hc": hc,
+            }
+        while True:
+            if target_index < sel_start:
+                hc -= 1
+            elif target_index >= sel_end:
+                if target_index - sel_end == 0:
+                    hc += 1
+                else:
+                    hc += (
+                        (target_index - sel_end) // 2
+                        if target_index - sel_end > 8
+                        else 4
+                    )
+
+            sel_start, sel_end = self.calculate_select(max(hc, 1))
+            if sel_start <= target_index < sel_end:
+                letter = self.get_trie_range(sel_start, sel_end)[
+                    target_index - sel_start
+                ]
+                return {
+                    "s_start": sel_start,
+                    "s_end": sel_end,
+                    "chr_index": target_index - sel_start,
+                    "key": letter,
+                    "hc": hc,
+                }
+
+    def calculate_chr_from_hc(self, hc_index: int) -> int:
+        """Calculate the character index from the given hc index."""
+        byte_len = self._bw_byte_size
+        s_index = max((hc_index // (byte_len * 8) - 1) * byte_len, 0)
+        chr_index = int.from_bytes(
+            self.section_slice(self._hc_to_chr, s_index, s_index + byte_len),
+            byteorder="big",
+        )
+
+        add: int = 1
+        while True:
+            hc = self.calculate_hc(chr_index)
+            if hc == hc_index:
+                break
+            if hc < hc_index and hc > 0:
+                add = (hc_index - hc) // 2 if hc_index - hc > 9 else 4
+            elif hc > hc_index:
+                add = -1
+            chr_index += add
+        return chr_index
 
     def calculate_hc(self, end_request_index: int) -> int:
         """what is the total number of "1" bits in hc_bits from 0 to end_request_index?
@@ -322,6 +360,30 @@ class Mapping:
                     return 0
         return 0  # no heads/childen found, return 0
 
+    def calculate__hc_index_from_bitsum(self, hc_bitsum: int) -> int:
+        """Calculate the character index from the given hc_bitsum."""
+
+        start_block: int = hc_bitsum // self.bits_in_superblock
+        rest_bits: int = hc_bitsum - start_block * self.bits_in_superblock
+        index = start_block * self.bits_in_superblock
+        for value in self.section_slice(
+            self._hc_bits,
+            start_block * self.bits_in_superblock // 8,
+            (start_block + 4) * self.bits_in_superblock // 8,
+        ):
+            if not value:
+                index += 8
+                continue
+
+            for i in range(7, -1, -1):
+                index += 1
+                if value & (1 << i):
+                    if rest_bits == 0:
+                        return index
+                    rest_bits -= 1
+
+        return -1  # start_block * self.bits_in_superblock + rest_bits
+
     def has_child(self, index: int) -> bool:
         """Returns True if node has child = '1'"""
         value: int = (
@@ -331,13 +393,16 @@ class Mapping:
         )
         return value & (1 << (7 - index % 8)) > 0
 
+    def scan_trie(self, start: int, pattern: bytes):
+        """Returns the index of trie where the pattern appears"""
+        return self.section_find(self._trie, bytes([pattern]), start, None)
+
     def get_trie_range(self, start: int, end: int) -> list[int]:
         """Returns the range of letters (bytes) in the mmaped trie"""
         return list(self.section_slice(self._trie, start, end))
 
     def get_trie_index_of(self, start: int, end: int, letter: int) -> int:
         """Returns the index of the of letter in the given range of the mmap"""
-        # print([f"{i}:{chr(c)}={c}" for i, c in enumerate   (self.section_slice(self._trie, start, end))])
         chr_index: int = self.section_find(self._trie, bytes([letter]), start, end)
         return -1 if chr_index < 0 else chr_index - start
 
@@ -412,7 +477,7 @@ class Mapping:
 
         for value in value_bytes:
             if not value or index + 8 < end_index:
-                bitsum += self.BYTE_LOOKUP_DICT.get(value, 0)
+                bitsum += value.bit_count()
                 index += 8
                 continue
             for i in range(7, -1, -1):
@@ -422,31 +487,15 @@ class Mapping:
                 index += 1
         return bitsum
 
-    def translate_index(self, index_value: int) -> int:
-        """Translate the index value to the corresponding index in the reversed index"""
-        start_idx: int = index_value * self.nr_bytes_in_index_block
-        end_idx: int = start_idx + self.nr_bytes_in_index_block
-
-        # short_text index:
-        translated_index: int = int.from_bytes(
-            self.section_slice(self._translate_index_bits, start_idx, end_idx),
-            byteorder="big",
-            signed=False,
-        )
-        return translated_index
-
     def get_result(self, trie_index_value: int) -> list[str]:
         """Returns result of the query"""
         eow_index_value: int = self.get_value_bits_sum(trie_index_value)
-
-        if self._reversed_lookup:
-            eow_index_value = self.translate_index(eow_index_value)
         return self.get_by_id(eow_index_value)
 
     def get_by_id(self, value_index_id: int) -> list[str]:
         """id is the value_sum from the method get_result()"""
 
-        if value_index_id < 0 or value_index_id > self.max_index_value:
+        if not 0 <= value_index_id <= self._max_index_value:
             return []
         if self._check_if_key_exists:
             return [value_index_id]
@@ -455,7 +504,9 @@ class Mapping:
         return {value_index_id: self.get_short_text(index_value, text_len)}
 
     def get_short_text(self, index: int, text_len: int) -> list[str]:
-        """Returns the short text"""
+        """Returns the short text (the short text is the result = value in key-value mapping)
+        Each key can have multiple short texts (values) associated with it.
+        """
         res: bytes = bytes(
             self.section_slice(self._short_text, index, index + text_len)
         )
