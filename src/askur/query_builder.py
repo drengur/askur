@@ -46,7 +46,6 @@ class QueryBuilder:
             "start_at_zero": False,  # Nothing to check after the scan_query
             "min_word_length": 0,  # Minimum length of the query result considering underscores and wildcards
             "max_word_length": 0,  # Maximum length of the query resultconsidering underscores and wildcards
-            # "limit": self._limit,
             "case_insensitive": self._case_insensitive,
             "fuzzy_match": self._fuzzy_match,
             "key_exists": key_exists,
@@ -86,7 +85,6 @@ class QueryBuilder:
         """Return whether the query can be treated as a normal query (without wildcards)."""
         return not self._has_wildcard and not self._has_underscore
 
-
     @property
     def case_insensitive(self) -> bool:
         """Return whether to use case insensitive search."""
@@ -104,9 +102,22 @@ class QueryBuilder:
             if self.original_query is not None
             else b""
         )
-        self._has_wildcard = alpha.WILDCARD in byte_query
-        self._has_underscore = alpha.UNDERSCORE in byte_query
-        return byte_query
+        back_slashed = False
+        sanitized_query = []
+        for n, value in enumerate(byte_query):
+            if value == alpha.BACKSLASH and back_slashed:
+                back_slashed = False
+            elif value == alpha.BACKSLASH:
+                back_slashed = True
+                continue
+            if back_slashed and value in (alpha.WILDCARD, alpha.UNDERSCORE):
+                value = -value
+                back_slashed = False
+            sanitized_query.append(value)
+
+        self._has_wildcard = alpha.WILDCARD in sanitized_query
+        self._has_underscore = alpha.UNDERSCORE in sanitized_query
+        return sanitized_query
 
     def _is_scan_query(self, query) -> bool:
         """Return whether the query contains a wildcard character."""

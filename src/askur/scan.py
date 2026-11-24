@@ -201,6 +201,7 @@ class Scanner:
                 # We stop scanning because we only need to scan from the start letter (s_start=0)
                 is_done = True
             chr_index = self._find_next_index(next_index, start_letter)
+
             if chr_index < 0:
                 break
             next_index = chr_index + 1
@@ -251,30 +252,28 @@ class Scanner:
         s_start, s_end = self.mmap.calculate_select(hc)
 
         i_letter = query[0]  # the letter we are currently seeking
+
         letter_range = self.mmap.get_trie_range(
             s_start, s_end
         )  # all letters available in the trie node range
 
-        if i_letter != alpha.UNDERSCORE and i_letter not in letter_range:
+        if (
+            i_letter > 0
+            and i_letter != alpha.UNDERSCORE
+            and i_letter not in letter_range
+        ):
             # No matching letters
             if not self.case_insensitive:
                 return
             if alpha.case_folding(i_letter) not in letter_range:
                 return
 
-        if (
-            self.case_insensitive
-            and i_letter not in letter_range
-            and i_letter != alpha.UNDERSCORE
-        ):
-            cf_letter = alpha.case_folding(i_letter)
-            if cf_letter not in letter_range:
-                return
-
         if i_letter == alpha.UNDERSCORE:
             # If the current letter is an underscore, we consider all letters in the range
             i_letters = letter_range
         else:
+            if i_letter < 0:
+                i_letter = -i_letter
             i_letters = [i_letter] if i_letter in letter_range else []
             if self.case_insensitive:
                 cf_letter = alpha.case_folding(

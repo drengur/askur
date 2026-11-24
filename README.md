@@ -12,7 +12,6 @@ A memory-mapped binary tree implementation for ultra-fast key-value lookup using
 - **Fuzzy matching**: Levenshtein distance search
 - **Case Insensetive**: Search both upper and lowercase letters in same search: 
 - **Unicode support**: UTF-8 character encoding (max 4 byte chars)
-- **Reversed indexing**: Suffix search capabilities
 
 ## Installation
 
@@ -47,40 +46,37 @@ uv pip install dist/<file-distribution-name>.tar.gz
 ```python
 # Build a collection:
 # The build procedure sorts the input while building the data
-askur-build -C <collection_name:str> -f <path-to-file> (-F <column_separator:str>) (-R)
-# -R is used to make reversed trie index
+askur-build -C <collection_name:str> -f <path-to-file> (-F <column_separator:str>)
 # -F determes where to split the input lines into key and value (default is ";")
-# Reversed index is reversed sorted
 
-
-# OR reading from stdin...
+# or reading from stdin...
 cat <path_to_file> | askur-build -C <collection_name> 
 
-# Build Example:
+# build example:
 echo -e "hello;greeting\nworld;earth\nhello*;wildcard" > data.txt
-askur-build -C test_collection -f data.txt -F";" -R
+askur-build -C test_collection -f data.txt -F";"
 
-# Searching:
-askur-search -c <collection:str> -q <key:str> [-l <limit:int>] [-e] [-z] [-i]
+# searching:
+askur-search -c <collection:str> -q "<key:str>" [-l <limit:int>] [-e] [-z] [-i]
 # -l = limits output (limit = 0 is no limit)
 # -e = check if key exists (=True)
-# -z = fuzzy search (levenshtein distance =1) (=True)
+# -z = fuzzy match word (levenshtein distance =1) (=True)
 # i = case insensetive search (=True)
 
 # get value by index (example index = 10):
 askur-get_id -c <collection_name:str> --id 10
 
-# Rename Collection:
+# rename a collection:
 askur-rename -o <old_name:str> -n <new_name:str>
 
-#Remove Collection
+# remove a collection
 askur-remove <collectin_name:str>
 
-# List All Available Collections:
+# list all available collections:
 askur-list_collections
 askur-list_collections [--sort_by (name, date or size)]
 
-# List Configs:
+# list Configs:
 askur-list_config
 
 ```
@@ -89,64 +85,82 @@ askur-list_config
 ```python
 # Building Collection:
 import askur
-res:int = askur.build_collection(<collection_name:str>, <path_to_file>, <reversed_index:bool>)
+res:int = askur.build_collection(<collection_name:str>, <path_to_file>
 # res = 0 if success, else -1
+# Building a collection can be memory demanding. Default memory upper limit is 60% of system total memory.
+# When building from command line the memory threshold can be set using the ASKUR_MEMORY_THRESHOLD environment variable.
+# Example usage from command line:
+# ASKUR_MEMORY_THRESHOLD=70 askur-build -C<collection_name> -f <file_name>
 
-# Examples of Searching Collection...
+
+# Examples of Searching a Collection...
 from askur import search
 # choose the collection to search:
-S = search(<collection_name:str>)
+s = search.Search(<collection_name:str>)
 
-# to limit the output to n-number of lines:
-S.limit=n
-
-# to search case insensetive:
-S.case_insensetive = True
-
-# check if key exists (faster search)
-# returns the key and index value {<key:str>: <index:int>}
-S.exists('key')
-
-# get the value associated whith index value
-S.get_by_id(<index:int>)
-
-# Find similar keys
-# returns all keys with levenshtein distance one.
-S.fuzzy_find('key')
-
-# general search method:
-S.lookup('key')
-
-# Use wildcards in the search:
-S.lookup('*k_ey*')
-# Wildcards can be escaped with backslash (\)
-S.lookup('hello\*')
-
-# All search methods (except get_by_id )
-# returns a generator. To print the results from a search method do:
-for item in S.lookup('key'):
+# The result from the search returns a generator
+# To get the results, loop throug the search result:
+for item in s.search('query'):
     print(item)
 
+# to limit the output to n-number (0 = unlimited) of lines:
+s.limit = n
+
+# to search case insensetive:
+s.case_insensetive = True
+
+# check if key exists (faster search)
+# if exists = True the search returns the word index
+s.exists = True
+
+# get the value associated whith index value
+# find the reslut based on the word index value.
+# set query parameter to empty string.
+s.id = <index:int>
+result = s.search('')
+
+
+# Find similar words
+# returns all words with levenshtein distance one.
+# When using fuzzy_match wildcards can't be used
+s.fuzzy_match = True
+
+# general search method:
+for item in S.search('word'): print(item);
+
+# Use wildcards in the search:
+results = s.search('*w_rd*')
+# Wildcards can be escaped with backslash (\)
+results = s.search('hello\*')
+
+# get the result in ascending- or descending order:
+s.sort_ascending = True
+# or
+s.sort_descending = True
+
+# To format the output:
+# there are three output formats: 'json', 'list' and 'none'
+# none is the default (dict)
+s.output_format='<format>'
+
 # Release the memory mapped object when done:
-S.close()
+s.close()
 
 # Or use the search as a context manager with autmatic cleanup:
 with Search(
     collection=collection,
-    limit=limit,
-    case_insensitive=case_insensitive,
-    use_levenshtein=fuzzy_search,
-) as S:
-    if exists:
-        for items in S.exists(query):
-            print(items)
-        return
-    if fuzzy_search:
-        for items in S.fuzzy_search(query):
-            print(items)
-        return
-    for items in S.lookup(query):
-        print(items)
+    limit=0,
+    case_insensitive=False,
+    fuzzy_match=False,
+    exists=False,
+    sort_ascending=False,
+    sort_descending=False,
+    id=-1,
+    output_json=False,
+    output_list=False,
+) as s: 
+    for item in s.search(query):
+        print(item)
 
 
 ```
