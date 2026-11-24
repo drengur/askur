@@ -1,24 +1,10 @@
-#!/usr/bin/env python3
-
-
 import sys
 import json
 
 from typing import Iterator
 from askur.filemapping import Mapping
-from askur.config import Config
-from askur.alphabet import Alphabet
 
-# from askur.scan import Scanner
 from askur.query_builder import QueryBuilder as qb
-# from askur.lookup import Lookup
-
-
-Config()  # Initialize the global CONFIG variable
-A = Alphabet()
-
-UNDERSCORE = 95
-WILDCARD = 42
 
 
 class Search:
@@ -109,7 +95,7 @@ class Search:
             return self.results_as_list(key, val)
         if self._output_json:
             return self.result_as_json(key, val)
-        return f"{key}: {val}"
+        return {key: val}
 
     def results_as_list(self, key: str, value: dict[str, list[str] | int]):
         """Convert the search result to a list format."""
@@ -253,6 +239,7 @@ class Search:
         self._nr_results = 0
         if query_string != "":
             self.id = -1
+
         qb_instance = qb(
             query_string,
             case_insensitive=self._case_insensitive,
