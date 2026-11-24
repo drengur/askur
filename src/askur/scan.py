@@ -140,7 +140,6 @@ class Scanner:
         self.search = search_instance
         self.query = qb_instance.query
         self.case_insensitive = qb_instance.case_insensitive
-        self.limit = qb_instance.limit
 
     def search_completed(self) -> bool:
         """Check if the search is completed."""
@@ -153,7 +152,7 @@ class Scanner:
         Returns:
             The result of adding the item to the search results.
         """
-        word = "".join([chr(chr_info["key"]) for chr_info in item])
+        word = alpha.convert_bytes_to_str([chr_info["key"] for chr_info in item])
         value = self.mmap.get_result(item[-1]["chr_index"])
         return self.search.add_result({word: value})
 

@@ -178,6 +178,10 @@ class Mapping:
         """Returns the number of items in the index"""
         return self._nr_words
 
+    def max_id(self) -> int:
+        """Returns the maximum ID in the index."""
+        return self._max_index_value
+
     def get_start_letters(self) -> list[str]:
         """Get all first letters in any word in the collection. ."""
         return [chr(c) for c in self.get_trie_range(*self.calculate_select(1))]

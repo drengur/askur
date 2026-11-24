@@ -1,15 +1,7 @@
-#!/usr/bin/env python3
-
-# import sys
-
 
 from typing import Iterator
-
-# from askur.filemapping import Mapping
 from askur.config import Config
 from askur.alphabet import Alphabet
-# from askur.scan import Scanner
-# from askur.query_builder import QueryBuilder as qb
 
 Config()  # Initialize the global CONFIG variable
 alpha = Alphabet()
@@ -23,10 +15,9 @@ class Lookup:
         search_instance,
         query_builder_instance,
     ) -> None:
-        # print("Initializing Lookup instance", query_builder_instance)
         self._search = search_instance
         self.mmap = search_instance.mmap
-        self._levenshtein = query_builder_instance.query.get("fuzzy_match", False)
+        self._fuzzy_match = query_builder_instance.query.get("fuzzy_match", False)
         self._limit = query_builder_instance.query.get("limit", 0)
         self._case_insensitive = query_builder_instance.query.get(
             "case_insensitive", False
@@ -37,38 +28,14 @@ class Lookup:
         self._query = query_builder_instance.query["query"]
         self._min_word_length = query_builder_instance.query.get("min_length", 0)
         self._max_word_length = query_builder_instance.query.get("max_length", 0)
-        if self._levenshtein:
-            search_instance._levenshtein_query = query_builder_instance.query[
+        if self._fuzzy_match:
+            search_instance._fuzzy_find_query = query_builder_instance.query[
                 "original_query"
             ]
         self._id = query_builder_instance.query.get("id", 0)
 
-    @property
-    def alphabet(self) -> dict[int, int]:
-        """Return the alphabet used in the collection."""
-        return self.mmap.get_alphabet()
 
-    @property
-    def levenshtein(self) -> bool:
-        """Return whether to use Levenshtein distance (of one) for the search."""
-        return self._levenshtein
-
-    @levenshtein.setter
-    def levenshtein(self, use_levenshtein: bool):
-        """Set whether to use Levenshtein distance for the search."""
-        self._levenshtein = use_levenshtein
-
-    @property
-    def case_insensitive(self) -> bool:
-        """Return whether to use case insensitive search."""
-        return self._case_insensitive
-
-    @case_insensitive.setter
-    def case_insensitive(self, value: bool):
-        """Set whether to use case insensitive search."""
-        self._case_insensitive = value
-
-    def _fuzzy_find(self, query: list) -> None:
+    def _fuzzy_search(self, query: list) -> None:
         """Method to find similar words
         Levenshtein distance of 1 is used to find similar words
         Case folding is applied to find similar words in case insensitive search
@@ -98,16 +65,16 @@ class Lookup:
             del new_word[n]
             yield from self._lookup(new_word, s_index=1)
 
-    def wildcard_search(self) -> Iterator[dict[str, list[str]]]:
+    def _wildcard_search(self) -> Iterator[dict[str, list[str]]]:
         min_length = (
             self._min_word_length - 1
-        )  # subtract 1 to save calculation in wildcard search
+        )  # subtract 1 to save calculation time in wildcard search
         max_length = self._max_word_length
-        return self._wildcard_search(
+        return self._wildcard_find(
             min_length, max_length, s_index=1, start=0, accumulated=[]
         )
 
-    def _wildcard_search(
+    def _wildcard_find(
         self,
         min_length: int,
         max_length: int,
@@ -147,7 +114,7 @@ class Lookup:
 
             nr_hc = self.mmap.calculate_hc(s_start + idx)
             if nr_hc > 0:
-                yield from self._wildcard_search(
+                yield from self._wildcard_find(
                     min_length,
                     max_length,
                     s_index=nr_hc + 1,
@@ -216,9 +183,11 @@ class Lookup:
                     res = self._search.add_result({word: result})
                     if res:
                         yield res
-                # continue
             if nr_hc == 0:
                 continue
+            if start >= word_len:
+                continue
+
             yield from self._case_insensitive_search(
                 query,
                 nr_hc + 1,
@@ -277,13 +246,13 @@ class Lookup:
         """Lookup a word in the trie."""
 
         if self._query_type == "wildcard":
-            yield from self.wildcard_search()
+            yield from self._wildcard_search()
             return
         if self._query_type == "id":
             yield self._get_by_id(self._id)
             return
-        if self._levenshtein:
-            yield from self._fuzzy_find(self._query)
+        if self._fuzzy_match:
+            yield from self._fuzzy_search(self._query)
             return
         if self._case_insensitive:
             yield from self._case_insensitive_search(

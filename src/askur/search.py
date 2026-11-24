@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 import sys
 import json
 
@@ -28,7 +29,7 @@ class Search:
         collection: str,
         limit: int = 0,
         case_insensitive: bool = False,
-        use_levenshtein: bool = False,
+        fuzzy_match: bool = False,
         exists: bool = False,
         sort_ascending: bool = False,
         sort_descending: bool = False,
@@ -43,20 +44,20 @@ class Search:
             "Limit must be a non-negative integer."
         )
         assert isinstance(case_insensitive, bool), "case_insensitive must be a boolean."
-        assert isinstance(use_levenshtein, bool), "use_levenshtein must be a boolean."
+        assert isinstance(fuzzy_match, bool), "fuzzy_match must be a boolean."
         assert collection, "Collection name must be provided."
         assert (output_json and output_list) is False, (
             "Cannot set both output_json and output_list to True."
         )
 
         self.mmap = Mapping(collection)
-        self._levenshtein = use_levenshtein
+        self._fuzzy_match = fuzzy_match
         self._limit = limit  # 0 means no limit
         self._case_insensitive = case_insensitive
         self._collection_name = collection
         self._nr_results = 0
-        self._reversed = False
-        self._levenshtein_query = None
+        # self._reversed = False
+        self._fuzzy_match_query = None
         self._exists = self._set_check_if_key_exists(exists)  # check if key exists mode
 
         self._sort_ascending = sort_ascending
@@ -81,9 +82,9 @@ class Search:
         self._nr_results += 1
 
         key: str
-        if self._levenshtein:
+        if self._fuzzy_match:
             key = list(value.keys())[0]
-            if key == self._levenshtein_query:
+            if key == self._fuzzy_match_query:
                 self._nr_results -= 1  # Don't count the original query word as a result
                 return None  # Skip the original query word in fuzzy search results
         if self._exists:
@@ -146,21 +147,119 @@ class Search:
         """Return the alphabet used in the collection."""
         return self.mmap.get_alphabet()
 
+    @property
+    def limit(self) -> int:
+        """Return the current limit for search results."""
+        return self._limit
+
+    @limit.setter
+    def limit(self, value: int) -> None:
+        self._limit = value
+
+    @property
+    def sort_ascending(self) -> bool:
+        """Return whether the search results are sorted in ascending order."""
+        return self._sort_ascending
+
+    @property
+    def sort_descending(self) -> bool:
+        """Return whether the search results are sorted in descending order."""
+        return self._sort_descending
+
+    @sort_ascending.setter
+    def sort_ascending(self, value: bool) -> None:
+        self._sort_descending = False
+        self._sort_ascending = value
+
+    @sort_descending.setter
+    def sort_descending(self, value: bool) -> None:
+        self._sort_ascending = False
+        self._sort_descending = value
+
+    @property
+    def sort_order(self) -> str:
+        """Return the current sort order for the search results."""
+        if self._sort_ascending:
+            return "ascending"
+        elif self._sort_descending:
+            return "descending"
+        return "none"
+
+    @property
+    def id(self) -> int:
+        """Return the current ID for the search."""
+        return self._id
+
+    @id.setter
+    def id(self, value: int) -> None:
+        self._id = value
+
+    @property
+    def max_id(self) -> int:
+        """Return the maximum ID in the collection."""
+        return self.mmap.max_id()
+
+    @property
+    def case_insensitive(self) -> bool:
+        """Return whether the search is case insensitive."""
+        return self._case_insensitive
+
+    @case_insensitive.setter
+    def case_insensitive(self, value: bool) -> None:
+        self._case_insensitive = value
+
+    @property
+    def fuzzy_match(self) -> bool:
+        """Return whether the search uses Levenshtein distance."""
+        return self._fuzzy_match
+
+    @fuzzy_match.setter
+    def fuzzy_match(self, value: bool) -> None:
+        self._fuzzy_match = value
+
+    @property
+    def exists(self) -> bool:
+        """Return whether the search checks for key existence."""
+        return self._exists
+
+    @exists.setter
+    def exists(self, value: bool) -> None:
+        self._exists = self._set_check_if_key_exists(value)
+
+    @property
+    def output_format(self) -> str:
+        """Return the current output format for the search results."""
+        return self._output_format
+
+    @output_format.setter
+    def output_format(self, value: str) -> None:
+        assert value in ("json", "list", ""), "Invalid output format"
+        self._output_json = False
+        self._output_list = False
+        if value == "json":
+            self._output_json = True
+        elif value == "list":
+            self._output_list = True
+        else:
+            self._output_list = False
+            self._output_json = False
 
     def search(
         self, query_string: str
     ) -> Iterator[dict[str, list[str]] | dict[str, int]]:
         """Search for a word in the trie."""
 
+        # init search state
+        self._nr_results = 0
+        if query_string != "":
+            self.id = -1
         qb_instance = qb(
             query_string,
-            limit=self._limit,
             case_insensitive=self._case_insensitive,
-            use_levenshtein=self._levenshtein,
+            fuzzy_match=self._fuzzy_match,
             key_exists=self._exists,
             id=self._id,
         )
-        # print(qb_instance)
 
         if qb_instance.query_type == "scan":
             from askur.scan import Scanner
@@ -192,7 +291,10 @@ class Search:
             return iter([self.format_output(res) for res in results])
 
         def key_func(item):
-            return [self.alphabet.index(c) for c in next(iter(item)).casefold()]
+            return [
+                self.alphabet.index(c) if ord(c) < 255 else -1
+                for c in next(iter(item)).casefold()
+            ]
 
         if self._sort_descending:
             results = sorted(
@@ -275,7 +377,7 @@ def main():
     collection = args.c
     query = args.q
     limit = args.l if args.l > 0 else 0
-    fuzzy_search = args.z
+    fuzzy_match = args.z
     case_insensitive = args.insensitive
     exists = args.exists
     id = args.id if args.id > -1 else -1
@@ -286,7 +388,7 @@ def main():
         collection=collection,
         limit=limit,
         case_insensitive=case_insensitive,
-        use_levenshtein=fuzzy_search,
+        fuzzy_match=fuzzy_match,
         exists=exists,
         sort_ascending=sort_ascending,
         sort_descending=sort_descending,

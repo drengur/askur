@@ -486,7 +486,6 @@ class Trie:
             open(self.trie_file, "wb") as ft,
             open(self.hc_bits_filename, "wb") as fhc,
             open(self.select_bits_filename, "wb") as fs,
-            open(self.index_bits_filename, "wb") as f_index,
         ):
             while stack:
                 for node in stack:

@@ -19,16 +19,14 @@ class QueryBuilder:
     def __init__(
         self,
         query,
-        limit: int = 0,
         case_insensitive: bool = False,
-        use_levenshtein: bool = False,
+        fuzzy_match: bool = False,
         key_exists: bool = False,
         sorted_results: bool = False,
         id: int = -1,
     ):
         self.original_query = query
-        self._levenshtein = use_levenshtein
-        self._limit = limit  # 0 means no limit
+        self._fuzzy_match = fuzzy_match
         self._case_insensitive = case_insensitive
         self._has_wildcard = False
         self._has_underscore = False
@@ -48,14 +46,14 @@ class QueryBuilder:
             "start_at_zero": False,  # Nothing to check after the scan_query
             "min_word_length": 0,  # Minimum length of the query result considering underscores and wildcards
             "max_word_length": 0,  # Maximum length of the query resultconsidering underscores and wildcards
-            "limit": self._limit,
+            # "limit": self._limit,
             "case_insensitive": self._case_insensitive,
-            "fuzzy_match": self._levenshtein,
+            "fuzzy_match": self._fuzzy_match,
             "key_exists": key_exists,
             "id": self._id,
         }
 
-        assert self._limit >= 0, "Limit must be a non-negative integer."
+        # assert self._limit >= 0, "Limit must be a non-negative integer."
         assert isinstance(sorted_results, bool), "sorted_results must be a boolean."
         if query is None or query == "":
             assert self._id > -1, "ID must be greater than -1."
@@ -72,10 +70,8 @@ class QueryBuilder:
             self.prepare_wildcard_query(san_query)
         elif self._is_scan_query(san_query):
             self.prepare_query_for_scan(san_query)
-        elif self._is_basic_query:
-            self.prepare_basic_query(san_query)
         else:
-            assert False, "Invalid query type"
+            self.prepare_basic_query(san_query)
 
     def __str__(self) -> str:
         ret = [f"   {key}: {value}\n" for key, value in self.query.items()]
@@ -88,11 +84,8 @@ class QueryBuilder:
     @property
     def _is_basic_query(self) -> bool:
         """Return whether the query can be treated as a normal query (without wildcards)."""
-        return not self._has_wildcard
+        return not self._has_wildcard and not self._has_underscore
 
-    @property
-    def limit(self) -> int:
-        return self._limit
 
     @property
     def case_insensitive(self) -> bool:
@@ -100,9 +93,9 @@ class QueryBuilder:
         return self._case_insensitive
 
     @property
-    def levenshtein(self) -> bool:
+    def fuzzy_match(self) -> bool:
         """Return whether to use Levenshtein distance (of one) for the search."""
-        return self._levenshtein
+        return self._fuzzy_match
 
     def sanitize_query(self) -> dict[bytes, int]:
         """Return a sanitized query dictionary containing only the original query."""
