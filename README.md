@@ -15,9 +15,10 @@ A memory-mapped binary tree implementation for ultra-fast key-value lookup using
 
 ## Installation
 
-### From PyPI
+### From ~~PyPI~~ and Github
 ```bash
-uv pip install askur
+uv pip install askur (NOT AVAILABLE)
+uv pip install git+https://github.com/drengur/askur.git
 ```
 
 ### From Source
