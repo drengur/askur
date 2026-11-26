@@ -125,9 +125,13 @@ class QueryBuilder:
 
     def _is_clean_wildcard_query(self, query) -> bool:
         """Return wheter there are any non-wildcard and non-underscore characters."""
-        for c in query:
-            if c not in (alpha.WILDCARD, alpha.UNDERSCORE):
-                return False
+        if not [c for c in query if c != alpha.UNDERSCORE]:
+            return False
+
+        # check to see if we have clean wildcards and underscores:
+        if [c for c in query if c not in (alpha.WILDCARD, alpha.UNDERSCORE)]:
+            return False
+
         return True
 
     def prepare_wildcard_query(self, query) -> None:

@@ -1,4 +1,3 @@
-
 from typing import Iterator
 from askur.config import Config
 from askur.alphabet import Alphabet
@@ -33,7 +32,6 @@ class Lookup:
                 "original_query"
             ]
         self._id = query_builder_instance.query.get("id", 0)
-
 
     def _fuzzy_search(self, query: list) -> None:
         """Method to find similar words
@@ -140,9 +138,33 @@ class Lookup:
         chr_range = self.mmap.get_trie_range(s_start, s_end)
         next_query = query[:]
         word_length = len(query) - 1
+
         for n, i_letter in enumerate(chr_range):
             if i_letter in (alpha.UNDERSCORE, alpha.WILDCARD):
                 i_letter *= -1  # Escape the character
+
+            if 2 <= i_letter <= 4:
+                # entering multibyte character handling
+                # loop through the next n bytes to handle multibyte characters
+                nr_hc = self.mmap.calculate_hc(s_start + n)
+                next_mb_query = next_query[:]
+
+                rest_mbs = self._get_rest_of_multibyte(nr_hc, i_letter, [i_letter])
+
+                for mbs in rest_mbs:
+                    mb_query = next_mb_query[:]
+                    mb_query[start] = mbs
+                    # flatten the multibyte query:
+                    mb_query = [
+                        item
+                        for sublist in mb_query
+                        for item in (
+                            sublist if isinstance(sublist, list) else [sublist]
+                        )
+                    ]
+                    yield from self._lookup(mb_query, s_index, start)
+
+                continue
 
             if start < word_length and self.mmap.calculate_hc(s_start + n) == 0:
                 # if this is not the last character in the query
@@ -151,6 +173,38 @@ class Lookup:
             next_query[start] = i_letter
 
             yield from self._lookup(next_query, s_index, start)
+
+    def _get_rest_of_multibyte(
+        self, nr_hc: int, i_letter: int, res: list[int], loop_index=0
+    ) -> list[list[int]]:
+        # Implement the logic to generate multibyte queries based on nr_hc and i_letter
+        # args:
+        # i_letter is the number of bytes in the multibyte character
+        # res is the current state of the multibyte query being generated
+        # loop_index keeps track of the current depth in the multibyte character generation
+
+        results = []
+        mb_start, mb_end = self.mmap.calculate_select(nr_hc + 1)
+        mb_chr_range = self.mmap.get_trie_range(mb_start, mb_end)
+
+        for mb_chr_index, mb_chr in enumerate(mb_chr_range):
+            sub_res = res[:]
+            sub_res.append(mb_chr)
+            nr_hc = self.mmap.calculate_hc(mb_start + mb_chr_index)
+
+            if i_letter - loop_index < 2:
+                # last byte of the multibyte character
+                results.extend([sub_res[:]])
+                continue
+
+            result = self._get_rest_of_multibyte(
+                nr_hc=nr_hc,
+                i_letter=i_letter,
+                res=sub_res[:],
+                loop_index=loop_index + 1,
+            )
+            results.extend(result)
+        return results
 
     def _case_insensitive_search(
         self,

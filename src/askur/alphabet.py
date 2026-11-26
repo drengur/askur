@@ -3,6 +3,17 @@ import sys
 
 
 class Alphabet:
+    """
+    Class representing an alphabet for the trie structure.
+    Alphabet consists of characters defined in the ASKUR_ALPHABET environment variable
+    plus characters added dynamically through the add method.
+    It also keeps track of the used characters in the alphabet.
+
+    Multibyte characters are handled by representing them with a
+    leading byte indicating the number of following bytes:
+    "💊" <=> [00000011 00000001 11110100 10001010] <=> [3 1 244 138]
+    """
+
     UNDERSCORE = ord("_")
     WILDCARD = ord("*")
     BACKSLASH = ord("\\")
@@ -11,7 +22,6 @@ class Alphabet:
     def __init__(self) -> None:
         if os.getenv("ASKUR_ALPHABET") is None:
             raise EnvironmentError("ALPHABET environment variable is not set.")
-            sys.exit(1)
 
         self._alphabet: dict[int, int] = {
             ord(c): n for n, c in enumerate(os.getenv("ASKUR_ALPHABET"))
@@ -20,9 +30,11 @@ class Alphabet:
 
     @property
     def alphabet(self) -> dict[int, int]:
+        """Return the current alphabet mapping."""
         return self._alphabet
 
     def add(self, w_key: int | str | bytes) -> None:
+        """Add a key to the alphabet if it doesn't already exist."""
         key: int
         if isinstance(w_key, str):
             key = ord(w_key)
@@ -33,6 +45,7 @@ class Alphabet:
         self._alphabet.setdefault(key, len(self._alphabet))
 
     def get_alphabet_index(self, key: int) -> int | None:
+        """Return the alphabet index for the given key, or None if not found."""
         return self._alphabet.get(key)
 
     @property
@@ -115,8 +128,10 @@ class Alphabet:
 
     def case_folding(self, char: int) -> int:
         """Convert character to lower case if it's upper case and vice versa."""
-        if (char >= 65 and char <= 90) or (char >= 192 and char <= 222):
+        if char in (247, 215):
+            return char
+        if 65 <= char <= 90 or 192 <= char <= 222:
             return char + 32
-        if (char >= 97 and char <= 122) or (char >= 224 and char <= 254):
+        if 97 <= char <= 122 or 224 <= char <= 254:
             return char - 32
         return char

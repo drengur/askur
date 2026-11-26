@@ -42,7 +42,6 @@ class Search:
         self._case_insensitive = case_insensitive
         self._collection_name = collection
         self._nr_results = 0
-        # self._reversed = False
         self._fuzzy_match_query = None
         self._exists = self._set_check_if_key_exists(exists)  # check if key exists mode
 
@@ -99,7 +98,7 @@ class Search:
 
     def results_as_list(self, key: str, value: dict[str, list[str] | int]):
         """Convert the search result to a list format."""
-
+        value_str = ""
         if isinstance(value, list):
             value_str = ", ".join(value)
         if isinstance(value, dict):
@@ -167,7 +166,7 @@ class Search:
         """Return the current sort order for the search results."""
         if self._sort_ascending:
             return "ascending"
-        elif self._sort_descending:
+        if self._sort_descending:
             return "descending"
         return "none"
 
@@ -215,7 +214,11 @@ class Search:
     @property
     def output_format(self) -> str:
         """Return the current output format for the search results."""
-        return self._output_format
+        if self._output_json:
+            return "json"
+        elif self._output_list:
+            return "list"
+        return ""
 
     @output_format.setter
     def output_format(self, value: str) -> None:
@@ -247,6 +250,10 @@ class Search:
             key_exists=self._exists,
             id=self._id,
         )
+
+        if qb_instance.fuzzy_match:
+            # to avoid the original query being in the fuzzy match results
+            self._fuzzy_match_query = query_string
 
         if qb_instance.query_type == "scan":
             from askur.scan import Scanner
