@@ -110,7 +110,7 @@ for item in s.search('query'):
 s.limit = n
 
 # to search case insensitive:
-s.case_insensetive = True
+s.case_insensitive = True
 
 # check if key exists (faster search)
 # if exists = True the search returns the word index
