@@ -63,13 +63,14 @@ echo -e "hello;greeting\nworld;earth\nhello*;wildcard" > data.txt
 askur-build -C test_collection -f data.txt -F";"
 
 # searching:
-askur-search -c <collection:str> -q "<key:str>" [-l <limit:int>] [-e] [-z] [-i] [--asc] [--desc]
+askur-search -c <collection:str> -q "<key:str>" [-l <limit:int>] [-e] [-z] [-i] [--asc] [--desc] [--json | --list]
 # -l = limits output (limit = 0 is no limit)
 # -e = check if key exists (=True)
 # -z = fuzzy match word (levenshtein distance =1) (=True)
 # i = case insensitive search (=True)
 # --asc = sort result ascending
 # --desc  = sort result descending
+# --json or --list = output format
 
 # get value by index (example index = 10):
 askur-get_id -c <collection_name:str> --id 10
